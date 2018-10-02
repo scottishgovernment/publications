@@ -1,0 +1,7 @@
+application:
+  name: publications
+
+hippo:
+  url: rmi://localhost:1099/hipporepository
+  user:
+  password:

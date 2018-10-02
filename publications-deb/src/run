@@ -1,0 +1,7 @@
+#!/bin/sh
+. /etc/profile
+set -eu
+
+exec ${JAVA_HOME:-/usr/bin}/java \
+  -Dlogback.configurationFile=/opt/publications/publications.xml \
+  -jar /opt/publications/publications.jar "$@"

@@ -1,0 +1,16 @@
+#!/bin/sh
+
+adduser \
+  --quiet \
+  --system \
+  --home /opt/publications \
+  --no-create-home \
+  --shell /bin/bash \
+  --group \
+  --gecos "Publications" \
+  publications
+  publications
+
+mkdir -p /var/log/publications
+chmod 755 /var/log/publications
+chown publications /var/log/publications
