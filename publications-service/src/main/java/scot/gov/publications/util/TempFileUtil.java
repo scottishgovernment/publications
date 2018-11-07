@@ -22,7 +22,11 @@ public class TempFileUtil {
     }
 
     public static File createTempFile(String prefix, FileType type, InputStream content) throws IOException {
-        File file = createTempFile(prefix, type);
+        return createTempFile(prefix, type.getExtension(), content);
+    }
+
+    public static File createTempFile(String prefix, String extenstion, InputStream content) throws IOException {
+        File file = createTempFile(prefix, extenstion);
         FileOutputStream stream = null;
         try {
             stream = new FileOutputStream(file);

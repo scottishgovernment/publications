@@ -4,6 +4,7 @@ import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.util.ZipEntryUtil;
 import scot.gov.publications.util.ZipUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -20,6 +21,17 @@ import static java.util.stream.Collectors.toList;
 public class MetadataExtractor {
 
     private MetadataParser metadataParser = new MetadataParser();
+
+    public Metadata extract(File file) throws ApsZipImporterException {
+
+        try {
+            ZipFile zipFile = new ZipFile(file);
+            return extract(zipFile);
+        } catch (IOException e) {
+            throw new ApsZipImporterException("Failed to create zip file", e);
+
+        }
+    }
 
     public Metadata extract(ZipFile zipFile) throws ApsZipImporterException {
 

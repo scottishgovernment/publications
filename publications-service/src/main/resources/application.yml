@@ -1,7 +1,20 @@
 application:
   name: publications
 
+port: 9111
+
 hippo:
   url: rmi://localhost:1099/hipporepository
   user:
   password:
+
+datasource:
+  url: jdbc:postgresql://localhost:5432/publications
+  username:
+  password:
+
+s3:
+  bucketName:
+  key:
+  secret:
+  path:
