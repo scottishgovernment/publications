@@ -7,6 +7,8 @@ import scot.gov.publications.metadata.Metadata;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -69,8 +71,7 @@ public class PublicationNodeUpdater {
             // always set these properties
             node.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.getPublicationType()));
             node.setProperty("govscot:isbn", metadata.normalisedIsbn());
-
-            node.setProperty(GOVSCOT_GOVSCOTURL, metadata.getUrl());
+            node.setProperty(GOVSCOT_GOVSCOTURL, oldStyleUrl(metadata));
             node.setProperty("govscot:publicationDate", toCalendar(metadata.getPublicationDate()));
 
             Node handle = node.getParent();
@@ -79,6 +80,15 @@ public class PublicationNodeUpdater {
 
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to create or update publicaiton node", e);
+        }
+    }
+
+    private String oldStyleUrl(Metadata metadata) throws ApsZipImporterException {
+        // we only want to store the path of the old style url
+        try {
+            return new URL(metadata.getUrl()).getPath();
+        } catch (MalformedURLException e) {
+            throw new ApsZipImporterException("Invalid URL", e);
         }
     }
 
