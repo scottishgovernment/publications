@@ -20,7 +20,7 @@ public enum FileType {
     DOC("doc", "application/msword", "word"),
     DOCX("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "word"),
 
-    XLS("xls", "application/msexcel", "excel"),
+    XLS("xls", "application/vnd.ms-excel", "excel"),
     XLSX("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", IconNames.EXCEL),
     XLSM("xlsm", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", IconNames.EXCEL),
 
@@ -45,7 +45,7 @@ public enum FileType {
     // open docs
     ODT("odt", "application/vnd.oasis.opendocument.text", IconNames.ODT),
     ODS("ods", "application/vnd.oasis.opendocument.spreadsheet", IconNames.ODT),
-    ODP("odp", "odp application/vnd.oasis.opendocument.presentation", IconNames.ODT),
+    ODP("odp", "application/vnd.oasis.opendocument.presentation", IconNames.ODT),
 
     // google earth
     KML("kml", "application/vnd.google-earth.kml+xml", "geo"),
