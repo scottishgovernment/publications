@@ -48,6 +48,7 @@ public class HtmlUtil {
                 .map(org.jsoup.nodes.Node::toString)
                 .map(String::toLowerCase)
                 .collect(joining(""))
+                .trim()
                 .toLowerCase();
         return "contents".equals(txt) || "table of contents".equals(txt);
     }
