@@ -44,7 +44,7 @@ public class PublicationNodeUpdater {
      *
      * @return Node representing the folder the publiation is contained in.
      */
-    public Node createOrpdatePublicationNode(Metadata metadata) throws ApsZipImporterException {
+    public Node createOrUpdatePublicationNode(Metadata metadata) throws ApsZipImporterException {
 
         try {
             Node node = doCreateOrUpdate(metadata);

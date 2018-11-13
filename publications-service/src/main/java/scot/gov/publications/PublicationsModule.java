@@ -15,9 +15,9 @@ import javax.inject.Singleton;
 import javax.sql.DataSource;
 
 @Module(injects = Publications.class)
-class PublicaitonsModule {
+class PublicationsModule {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PublicaitonsModule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationsModule.class);
 
     private static String APP_NAME = "publications";
 

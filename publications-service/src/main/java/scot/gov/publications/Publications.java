@@ -21,7 +21,7 @@ public class Publications {
     PublicationsApplication application;
 
     public static final void main(String[] args) throws Exception {
-        ObjectGraph graph = ObjectGraph.create(new PublicaitonsModule());
+        ObjectGraph graph = ObjectGraph.create(new PublicationsModule());
 
         // start the app
         graph.get(Publications.class).run();

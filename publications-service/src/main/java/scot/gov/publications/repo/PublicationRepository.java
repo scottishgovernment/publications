@@ -26,7 +26,7 @@ public class PublicationRepository {
 
     public void create(Publication publication) throws PublicationRepositoryException {
         String sql = "INSERT INTO publication" +
-                "(id, title, isbn, empbargo_date, state, state_details, checksum, created_date, last_modified_date) " +
+                "(id, title, isbn, embargo_date, state, state_details, checksum, created_date, last_modified_date) " +
                 "values(?,?,?,?,?,?,?,?,?)";
         try {
             queryRunner.update(sql, queryArgs(publication));

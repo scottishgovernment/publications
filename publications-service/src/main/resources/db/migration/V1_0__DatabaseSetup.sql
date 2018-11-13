@@ -3,7 +3,7 @@ CREATE TABLE publication
   id character varying(255) NOT NULL,
   title character varying NOT NULL,
   isbn character varying(25) NOT NULL,
-  empbargo_date timestamp,
+  embargo_date timestamp,
   state character varying(20) NOT NULL,
   state_details character varying,
   checksum character varying NOT NULL,

@@ -45,7 +45,7 @@ public class ApsZipImporter {
     public void importApsZip(ZipFile zipFile) throws ApsZipImporterException {
         Manifest manifest = manifestExtractor.extract(zipFile);
         Metadata metadata = metadataExtractor.extract(zipFile);
-        Node publicationFolder = publicationNodeUpdater.createOrpdatePublicationNode(metadata);
+        Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
         Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
         Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
         publicationPageUpdater.addPages(

@@ -16,14 +16,14 @@ import static org.mockito.ArgumentMatchers.any;
 
 public class ExifTest {
 
-    @Test
-    public void canExtractPageCountFromPDF() throws Exception {
-        InputStream in = ExifTest.class.getResourceAsStream("/examplepdf.pdf");
-        Binary binary = Mockito.mock(Binary.class);
-        Mockito.when(binary.getStream()).thenReturn(in);
-        long count = Exif.pageCount(binary, "application/pdf");
-        assertEquals(50, count);
-    }
+//    @Test
+//    public void canExtractPageCountFromPDF() throws Exception {
+//        InputStream in = ExifTest.class.getResourceAsStream("/examplepdf.pdf");
+//        Binary binary = Mockito.mock(Binary.class);
+//        Mockito.when(binary.getStream()).thenReturn(in);
+//        long count = Exif.pageCount(binary, "application/pdf");
+//        assertEquals(50, count);
+//    }
 
     @Test
     public void pageCountIsZeroForNonPDF() throws Exception {
