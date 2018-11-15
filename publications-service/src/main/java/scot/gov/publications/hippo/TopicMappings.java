@@ -25,7 +25,7 @@ public class TopicMappings {
     public TopicMappings(Session session) {
         this.session = session;
 
-        // TODO: there are some topics missing I think - e.g. Building?
+        // Verify if this is the right list there are some topics missing I think - e.g. Building?
         topics.put("Agriculture", "Farming and rural");
         topics.put("Arts and Culture", "Arts, culture and sport");
         topics.put("Business and Industry", "Business, industry and innovation");

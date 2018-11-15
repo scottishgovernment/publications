@@ -9,6 +9,7 @@ import dagger.Provides;
 import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scot.gov.publications.repo.TimestampSource;
 import scot.mygov.config.Configuration;
 
 import javax.inject.Singleton;
@@ -42,17 +43,11 @@ class PublicationsModule {
     @Provides
     @Singleton
     public DataSource dataSource(PublicationsConfiguration configuration) {
-
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setJdbcUrl(configuration.getDatasource().getUrl());
         dataSource.setUsername(configuration.getDatasource().getUsername());
         dataSource.setPassword(configuration.getDatasource().getPassword());
-        //dataSource.setMaximumPoolSize(configuration.getMaxTotal());
-        //dataSource.setReadOnly(configuration.isReadOnly());
-        //dataSource.setConnectionTimeout(configuration.getConnectionTimeout());
-        //dataSource.setPoolName("");
-        //dataSource.setMetricRegistry(metricRegistry);
         return dataSource;
     }
 
@@ -60,6 +55,12 @@ class PublicationsModule {
     @Singleton
     public QueryRunner queryRunner(DataSource dataSource) {
         return new QueryRunner(dataSource);
+    }
+
+    @Provides
+    @Singleton
+    public TimestampSource timestampSource() {
+        return new TimestampSource();
     }
 
 }

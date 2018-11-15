@@ -1,34 +1,49 @@
-package scot.gov.publications;
+package scot.gov.publications.rest;
 
 import com.amazonaws.util.BinaryUtils;
 import com.amazonaws.util.Md5Utils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import scot.gov.publications.ApsZipImporter;
+import scot.gov.publications.ApsZipImporterException;
+import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.hippo.SessionFactory;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
+import scot.gov.publications.repo.ListResult;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
 import scot.gov.publications.repo.State;
+import scot.gov.publications.storage.PublicationStorage;
+import scot.gov.publications.storage.PublicationStorageException;
 import scot.gov.publications.util.TempFileUtil;
 import scot.gov.publications.util.ZipUtil;
 
 import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +55,8 @@ import javax.jcr.Session;
  */
 @Path("publications")
 public class PublicationsResource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationsResource.class);
 
     @Inject
     PublicationsConfiguration configuration;
@@ -57,26 +74,62 @@ public class PublicationsResource {
 
     ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Get a paged list of publications with an optional queryString that can be used to perform a partial and case insensitive
+     * match against the list of publicaitons.
+     *
+     * @param page the page to feths
+     * @param size the number of items to fetch
+     * @param queryString optional query string used to filter by title or isbm
+     * @return A paged list of publications.
+     */
     @GET
     @Produces({ MediaType.APPLICATION_JSON })
-    public Collection<Publication> list() {
+    public Response list(
+            @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("size") int size,
+            @DefaultValue("") @QueryParam("q") String queryString) {
         try {
-            return repository.list(0, 100);
+            ListResult result = repository.list(page, size, queryString);
+            return Response.ok(result).build();
         } catch (PublicationRepositoryException e) {
-            throw new RuntimeException("arg", e);
+            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
+        }
+    }
+
+    /**
+     * The details for a publication for an id.
+     *
+     * @param id Id of the publication to fetch
+     * @return the publications, will throw a web applicaiton exception if it is not found.
+     */
+    @GET
+    @Path("{id}")
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Publication get(@PathParam("id") String id) {
+        try {
+            Publication publication = repository.get(id);
+            if (publication == null) {
+                throw new WebApplicationException(Response.status(404).entity("Not Found").build());
+            }
+            return publication;
+        } catch (PublicationRepositoryException e) {
+            LOG.error("Failed to get publication {}", id, e);
+            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
         }
     }
 
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response postFormData(@MultipartForm FileUpload fileUpload) {
+    public Response postFormData(@MultipartForm UploadRequest fileUpload) {
 
         // extract the zip file from the uploaded file
         File extractedZipFile = null;
         try {
             extractedZipFile = ZipUtil.extractNestedZipFile(fileUpload);
         } catch (IOException e) {
+            LOG.error("Failed to extract zip", e);
             FileUtils.deleteQuietly(extractedZipFile);
             return Response.status(400).entity(UploadResponse.error("Failed to extract zip file", e)).build();
         }
@@ -85,27 +138,31 @@ public class PublicationsResource {
         Publication publication = null;
         try {
             publication = newPublication(extractedZipFile);
-        } catch (ApsZipImporterException e) {
-            return Response.status(400).entity(UploadResponse.error("Failed to extract metadata from zip", e)).build();
-        }
 
-        // upload the file to s3
-        try {
+            // upload the file to s3
             storage.save(publication, extractedZipFile);
-        } catch (PublicationStorageException e) {
-            return Response.status(500).entity(UploadResponse.error("Failed to upload zip file to s3", e)).build();
-        }
 
-        try {
+            // save the details in the repository
             repository.create(publication);
-        } catch (PublicationRepositoryException e) {
-            return Response.status(500).entity(UploadResponse.error("Failed to save publication to the repository", e)).build();
-        }
 
-        // submit the publication to the processing queue
-        importPublication(publication);
-        FileUtils.deleteQuietly(extractedZipFile);
-        return Response.accepted(UploadResponse.accepted(publication)).build();
+            // submit the publication to the processing queue and return accepted status code
+            importPublication(publication);
+            return Response.accepted(UploadResponse.accepted(publication)).build();
+        } catch (ApsZipImporterException e) {
+            String msg = "Failed to extract metadata from zip";
+            LOG.error(msg,  e);
+            return Response.status(400).entity(UploadResponse.error(msg, e)).build();
+        } catch (PublicationStorageException e) {
+            String msg = "Failed to upload zip file to s3";
+            LOG.error(msg,  e);
+            return Response.status(500).entity(UploadResponse.error(msg, e)).build();
+        } catch (PublicationRepositoryException e) {
+            String msg = "Failed to save publication to the repository";
+            LOG.error(msg, e);
+            return Response.status(500).entity(UploadResponse.error("Failed to save publication to the repository", e)).build();
+        } finally {
+            FileUtils.deleteQuietly(extractedZipFile);
+        }
     }
 
     private void importPublication(final Publication publication) {
@@ -113,7 +170,6 @@ public class PublicationsResource {
     }
 
     private void doImportPublication(final Publication publication) {
-// TODO: add stacktrace field to the publicaiton table
         File downloadedFile = null;
         try {
             Session session = sessionFactory.newSession();
@@ -134,26 +190,17 @@ public class PublicationsResource {
             publication.setState(State.DONE.name());
             repository.update(publication);
         } catch (RepositoryException e) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails("Failed to get JCR session");
-            return;
+            populateErrorInformation(publication, "Failed to talk to JCR repository", e);
+        } catch (RemoteRuntimeException e) {
+            populateErrorInformation(publication, "JCR repo is not running", e);
         } catch (IOException e) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails("Failed to save publication as a temp file");
-            return;
+            populateErrorInformation(publication, "Failed to save publication as a temp file", e);
         } catch (PublicationStorageException e) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails("Failed to get publication from s3");
-            return;
+            populateErrorInformation(publication, "Failed to get publication from s3", e);
         } catch(PublicationRepositoryException e) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails("Failed to save publication to repostitory");
+            populateErrorInformation(publication, "Failed to save publication to database", e);
         } catch (ApsZipImporterException e) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails(e.getMessage());
-        } catch (Throwable t) {
-            publication.setState(State.FAILED.name());
-            publication.setStateDetails(t.getMessage());
+            populateErrorInformation(publication, "Failed to import contents of zip", e);
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
         }
@@ -161,9 +208,19 @@ public class PublicationsResource {
         try {
             repository.update(publication);
         } catch (PublicationRepositoryException e) {
-            System.out.println("Failed to save pub");
+            LOG.error("Failed to save publicaiton status", e);
+            publication.setState(State.FAILED.name());
+            publication.setStatedetails(e.getMessage());
+            publication.populateStackTrace(e);
+            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
         }
+    }
 
+    private void populateErrorInformation(Publication publication, String details, Throwable t) {
+        LOG.error("{} {}", details, t);
+        publication.setState(State.FAILED.name());
+        publication.setStatedetails(details);
+        publication.populateStackTrace(t);
     }
 
     private Publication newPublication(File zip) throws ApsZipImporterException {
@@ -173,8 +230,8 @@ public class PublicationsResource {
         publication.setIsbn(metadata.getIsbn());
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());
-        // TODO: decide how to handle dates ...
-        // publication.setEmbargoDate(metadata.getPublicationDate());
+        Instant publishInstant = metadata.getPublicationDate().toInstant(ZoneOffset.UTC);
+        publication.setEmbargodate(Timestamp.from(publishInstant));
         publication.setChecksum(hash(zip));
         return publication;
     }

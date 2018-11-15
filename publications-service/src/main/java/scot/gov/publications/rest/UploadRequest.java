@@ -1,10 +1,10 @@
-package scot.gov.publications;
+package scot.gov.publications.rest;
 
 import org.jboss.resteasy.annotations.providers.multipart.PartType;
 
 import javax.ws.rs.FormParam;
 
-public class FileUpload {
+public class UploadRequest {
 
     private byte[] fileData;
 

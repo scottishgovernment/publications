@@ -18,7 +18,7 @@ public class MimeTypeUtilsTest {
         inputs.put("filename.PDF", "application/pdf");
         inputs.put("filename.doc", "application/msword");
         inputs.put("filename.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-        inputs.put("filename.xls", "application/msexcel");
+        inputs.put("filename.xls", "application/vnd.ms-excel");
         inputs.put("filename.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         Map<String, String> actual = new HashMap<>();
 

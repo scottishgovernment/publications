@@ -1,4 +1,4 @@
-package scot.gov.publications;
+package scot.gov.publications.rest;
 
 import scot.gov.publications.repo.Publication;
 

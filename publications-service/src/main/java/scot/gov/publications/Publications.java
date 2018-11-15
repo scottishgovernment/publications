@@ -10,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.net.InetSocketAddress;
 
+/**
+ * Main for the Publications service
+ */
 public class Publications {
 
     private static final Logger LOG = LoggerFactory.getLogger(Publications.class);

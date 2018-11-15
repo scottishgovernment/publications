@@ -54,7 +54,7 @@ public class Exif {
     }
 
     private static List<String> runExiftool(File file) throws IOException, InterruptedException {
-        // TODO could block indefinitely because it doesn't read stderr
+        // could block indefinitely because it doesn't read stderr
         ProcessBuilder builder =
                 new ProcessBuilder("exiftool",
                         "-s2",

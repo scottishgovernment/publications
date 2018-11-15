@@ -1,4 +1,4 @@
-package scot.gov.publications;
+package scot.gov.publications.storage;
 
 public class PublicationStorageException extends Exception {
 

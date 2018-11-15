@@ -1,0 +1,1 @@
+This file is used by the Publications project. It is used to test connectivity with s3.

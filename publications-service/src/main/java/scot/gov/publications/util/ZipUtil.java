@@ -1,7 +1,7 @@
 package scot.gov.publications.util;
 
 import org.apache.commons.io.FileUtils;
-import scot.gov.publications.FileUpload;
+import scot.gov.publications.rest.UploadRequest;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,15 +28,18 @@ public class ZipUtil {
      *
      * The caller should delete the returned temporary file.
      */
-    public static File extractNestedZipFile(FileUpload fileUpload) throws IOException {
+    public static File extractNestedZipFile(UploadRequest fileUpload) throws IOException {
         // save the data as a temp file...
         File file = TempFileUtil.createTempFile("zipUpload", "zip", new ByteArrayInputStream(fileUpload.getFileData()));
-        return extractNestedZipFile(file);
+        try {
+            return extractNestedZipFile(file);
+        } finally {
+            FileUtils.deleteQuietly(file);
+        }
     }
 
     public static File extractNestedZipFile(File file) throws IOException {
         ZipFile zipFile = new ZipFile(file);
-
         List<ZipEntry> zipEntries = zipFile.stream()
                 .filter(ZipEntryUtil::isZip)
                 .filter(entry -> !entry.getName().startsWith("__MACOSX/"))
@@ -49,8 +52,6 @@ public class ZipUtil {
         }
 
         ZipEntry entry = zipEntries.get(0);
-        File extractedZipFile = TempFileUtil.createTempFile("extractedFromZip", "zip", zipFile.getInputStream(entry));
-        FileUtils.deleteQuietly(file);
-        return extractedZipFile;
+        return TempFileUtil.createTempFile("extractedFromZip", "zip", zipFile.getInputStream(entry));
     }
 }

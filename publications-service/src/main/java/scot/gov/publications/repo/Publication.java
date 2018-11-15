@@ -1,6 +1,10 @@
 package scot.gov.publications.repo;
 
-import java.sql.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.sql.Timestamp;
 
 public class Publication {
 
@@ -10,17 +14,22 @@ public class Publication {
 
     private String isbn;
 
-    private Date embargoDate;
+    private Timestamp embargodate;
 
     private String state;
 
-    private String stateDetails;
+    private String statedetails;
+
+    private String stacktrace;
 
     private String checksum;
 
-    private Date createdDate;
+    private Timestamp createddate;
 
-    private Date lastModifiedDate;
+    private Timestamp lastmodifieddate;
+
+    @JsonIgnore
+    private int fullcount;
 
     public String getId() {
         return id;
@@ -46,12 +55,12 @@ public class Publication {
         this.isbn = isbn;
     }
 
-    public Date getEmbargoDate() {
-        return embargoDate;
+    public Timestamp getEmbargodate() {
+        return embargodate;
     }
 
-    public void setEmbargoDate(Date embargoDate) {
-        this.embargoDate = embargoDate;
+    public void setEmbargodate(Timestamp embargodate) {
+        this.embargodate = embargodate;
     }
 
     public String getState() {
@@ -62,12 +71,20 @@ public class Publication {
         this.state = state;
     }
 
-    public String getStateDetails() {
-        return stateDetails;
+    public String getStatedetails() {
+        return statedetails;
     }
 
-    public void setStateDetails(String stateDetails) {
-        this.stateDetails = stateDetails;
+    public void setStatedetails(String statedetails) {
+        this.statedetails = statedetails;
+    }
+
+    public String getStacktrace() {
+        return stacktrace;
+    }
+
+    public void setStacktrace(String stacktrace) {
+        this.stacktrace = stacktrace;
     }
 
     public String getChecksum() {
@@ -78,19 +95,33 @@ public class Publication {
         this.checksum = checksum;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Timestamp getCreateddate() {
+        return createddate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setCreateddate(Timestamp createddate) {
+        this.createddate = createddate;
     }
 
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
+    public Timestamp getLastmodifieddate() {
+        return lastmodifieddate;
     }
 
-    public void setLastModifiedDate(Date lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+    public void setLastmodifieddate(Timestamp lastmodifieddate) {
+        this.lastmodifieddate = lastmodifieddate;
+    }
+
+    public int getFullcount() {
+        return fullcount;
+    }
+
+    public void setFullcount(int fullcount) {
+        this.fullcount = fullcount;
+    }
+
+    public void populateStackTrace(Throwable t) {
+        StringWriter stringWriter = new StringWriter();
+        t.printStackTrace(new PrintWriter(stringWriter));
+        this.stacktrace = stringWriter.toString();
     }
 }

@@ -1,5 +1,6 @@
 package scot.gov.publications.hippo;
 
+import org.apache.commons.lang.StringUtils;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.metadata.Metadata;
@@ -61,7 +62,7 @@ public class PublicationNodeUpdater {
             hippoUtils.setPropertyIfAbsent(node, "govscot:notes", "");
             hippoUtils.addHtmlNodeIfAbsent(node, "govscot:content", metadata.getExecutiveSummary());
 
-            // TODO: we seem to be missing this from the metadata ... have asked Jon to add, waiting on GDPR issue being resolved
+            // Contact seems to be missing this from the metadata ... have asked Jon to add, waiting on GDPR issue being resolved
             //            if (publication.getContact() != null) {
             //                hippoUtils.addHtmlNodeIfAbsent(node, "govscot:contact", metadata.getContact().asHtml());
             //            }
@@ -71,7 +72,7 @@ public class PublicationNodeUpdater {
             // always set these properties
             node.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.getPublicationType()));
             node.setProperty("govscot:isbn", metadata.normalisedIsbn());
-            node.setProperty(GOVSCOT_GOVSCOTURL, oldStyleUrl(metadata));
+            populateUrls(node, metadata);
             node.setProperty("govscot:publicationDate", toCalendar(metadata.getPublicationDate()));
 
             Node handle = node.getParent();
@@ -83,12 +84,18 @@ public class PublicationNodeUpdater {
         }
     }
 
+    private void populateUrls(Node node, Metadata metadata) throws RepositoryException, ApsZipImporterException {
+        if (StringUtils.isNotBlank(metadata.getUrl())) {
+            node.setProperty(GOVSCOT_GOVSCOTURL, oldStyleUrl(metadata));
+        }
+    }
+
     private String oldStyleUrl(Metadata metadata) throws ApsZipImporterException {
         // we only want to store the path of the old style url
         try {
             return new URL(metadata.getUrl()).getPath();
         } catch (MalformedURLException e) {
-            throw new ApsZipImporterException("Invalid URL", e);
+            throw new ApsZipImporterException("Invalid URL:" + metadata.getUrl(), e);
         }
     }
 
