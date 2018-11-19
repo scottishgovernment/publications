@@ -20,6 +20,9 @@ import java.util.zip.ZipFile;
 
 import static scot.gov.publications.hippo.Constants.*;
 
+/**
+ * Responsible for uploading documents to hippo.
+ */
 public class DocumentUploader {
 
     private Session session;

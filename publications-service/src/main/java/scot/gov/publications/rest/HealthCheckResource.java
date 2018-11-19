@@ -42,7 +42,7 @@ public class HealthCheckResource {
     private static final Logger LOG = LoggerFactory.getLogger(HealthCheckResource.class);
 
     // The maximum wait time considered acceptable by the healthcheck (5 minutes)
-    private static final long WAIT_THRESHOLD = 1000 * 60 * 5;
+    public static final long WAIT_THRESHOLD = 1000 * 60 * 5;
 
     private static String WAIT_THRESHOLD_STRING = DurationFormatUtils.formatDurationHMS(WAIT_THRESHOLD);
 
