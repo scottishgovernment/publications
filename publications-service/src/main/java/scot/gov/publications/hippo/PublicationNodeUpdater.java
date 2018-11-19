@@ -21,6 +21,9 @@ import java.util.List;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
 
+/**
+ * Responsible for creating and updating publication nodes in Hippo based on the metedata from an APS  zip file.
+ */
 public class PublicationNodeUpdater {
 
     Session session;
