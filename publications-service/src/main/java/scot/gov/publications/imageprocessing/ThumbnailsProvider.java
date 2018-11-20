@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.util.FileType;
 import scot.gov.publications.util.IconNames;
-import scot.gov.publications.util.TempFileUtil;
+import scot.gov.publications.util.FileUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,6 +29,8 @@ public class ThumbnailsProvider {
             107);
 
     ImageProcessing imageProcessing = new ImageProcessing();
+
+    FileUtil fileUtil = new FileUtil();
 
     /**
      * Create thumbnails for document attachments.
@@ -75,7 +77,7 @@ public class ThumbnailsProvider {
     private Map<Integer, File> imageThumbnails(InputStream input, FileType type) throws IOException {
         File imageFile = null;
         try {
-            imageFile = TempFileUtil.createTempFile("imagethumbs", type, input);
+            imageFile = fileUtil.createTempFile("imagethumbs", type, input);
             return imageThumbnails(imageFile);
         } finally {
             FileUtils.deleteQuietly(imageFile);
@@ -125,7 +127,7 @@ public class ThumbnailsProvider {
             throw new IOException("Could not load thumbnail " + filename);
         }
 
-        return TempFileUtil.createTempFile("fixedthumbnila", FileType.PNG, inputStream);
+        return fileUtil.createTempFile("fixedthumbnila", FileType.PNG, inputStream);
     }
 
 }

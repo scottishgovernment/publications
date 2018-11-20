@@ -3,7 +3,7 @@ package scot.gov.publications.imageprocessing;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import scot.gov.publications.util.FileType;
-import scot.gov.publications.util.TempFileUtil;
+import scot.gov.publications.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +15,13 @@ import static java.util.stream.Collectors.joining;
 
 public class ImageProcessing {
 
+    FileUtil fileUtil = new FileUtil();
+
     public File extractPdfCoverImage(InputStream source) throws ImageProcessingException {
 
         try {
-            File sourceFile = TempFileUtil.createTempFile("pdfcoversrc", FileType.PDF, source);
-            File targetFile = TempFileUtil.createTempFile("pdfcover", FileType.PNG);
+            File sourceFile = fileUtil.createTempFile("pdfcoversrc", FileType.PDF, source);
+            File targetFile = fileUtil.createTempFile("pdfcover", FileType.PNG);
 
             execute(targetFile,
                     "gm",
@@ -42,8 +44,8 @@ public class ImageProcessing {
 
     public File thumbnail(InputStream source, int width) throws ImageProcessingException {
         try {
-            File sourceFile = TempFileUtil.createTempFile("source", FileType.PNG, source);
-            File targetFile = TempFileUtil.createTempFile("thumbnail", FileType.PNG);
+            File sourceFile = fileUtil.createTempFile("source", FileType.PNG, source);
+            File targetFile = fileUtil.createTempFile("thumbnail", FileType.PNG);
 
             execute(targetFile,
                     "gm",

@@ -1,7 +1,7 @@
 package scot.gov.publications.hippo;
 
 import org.apache.commons.io.IOUtils;
-import scot.gov.publications.util.TempFileUtil;
+import scot.gov.publications.util.FileUtil;
 
 import java.io.*;
 import java.util.zip.ZipFile;
@@ -29,7 +29,7 @@ public class ZipFixtures {
     }
 
     public static ZipFile zip(String name) throws IOException {
-        File exampleFile = TempFileUtil.createTempFile(name, "zip");
+        File exampleFile = new FileUtil().createTempFile(name, "zip");
         InputStream in = ImageUploaderTest.class.getResourceAsStream("/" + name + ".zip");
         OutputStream out = new FileOutputStream(exampleFile);
         IOUtils.copy(in, out);

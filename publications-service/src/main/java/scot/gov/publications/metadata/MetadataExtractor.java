@@ -22,6 +22,8 @@ public class MetadataExtractor {
 
     private MetadataParser metadataParser = new MetadataParser();
 
+    private ZipUtil zipUtil = new ZipUtil();
+
     public Metadata extract(File file) throws ApsZipImporterException {
 
         try {
@@ -35,7 +37,7 @@ public class MetadataExtractor {
 
     public Metadata extract(ZipFile zipFile) throws ApsZipImporterException {
 
-        String dir = ZipUtil.getDirname(zipFile);
+        String dir = zipUtil.getDirname(zipFile);
         List<ZipEntry> jsonEntries = zipFile.stream()
                 .filter(e -> e.getName().startsWith(dir))
                 .filter(ZipEntryUtil::isJson)
