@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.hippo.SessionFactory;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.ListResult;
@@ -58,9 +57,6 @@ public class PublicationsResource {
 
     @Inject
     PublicationRepository repository;
-
-    @Inject
-    SessionFactory sessionFactory;
 
     @Inject
     PublicationUploader publicationUploader;

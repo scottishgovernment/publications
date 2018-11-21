@@ -12,7 +12,6 @@ import java.io.InputStream;
 
 public class FileUtil {
 
-
     public File createTempFile(String prefix, FileType type) throws IOException {
         return createTempFile(prefix, type.getExtension());
     }

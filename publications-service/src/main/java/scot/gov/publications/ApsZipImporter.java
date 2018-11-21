@@ -1,14 +1,17 @@
 package scot.gov.publications;
 
+import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import scot.gov.publications.hippo.DocumentUploader;
 import scot.gov.publications.hippo.ImageUploader;
 import scot.gov.publications.hippo.PublicationNodeUpdater;
+import scot.gov.publications.hippo.SessionFactory;
 import scot.gov.publications.hippo.pages.PublicationPageUpdater;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -20,29 +23,24 @@ import java.util.zip.ZipFile;
  */
 public class ApsZipImporter {
 
-    Session session;
+    @Inject
+    PublicationsConfiguration configuration;
+
+    @Inject
+    SessionFactory sessionFactory;
 
     ManifestExtractor manifestExtractor = new ManifestExtractor();
 
     MetadataExtractor metadataExtractor = new MetadataExtractor();
 
-    PublicationNodeUpdater publicationNodeUpdater;
-
-    PublicationPageUpdater publicationPageUpdater;
-
-    ImageUploader imageUploader;
-
-    DocumentUploader documentUploader;
-
-    public ApsZipImporter(Session session, PublicationsConfiguration configuration) {
-        this.session = session;
-        this.publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
-        this.publicationPageUpdater = new PublicationPageUpdater(session, configuration);
-        this.imageUploader = new ImageUploader(session);
-        this.documentUploader = new DocumentUploader(session, configuration);
-    }
-
     public void importApsZip(ZipFile zipFile) throws ApsZipImporterException {
+
+        Session session = newSession();
+        PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
+        PublicationPageUpdater publicationPageUpdater = new PublicationPageUpdater(session, configuration);
+        ImageUploader imageUploader = new ImageUploader(session);
+        DocumentUploader documentUploader = new DocumentUploader(session, configuration);
+
         Manifest manifest = manifestExtractor.extract(zipFile);
         Metadata metadata = metadataExtractor.extract(zipFile);
         Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
@@ -59,6 +57,16 @@ public class ApsZipImporter {
             session.save();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
+        }
+    }
+
+    private Session newSession() throws ApsZipImporterException {
+        try {
+            return sessionFactory.newSession();
+        } catch (RepositoryException e) {
+            throw new ApsZipImporterException("Failed to talk to JCR repository", e);
+        } catch (RemoteRuntimeException e) {
+            throw new ApsZipImporterException("JCR repo is not running", e);
         }
     }
 }

@@ -1,13 +1,11 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporter;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.hippo.SessionFactory;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
@@ -18,12 +16,15 @@ import scot.gov.publications.util.FileUtil;
 import scot.gov.publications.util.ZipUtil;
 
 import javax.inject.Inject;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.ZipFile;
 
+/**
+ * Uploads zip files from PublicationStorage (s3) to Hippo, recording status information in the
+ * PublicationRepository (postgres).
+ */
 public class PublicationUploader  {
 
     private static final Logger LOG = LoggerFactory.getLogger(PublicationsResource.class);
@@ -38,7 +39,7 @@ public class PublicationUploader  {
     PublicationRepository repository;
 
     @Inject
-    SessionFactory sessionFactory;
+    ApsZipImporter apsZipImporter;
 
     FileUtil fileUtil = new FileUtil();
 
@@ -47,27 +48,21 @@ public class PublicationUploader  {
     public void importPublication(final Publication publication) {
         File downloadedFile = null;
         try {
-            Session session = sessionFactory.newSession();
-
             // mark it as processing
             publication.setState(State.PROCESSING.name());
             repository.update(publication);
 
             // download the file from s3
-            downloadedFile = fileUtil.createTempFile("downloadedPublicationFromS3", "zip", storage.get(publication));
-            ZipFile zipFile = new ZipFile(zipUtil.extractNestedZipFile(downloadedFile));
+            InputStream storageStream = storage.get(publication);
+            downloadedFile = fileUtil.createTempFile("downloadedPublicationFromS3", "zip", storageStream);
+            File extractedZip = zipUtil.extractNestedZipFile(downloadedFile);
+            ZipFile zipFile = new ZipFile(extractedZip);
 
             // try to import it
-            ApsZipImporter apsZipImporter = new ApsZipImporter(session, configuration);
             apsZipImporter.importApsZip(zipFile);
 
             // save it as done
             publication.setState(State.DONE.name());
-            repository.update(publication);
-        } catch (RepositoryException e) {
-            populateErrorInformation(publication, "Failed to talk to JCR repository", e);
-        } catch (RemoteRuntimeException e) {
-            populateErrorInformation(publication, "JCR repo is not running", e);
         } catch (IOException e) {
             populateErrorInformation(publication, "Failed to save publication as a temp file", e);
         } catch (PublicationStorageException e) {
@@ -84,9 +79,6 @@ public class PublicationUploader  {
             repository.update(publication);
         } catch (PublicationRepositoryException e) {
             LOG.error("Failed to save publication status", e);
-            publication.setState(State.FAILED.name());
-            publication.setStatedetails(e.getMessage());
-            publication.populateStackTrace(e);
         }
     }
 
