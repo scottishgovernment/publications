@@ -21,6 +21,11 @@
     <undertow.version>1.4.11.Final</undertow.version>
     <resteasy.version>3.1.1.Final</resteasy.version>
     <jackson.version>2.6.1</jackson.version>
+
+    <sonar.exclusions>
+      src/main/java/scot/gov/publications/imageprocessing/ImageProcessing.java
+    </sonar.exclusions>
+
   </properties>
 
   <dependencies>
