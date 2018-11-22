@@ -96,24 +96,24 @@ public class PublicationRepository {
     public ListResult list(int page, int size, String queryTerm) throws PublicationRepositoryException {
         BeanListHandler<Publication> handler = new BeanListHandler<>(Publication.class);
         try {
+
             List<Publication> publications;
 
-            if (StringUtils.isNotBlank(queryTerm)) {
-                String sql =
-                        "SELECT *, count(*) OVER() AS fullcount FROM publication " +
-                        "WHERE isbn ~* ? OR title ~* ? " +
-                        "ORDER BY lastmodifieddate DESC " +
-                        "LIMIT ? OFFSET ?";
-                // perform a case insensitive pattern match
-                String queryExpression = String.format(".*%s.*", queryTerm);
-                publications = queryRunner.query(sql.toString(), handler, queryExpression, queryExpression, size, (page - 1) * size);
-            } else {
-                String sql = "SELECT *, count(*) OVER() AS fullcount FROM publication ORDER BY lastmodifieddate DESC LIMIT ? OFFSET ?";
-                publications = queryRunner.query(sql, handler, size, (page - 1) * size);
-            }
-
-            int totlasize = publications.isEmpty() ? 0 : publications.get(0).getFullcount();
-            return ListResult.result(publications, totlasize, page, size);
+            // Performs a paged query. If there is a query string we use a LIKE with a towlwere to get a case
+            // insensitive partial match.  If there is no query string then it is or'd with true to return all
+            // results.
+            //
+            // The join is in order to get the total number fo results to support paging.
+            String sql = "SELECT * FROM " +
+                    "(SELECT * FROM publication WHERE ? OR LOWER(isbn) LIKE ? OR LOWER(title) LIKE ? ORDER BY lastmodifieddate DESC LIMIT ? OFFSET ?) s1\n" +
+                    "JOIN\n" +
+                    "(SELECT count(*) as fullcount FROM publication WHERE ? OR LOWER(isbn) LIKE ? OR LOWER(title) LIKE ?) as s2\n" +
+                    "on true\n";
+            boolean hasQuery = StringUtils.isNotBlank(queryTerm);
+            String queryExpression = hasQuery ? String.format("%%%s%%", queryTerm) : "";
+            publications = queryRunner.query(sql.toString(), handler, !hasQuery, queryExpression, queryExpression, size, (page - 1) * size, !hasQuery, queryExpression, queryExpression);
+            int totalsize = publications.isEmpty() ? 0 : publications.get(0).getFullcount();
+            return ListResult.result(publications, totalsize, page, size);
 
         } catch (SQLException e) {
             throw new PublicationRepositoryException("Failed to list publications", e);

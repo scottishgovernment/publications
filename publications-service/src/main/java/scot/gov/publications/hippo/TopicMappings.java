@@ -62,7 +62,6 @@ public class TopicMappings {
         }
 
         // get the topic node for this topic
-        // TODO escape title
         String template = "SELECT * FROM govscot:Topic WHERE hippostd:state = 'published' AND govscot:title = '%s'";
         Node topicNode = hippoUtils.findOne(session, template, mappedTopic);
 

@@ -1,13 +1,8 @@
 package scot.gov.publications.rest;
 
-import com.amazonaws.util.BinaryUtils;
-import com.amazonaws.util.Md5Utils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
-import org.mockito.Matchers;
-import org.mockito.Mockito;
 import scot.gov.publications.ApsZipImporterException;
-import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.ListResult;
 import scot.gov.publications.repo.Publication;
@@ -21,10 +16,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 import static org.junit.Assert.assertEquals;

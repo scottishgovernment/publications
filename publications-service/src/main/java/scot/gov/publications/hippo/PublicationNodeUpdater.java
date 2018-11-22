@@ -64,11 +64,7 @@ public class PublicationNodeUpdater {
             hippoUtils.setPropertyIfAbsent(node, "govscot:metaDescription", metadata.getDescription());
             hippoUtils.setPropertyIfAbsent(node, "govscot:notes", "");
             hippoUtils.addHtmlNodeIfAbsent(node, "govscot:content", metadata.getExecutiveSummary());
-
             // Contact seems to be missing this from the metadata ... have asked Jon to add, waiting on GDPR issue being resolved
-            //            if (publication.getContact() != null) {
-            //                hippoUtils.addHtmlNodeIfAbsent(node, "govscot:contact", metadata.getContact().asHtml());
-            //            }
             hippoUtils.setPropertyStringsIfAbsent(node, "hippostd:tags", Collections.emptyList());
             topicMappings.updateTopics(node, metadata.getTopic());
 
@@ -119,7 +115,6 @@ public class PublicationNodeUpdater {
     }
 
     private Node findPublishedNode(Metadata metadata) throws RepositoryException {
-        // TODO escape isbn
         String sql = String.format(
                 "SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s' AND hippostd:state = 'published'",
                 metadata.getIsbn());
