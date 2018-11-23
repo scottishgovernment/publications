@@ -22,7 +22,7 @@ import java.io.InputStream;
 import java.util.zip.ZipFile;
 
 /**
- * Uploads zip files from PublicationStorage (s3) to Hippo, recording status information in the
+ * Uploads zip files from S3PublicationStorage (s3) to Hippo, recording status information in the
  * PublicationRepository (postgres).
  */
 public class PublicationUploader  {

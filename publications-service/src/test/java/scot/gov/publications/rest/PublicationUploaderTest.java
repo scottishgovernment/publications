@@ -8,7 +8,7 @@ import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
 import scot.gov.publications.repo.State;
-import scot.gov.publications.storage.PublicationStorage;
+import scot.gov.publications.storage.S3PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
 import scot.gov.publications.util.FileUtil;
 
@@ -23,7 +23,7 @@ public class PublicationUploaderTest {
         // ARRANGE
         PublicationUploader sut = new PublicationUploader();
         sut.configuration = new PublicationsConfiguration();
-        sut.storage = mock(PublicationStorage.class);
+        sut.storage = mock(S3PublicationStorage.class);
         when(sut.storage.get(any())).thenReturn(PublicationUploaderTest.class.getResourceAsStream("/nestedzip.zip"));
         sut.repository = mock(PublicationRepository.class);
         sut.apsZipImporter = mock(ApsZipImporter.class);
@@ -43,7 +43,7 @@ public class PublicationUploaderTest {
         // ARRANGE
         PublicationUploader sut = new PublicationUploader();
         sut.configuration = new PublicationsConfiguration();
-        sut.storage = mock(PublicationStorage.class);
+        sut.storage = mock(S3PublicationStorage.class);
         when(sut.storage.get(any())).thenReturn(PublicationUploaderTest.class.getResourceAsStream("/nestedzip.zip"));
         sut.repository = mock(PublicationRepository.class);
         doThrow(new PublicationRepositoryException("", null)).doNothing().when(sut.repository).update(any());
@@ -69,7 +69,7 @@ public class PublicationUploaderTest {
         // ARRANGE
         PublicationUploader sut = new PublicationUploader();
         sut.configuration = new PublicationsConfiguration();
-        sut.storage = mock(PublicationStorage.class);
+        sut.storage = mock(S3PublicationStorage.class);
         when(sut.storage.get(any())).thenReturn(PublicationUploaderTest.class.getResourceAsStream("/nestedzip.zip"));
         sut.repository = mock(PublicationRepository.class);
         sut.apsZipImporter = mock(ApsZipImporter.class);
@@ -96,7 +96,7 @@ public class PublicationUploaderTest {
         // ARRANGE
         PublicationUploader sut = new PublicationUploader();
         sut.configuration = new PublicationsConfiguration();
-        sut.storage = mock(PublicationStorage.class);
+        sut.storage = mock(S3PublicationStorage.class);
         when(sut.storage.get(any())).thenThrow(new PublicationStorageException(new RuntimeException("")));
         sut.repository = mock(PublicationRepository.class);
         sut.apsZipImporter = mock(ApsZipImporter.class);
@@ -121,7 +121,7 @@ public class PublicationUploaderTest {
         // ARRANGE
         PublicationUploader sut = new PublicationUploader();
         sut.configuration = new PublicationsConfiguration();
-        sut.storage = mock(PublicationStorage.class);
+        sut.storage = mock(S3PublicationStorage.class);
         when(sut.storage.get(any())).thenReturn(PublicationUploaderTest.class.getResourceAsStream("/nestedzip.zip"));
         sut.repository = mock(PublicationRepository.class);
         sut.apsZipImporter = mock(ApsZipImporter.class);

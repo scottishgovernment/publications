@@ -10,6 +10,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.repo.TimestampSource;
+import scot.gov.publications.storage.PublicationStorage;
+import scot.gov.publications.storage.S3PublicationStorage;
 import scot.mygov.config.Configuration;
 
 import javax.inject.Singleton;
@@ -62,5 +64,12 @@ class PublicationsModule {
     public TimestampSource timestampSource() {
         return new TimestampSource();
     }
+
+    @Provides
+    @Singleton
+    public PublicationStorage publicationStorage(AmazonS3Client client) {
+        return new S3PublicationStorage();
+    }
+
 
 }

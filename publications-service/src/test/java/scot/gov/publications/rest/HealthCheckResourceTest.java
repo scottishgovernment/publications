@@ -1,9 +1,7 @@
 package scot.gov.publications.rest;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.hippo.HippoPaths;
