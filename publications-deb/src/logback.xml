@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder>
-      <pattern>%d{ISO8601,UTC} [%thread] %-5level %logger{86} - %msg%n</pattern>
-    </encoder>
-  </appender>
+  <logger name="scot.gov.publications" level="info"/>
 
-  <logger name="scot.gov.publications" level="INFO"/>
+  <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+  </appender>
 
   <root level="info">
     <appender-ref ref="stdout" />

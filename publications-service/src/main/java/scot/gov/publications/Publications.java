@@ -25,14 +25,21 @@ public class Publications {
 
     public static final void main(String[] args) throws Exception {
         ObjectGraph graph = ObjectGraph.create(new PublicationsModule());
-
-        // start the app
-        graph.get(Publications.class).run();
+        try {
+            Publications publications = graph.get(Publications.class);
+            publications.run();
+        } catch (Throwable ex) {
+            LOG.error("Publications service failed to start", ex);
+            System.exit(1);
+        }
     }
 
     public void run() {
+        runDatabaseMigrations();
+        startServer();
+    }
 
-        // run any required flyway migrations
+    private void runDatabaseMigrations() {
         Flyway flyway = Flyway.configure()
                 .dataSource(
                         config.getDatasource().getUrl(),
@@ -40,8 +47,9 @@ public class Publications {
                         config.getDatasource().getPassword())
                 .load();
         flyway.migrate();
+    }
 
-        // start the server
+    private void startServer() {
         Server server = new Server();
         server.deploy(application);
         server.start(Undertow.builder().addHttpListener(config.getPort(), "::"));

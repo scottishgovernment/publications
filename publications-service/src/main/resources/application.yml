@@ -1,6 +1,3 @@
-application:
-  name: publications
-
 port: 9111
 
 hippo:
