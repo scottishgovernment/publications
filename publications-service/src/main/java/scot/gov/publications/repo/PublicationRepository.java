@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Repository for storing publicaiton uploads.
+ * Repository for storing publication uploads.
  *
- * This repo uses apache dbutils to store and fetch details from a psogres database.
+ * This repo uses apache dbutils to store and fetch details from a posgres database.
  */
 public class PublicationRepository {
 
@@ -59,7 +59,7 @@ public class PublicationRepository {
      * Update a publication.
      *
      * @param publication Publication details to update.
-     * @throws PublicationRepositoryException if the update the publicaiton.
+     * @throws PublicationRepositoryException if the update the publication.
      */
     public void update(Publication publication) throws PublicationRepositoryException {
         publication.setLastmodifieddate(timestampSource.now());

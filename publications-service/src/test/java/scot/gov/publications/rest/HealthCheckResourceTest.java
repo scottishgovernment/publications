@@ -191,11 +191,11 @@ public class HealthCheckResourceTest {
     }
 
     Publication pendingALongTimePublication() {
-        Publication publicaiton = anyPublication();
-        publicaiton.setState(State.PENDING.name());
-        publicaiton.setCreateddate(new Timestamp(Instant.now().minusSeconds(HealthCheckResource.WAIT_THRESHOLD + 1).toEpochMilli()));
-        publicaiton.setLastmodifieddate(new Timestamp(Instant.now().toEpochMilli()));
-        return publicaiton;
+        Publication publication = anyPublication();
+        publication.setState(State.PENDING.name());
+        publication.setCreateddate(new Timestamp(Instant.now().minusSeconds(HealthCheckResource.WAIT_THRESHOLD + 1).toEpochMilli()));
+        publication.setLastmodifieddate(new Timestamp(Instant.now().toEpochMilli()));
+        return publication;
     }
 
     PublicationStorage healthlyPublicationStorage() {

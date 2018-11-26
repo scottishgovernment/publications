@@ -79,7 +79,7 @@ public class PublicationNodeUpdater {
             return handle.getParent();
 
         } catch (RepositoryException e) {
-            throw new ApsZipImporterException("Failed to create or update publicaiton node", e);
+            throw new ApsZipImporterException("Failed to create or update publication node", e);
         }
     }
 

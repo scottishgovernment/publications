@@ -16,7 +16,7 @@ public interface PublicationStorage {
     boolean ok() throws PublicationStorageException;
 
     /**
-     * Save a publicaiton to the repository.
+     * Save a publication to the repository.
      * @param publication the publication to save.
      * @param file The file to save for the publication
      * @throws PublicationStorageException IIf we cannot store the file.
@@ -24,8 +24,8 @@ public interface PublicationStorage {
     void save(Publication publication, File file) throws PublicationStorageException;
 
     /**
-     * Read the contents of a publicaiton from the repository.
-     * @param publication the publicaiton to read
+     * Read the contents of a publication from the repository.
+     * @param publication the publication to read
      * @return Input stream of the content of the publication.
      * @throws PublicationStorageException If we cannot read the content.
      */

@@ -13,7 +13,7 @@ import java.io.LineNumberReader;
  *
  * The manifest file is a text file where each line consists of a filename and its title separated by a colon.
  *
- * The order of the entries denotes what order the documents should apear in the publicaiton with the first one
+ * The order of the entries denotes what order the documents should apear in the publication with the first one
  * used as the hero image.
  */
 public class ManifestParser {
