@@ -43,20 +43,21 @@ public class ApsZipImporter {
 
         Manifest manifest = manifestExtractor.extract(zipFile);
         Metadata metadata = metadataExtractor.extract(zipFile);
-        Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
-        Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
-        Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
-        publicationPageUpdater.addPages(
-                zipFile,
-                publicationFolder,
-                imgMap,
-                docMap,
-                metadata.getPublicationDate());
-
         try {
+            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
+            Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
+            Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
+            publicationPageUpdater.addPages(
+                    zipFile,
+                    publicationFolder,
+                    imgMap,
+                    docMap,
+                    metadata.getPublicationDate());
             session.save();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
+        } finally {
+            session.logout();
         }
     }
 
