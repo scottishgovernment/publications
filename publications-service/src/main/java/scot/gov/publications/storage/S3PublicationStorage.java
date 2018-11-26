@@ -1,7 +1,7 @@
 package scot.gov.publications.storage;
 
 import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -23,7 +23,7 @@ public class S3PublicationStorage implements PublicationStorage {
     PublicationsConfiguration configuration;
 
     @Inject
-    AmazonS3Client s3client;
+    AmazonS3 s3;
 
     /**
      * Determine if the storage service is healthly by trying to ensure that the readme file exists.
@@ -36,7 +36,7 @@ public class S3PublicationStorage implements PublicationStorage {
         try {
             // test if we can determin the existence of the readme file
             String path = path("README.txt");
-            if (s3client.doesObjectExist(configuration.getS3().getBucketName(), path)) {
+            if (s3.doesObjectExist(configuration.getS3().getBucketName(), path)) {
                 return true;
             }
 
@@ -46,7 +46,7 @@ public class S3PublicationStorage implements PublicationStorage {
             InputStream in = S3PublicationStorage.class.getResourceAsStream("/StorageReadme.txt");
             PutObjectRequest put = new PutObjectRequest(bucketName, path, in, objectMetadata);
 
-            s3client.putObject(put);
+            s3.putObject(put);
             return true;
         } catch (AmazonClientException e) {
             throw new PublicationStorageException(e);
@@ -57,7 +57,7 @@ public class S3PublicationStorage implements PublicationStorage {
         String path = getPath(publication);
         PutObjectRequest put = new PutObjectRequest(configuration.getS3().getBucketName(), path, file);
         try {
-            s3client.putObject(put);
+            s3.putObject(put);
         } catch (AmazonClientException e) {
             throw new PublicationStorageException(e);
         }
@@ -67,7 +67,7 @@ public class S3PublicationStorage implements PublicationStorage {
         String path = getPath(publication);
         GetObjectRequest get = new GetObjectRequest(configuration.getS3().getBucketName(), path);
         try {
-            S3Object s3Object = s3client.getObject(get);
+            S3Object s3Object = s3.getObject(get);
             return s3Object.getObjectContent();
         } catch (AmazonClientException e) {
             throw new PublicationStorageException(e);

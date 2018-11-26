@@ -1,6 +1,7 @@
 package scot.gov.publications.storage;
 
 import com.amazonaws.AmazonClientException;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
 import org.junit.Assert;
@@ -24,10 +25,10 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3client = mock(AmazonS3Client.class);
+        sut.s3 = mock(AmazonS3.class);
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
-        when(sut.s3client.doesObjectExist(any(), any())).thenReturn(true);
+        when(sut.s3.doesObjectExist(any(), any())).thenReturn(true);
 
         // ACT
         boolean actual = sut.ok();
@@ -41,8 +42,8 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3client = mock(AmazonS3Client.class);
-        when(sut.s3client.doesObjectExist(any(), any())).thenReturn(false);
+        sut.s3 = mock(AmazonS3.class);
+        when(sut.s3.doesObjectExist(any(), any())).thenReturn(false);
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
 
@@ -58,8 +59,8 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3client = mock(AmazonS3Client.class);
-        when(sut.s3client.doesObjectExist(any(), any())).thenThrow(new AmazonClientException(""));
+        sut.s3 = mock(AmazonS3Client.class);
+        when(sut.s3.doesObjectExist(any(), any())).thenThrow(new AmazonClientException(""));
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
 
@@ -77,7 +78,7 @@ public class S3PublicationStorageTest {
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
         sut.configuration.getS3().setBucketName("bucket");
-        sut.s3client = mock(AmazonS3Client.class);
+        sut.s3 = mock(AmazonS3Client.class);
         Publication publication = new Publication();
         publication.setChecksum("checksum");
         File file = mock(File.class);
@@ -89,7 +90,7 @@ public class S3PublicationStorageTest {
         sut.save(publication, file);
 
         // ASSERT
-        verify(sut.s3client).putObject(
+        verify(sut.s3).putObject(
                 argThat(put -> put.getBucketName().equals(expectedBucketName) && put.getKey().equals(expectedPath)));
     }
 
@@ -101,8 +102,8 @@ public class S3PublicationStorageTest {
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
         sut.configuration.getS3().setBucketName("bucket");
-        sut.s3client = mock(AmazonS3Client.class);
-        when(sut.s3client.putObject(any())).thenThrow(new AmazonClientException(""));
+        sut.s3 = mock(AmazonS3Client.class);
+        when(sut.s3.putObject(any())).thenThrow(new AmazonClientException(""));
         Publication publication = new Publication();
         publication.setChecksum("checksum");
         File file = mock(File.class);
@@ -121,9 +122,9 @@ public class S3PublicationStorageTest {
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
         sut.configuration.getS3().setBucketName("bucket");
-        sut.s3client = mock(AmazonS3Client.class);
+        sut.s3 = mock(AmazonS3Client.class);
         S3Object s3Obj = mock(S3Object.class);
-        when(sut.s3client.getObject(any())).thenReturn(s3Obj);
+        when(sut.s3.getObject(any())).thenReturn(s3Obj);
         Publication publication = new Publication();
         publication.setChecksum("checksum");
 
@@ -134,7 +135,7 @@ public class S3PublicationStorageTest {
         sut.get(publication);
 
         // ASSERT
-        verify(sut.s3client).getObject(
+        verify(sut.s3).getObject(
                 argThat(get -> get.getBucketName().equals(expectedBucketName) && get.getKey().equals(expectedPath)));
     }
 
@@ -146,9 +147,9 @@ public class S3PublicationStorageTest {
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getS3().setPath("path");
         sut.configuration.getS3().setBucketName("bucket");
-        sut.s3client = mock(AmazonS3Client.class);
+        sut.s3 = mock(AmazonS3Client.class);
         S3Object s3Obj = mock(S3Object.class);
-        when(sut.s3client.getObject(any())).thenThrow(new AmazonClientException(""));
+        when(sut.s3.getObject(any())).thenThrow(new AmazonClientException(""));
         Publication publication = new Publication();
         publication.setChecksum("checksum");
 
@@ -159,7 +160,7 @@ public class S3PublicationStorageTest {
         sut.get(publication);
 
         // ASSERT
-        verify(sut.s3client).getObject(
+        verify(sut.s3).getObject(
                 argThat(get -> get.getBucketName().equals(expectedBucketName) && get.getKey().equals(expectedPath)));
     }
 

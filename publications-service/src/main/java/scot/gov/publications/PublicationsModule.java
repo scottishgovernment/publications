@@ -1,8 +1,10 @@
 package scot.gov.publications;
 
 import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.zaxxer.hikari.HikariDataSource;
 import dagger.Module;
 import dagger.Provides;
@@ -34,12 +36,24 @@ class PublicationsModule {
         return configuration.getConfiguration();
     }
 
+
     @Provides
     @Singleton
-    AmazonS3Client s3Client(PublicationsConfiguration configuration) {
+    AmazonS3 s3Client(PublicationsConfiguration configuration) {
         PublicationsConfiguration.S3 s3 = configuration.getS3();
         AWSCredentials credentials = new BasicAWSCredentials(s3.getKey(), s3.getSecret());
-        return new AmazonS3Client(credentials);
+        AWSCredentialsProvider credentialsProvider = new AWSCredentialsProvider() {
+            @Override
+            public AWSCredentials getCredentials() {
+                return credentials;
+            }
+
+            @Override
+            public void refresh() {
+                //Refresh not needed since basic credentials will not change.
+            }
+        };
+        return AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider).build();
     }
 
     @Provides
