@@ -24,6 +24,23 @@ public class PublicationRepository {
     @Inject
     TimestampSource timestampSource;
 
+    QueryLoader queryLoader = new QueryLoader();
+
+    String insertSQL;
+
+    String updateSQL;
+
+    String listSQL;
+
+    String waitingSQL;
+
+    PublicationRepository() {
+        insertSQL = queryLoader.loadSQL("/sql/insert.sql");
+        updateSQL = queryLoader.loadSQL("/sql/update.sql");
+        listSQL = queryLoader.loadSQL("/sql/list.sql");
+        waitingSQL = queryLoader.loadSQL("/sql/waiting.sql");
+    }
+
     /**
      * Create a new publication.
      *
@@ -31,11 +48,8 @@ public class PublicationRepository {
      * @throws PublicationRepositoryException if the create failed.
      */
     public void create(Publication publication) throws PublicationRepositoryException {
-        String sql = "INSERT INTO publication" +
-                "(id, title, isbn, embargodate, state, statedetails, stacktrace, checksum, createddate, lastmodifieddate) " +
-                "values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
-            queryRunner.update(sql, insertQueryArgs(publication));
+            queryRunner.update(insertSQL, insertQueryArgs(publication));
         } catch (SQLException e) {
             throw new PublicationRepositoryException("Failed to create publication", e);
         }
@@ -49,19 +63,9 @@ public class PublicationRepository {
      */
     public void update(Publication publication) throws PublicationRepositoryException {
         publication.setLastmodifieddate(timestampSource.now());
-        String sql = "UPDATE publication SET " +
-                "title = ?, " +
-                "isbn = ?, " +
-                "embargodate = ?, " +
-                "state = ?, " +
-                "statedetails = ?, " +
-                "stacktrace = ?, " +
-                "checksum = ?, " +
-                "lastmodifieddate = ? " +
-                "WHERE id = ?";
         try {
             Object[] args = updateQueryArgs(publication);
-            queryRunner.update(sql, args);
+            queryRunner.update(updateSQL, args);
         } catch (SQLException e) {
             throw new PublicationRepositoryException("Failed to update publication", e);
         }
@@ -104,14 +108,18 @@ public class PublicationRepository {
             // results.
             //
             // The join is in order to get the total number fo results to support paging.
-            String sql = "SELECT * FROM " +
-                    "(SELECT * FROM publication WHERE ? OR LOWER(isbn) LIKE ? OR LOWER(title) LIKE ? ORDER BY lastmodifieddate DESC LIMIT ? OFFSET ?) s1\n" +
-                    "JOIN\n" +
-                    "(SELECT count(*) as fullcount FROM publication WHERE ? OR LOWER(isbn) LIKE ? OR LOWER(title) LIKE ?) as s2\n" +
-                    "on true\n";
             boolean hasQuery = StringUtils.isNotBlank(queryTerm);
             String queryExpression = hasQuery ? String.format("%%%s%%", queryTerm) : "";
-            publications = queryRunner.query(sql.toString(), handler, !hasQuery, queryExpression, queryExpression, size, (page - 1) * size, !hasQuery, queryExpression, queryExpression);
+            publications = queryRunner.query(listSQL,
+                    handler,
+                    !hasQuery,
+                    queryExpression,
+                    queryExpression,
+                    size,
+                    (page - 1) * size,
+                    !hasQuery,
+                    queryExpression,
+                    queryExpression);
             int totalsize = publications.isEmpty() ? 0 : publications.get(0).getFullcount();
             return ListResult.result(publications, totalsize, page, size);
 
@@ -129,12 +137,12 @@ public class PublicationRepository {
     public Collection<Publication> waitingPublications() throws PublicationRepositoryException {
         BeanListHandler<Publication> handler = new BeanListHandler<>(Publication.class);
         try {
-            String sql = "SELECT * FROM publication WHERE state in ('PENDING', 'PROCESSING') ORDER BY lastmodifieddate DESC";
-            return queryRunner.query(sql.toString(), handler);
+            return queryRunner.query(waitingSQL, handler);
         } catch (SQLException e) {
             throw new PublicationRepositoryException("Failed to list publications", e);
         }
     }
+
 
     private Object[] insertQueryArgs(Publication publication) {
         Timestamp now = timestampSource.now();
