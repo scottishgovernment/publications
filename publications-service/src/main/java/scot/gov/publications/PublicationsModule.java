@@ -64,6 +64,7 @@ class PublicationsModule {
         dataSource.setJdbcUrl(configuration.getDatasource().getUrl());
         dataSource.setUsername(configuration.getDatasource().getUsername());
         dataSource.setPassword(configuration.getDatasource().getPassword());
+        dataSource.setMaximumPoolSize(configuration.getDatasource().getMaxPoolSize());
         return dataSource;
     }
 

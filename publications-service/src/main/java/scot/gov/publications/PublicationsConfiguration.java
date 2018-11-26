@@ -97,6 +97,8 @@ public class PublicationsConfiguration {
         @NotNull
         String password;
 
+        int maxPoolSize;
+
         public String getUrl() {
             return url;
         }
@@ -119,6 +121,14 @@ public class PublicationsConfiguration {
 
         public void setPassword(String password) {
             this.password = password;
+        }
+
+        public int getMaxPoolSize() {
+            return maxPoolSize;
+        }
+
+        public void setMaxPoolSize(int maxPoolSize) {
+            this.maxPoolSize = maxPoolSize;
         }
     }
 
