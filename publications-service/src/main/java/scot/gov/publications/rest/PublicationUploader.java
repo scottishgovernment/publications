@@ -83,7 +83,6 @@ public class PublicationUploader  {
     }
 
     private void populateErrorInformation(Publication publication, String details, Throwable t) {
-        LOG.error("{} {}", details, t);
         publication.setState(State.FAILED.name());
         publication.setStatedetails(details);
         publication.populateStackTrace(t);

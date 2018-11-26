@@ -30,7 +30,7 @@ class PublicationsModule {
         Configuration<PublicationsConfiguration> configuration = Configuration
                 .load(new PublicationsConfiguration(), APP_NAME)
                 .validate();
-        LOG.info("{}", configuration);
+        LOG.info("Configuration: {}", configuration);
         return configuration.getConfiguration();
     }
 
