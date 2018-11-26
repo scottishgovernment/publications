@@ -35,15 +35,16 @@ public class ApsZipImporter {
 
     public void importApsZip(ZipFile zipFile) throws ApsZipImporterException {
 
-        Session session = newSession();
+        Session session = newJCRSession();
         PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
         PublicationPageUpdater publicationPageUpdater = new PublicationPageUpdater(session, configuration);
         ImageUploader imageUploader = new ImageUploader(session);
         DocumentUploader documentUploader = new DocumentUploader(session, configuration);
 
-        Manifest manifest = manifestExtractor.extract(zipFile);
-        Metadata metadata = metadataExtractor.extract(zipFile);
         try {
+            Manifest manifest = manifestExtractor.extract(zipFile);
+            Metadata metadata = metadataExtractor.extract(zipFile);
+
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
@@ -61,11 +62,11 @@ public class ApsZipImporter {
         }
     }
 
-    private Session newSession() throws ApsZipImporterException {
+    private Session newJCRSession() throws ApsZipImporterException {
         try {
             return sessionFactory.newSession();
         } catch (RepositoryException e) {
-            throw new ApsZipImporterException("Failed to talk to JCR repository", e);
+            throw new ApsZipImporterException("Failed to create a new JCR session", e);
         } catch (RemoteRuntimeException e) {
             throw new ApsZipImporterException("JCR repo is not running", e);
         }
