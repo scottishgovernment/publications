@@ -63,7 +63,7 @@ public class UploadResponse {
     public static UploadResponse accepted(Publication publication) {
         UploadResponse response = new UploadResponse();
         response.setAccepted(true);
-        response.setMessage("accpted");
+        response.setMessage("accepted");
         response.setPublication(publication);
         return response;
     }
