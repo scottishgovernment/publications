@@ -92,7 +92,7 @@ public class HealthCheckResource {
 
             // are more then 5 publications waiting?
             if (waitingPublications.size() > 5) {
-                errors.add(String.format("%d publicaitons are waiting", waitingPublications.size()));
+                errors.add(String.format("%d publications are waiting", waitingPublications.size()));
             }
         } catch (PublicationRepositoryException e) {
             LOG.error("Failed to add repository info to healthcheck", e);

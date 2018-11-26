@@ -91,7 +91,7 @@ public class PublicationRepository {
      * @param queryTerm Optional search term.  This will perform a case insensitive partial match against the title
      *                  and isbn columns.
      * @return Collection of matching publications
-     * @throws PublicationRepositoryException if it fails to list publicaitons
+     * @throws PublicationRepositoryException if it fails to list publications
      */
     public ListResult list(int page, int size, String queryTerm) throws PublicationRepositoryException {
         BeanListHandler<Publication> handler = new BeanListHandler<>(Publication.class);
@@ -121,7 +121,7 @@ public class PublicationRepository {
     }
 
     /**
-     * Get a list of publicaitons that are waiting to be processed, i.e. have not reached a terminal state.
+     * Get a list of publications that are waiting to be processed, i.e. have not reached a terminal state.
      *
      * @return Lisot of publications in a non terminal state.
      * @throws PublicationRepositoryException

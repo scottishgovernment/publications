@@ -26,7 +26,7 @@ GET /health
 
 POST /publications
 
-GET /publicaitons
+GET /publications
 
-GET /publicaitons/publicationid
+GET /publications/publicationid
 

@@ -67,8 +67,8 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    public PublicationStorage publicationStorage(AmazonS3Client client) {
-        return new S3PublicationStorage();
+    public PublicationStorage publicationStorage(S3PublicationStorage s3Storage) {
+        return s3Storage;
     }
 
 
