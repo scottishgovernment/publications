@@ -124,16 +124,12 @@ public class PublicationsConfiguration {
 
     public class S3 {
 
-        @NotNull
         private String bucketName;
 
-        @NotNull
         private String key;
 
-        @NotNull
         private String secret;
 
-        @NotNull
         private String path;
 
         public String getBucketName() {
