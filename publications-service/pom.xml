@@ -21,7 +21,9 @@
     <jackson.version>2.6.1</jackson.version>
 
     <sonar.exclusions>
-      src/main/java/scot/gov/publications/imageprocessing/ImageProcessing.java
+      src/main/java/scot/gov/publications/imageprocessing/ImageProcessing.java,
+      src/main/java/scot/gov/publications/hippo/DocumentUploader.java,
+      src/main/java/scot/gov/publications/hippo/pages/PublicationPageUpdater.java
     </sonar.exclusions>
 
   </properties>
