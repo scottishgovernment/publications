@@ -59,6 +59,13 @@
       <version>2.9.7</version>
     </dependency>
 
+    <!-- Apache utils -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.8.1</version>
+    </dependency>
+
     <!-- amazon -->
     <dependency>
       <groupId>com.amazonaws</groupId>
