@@ -1,0 +1,99 @@
+<'govscot'='http://www.onehippo.org/govscot/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+<'hippogallery'='http://www.onehippo.org/jcr/hippogallery/nt/2.0'>
+
+[govscot:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[govscot:SimpleContent] > govscot:basedocument, hippostd:relaxed, hippostd:taggable, hippotranslation:translated
+  orderable
+
+[govscot:AttributableContent] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:BannerImages] > hippogallery:imageset, hippogallery:relaxed
+
+[govscot:ComplexDocument] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:ComplexDocumentSection] > govscot:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:ContactInformation] > hippo:compound, hippostd:relaxed
+  orderable
+
+[govscot:CoverImage] > hippogallery:imageset, hippogallery:relaxed
+
+[govscot:Directorate] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:DocumentInformation] > govscot:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:ExternalLink] > hippo:compound, hippostd:relaxed
+  orderable
+
+[govscot:FeaturedItems] > hippogallery:imageset, hippogallery:relaxed
+
+[govscot:Group] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Home] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:HomeFeaturedItem] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Issue] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Migration] > govscot:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Publication] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Minutes] > govscot:Publication, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:MourningBanner] > govscot:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:News] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:OrgRoles] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:People] > hippogallery:imageset, hippogallery:relaxed
+
+[govscot:Person] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Policy] > govscot:AttributableContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:PolicyInDetail] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:PublicationInlineImage] > hippogallery:imageset, hippogallery:relaxed
+  orderable
+
+[govscot:PublicationPage] > govscot:basedocument, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Role] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:SiteItem] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:SpeechOrStatement] > govscot:Publication, hippostd:relaxed, hippotranslation:translated
+  orderable
+
+[govscot:Topic] > govscot:SimpleContent, hippostd:relaxed, hippotranslation:translated
+  orderable
+

@@ -34,7 +34,7 @@ public class ZipEntryUtil {
     }
 
     public static boolean isHtml(ZipEntry entry) {
-        return entry.getName().endsWith(".htm");
+        return entry.getName().endsWith(".htm") && !entry.getName().startsWith("__MACOSX");
     }
 
     public static boolean isZip(ZipEntry entry) {

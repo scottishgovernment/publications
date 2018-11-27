@@ -1,0 +1,1201 @@
+<?xml version="1.0" encoding="UTF-8"?><sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="content">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+        <sv:value>mix:referenceable</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>ed307dfc-5774-4ac7-9feb-79b57e058bb2</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+        <sv:value>new-document</sv:value>
+        <sv:value>new-folder</sv:value>
+    </sv:property>
+    <sv:node sv:name="documents">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:folder</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+            <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>2c21a29c-a5d1-4e84-aec4-594e5bf93b25</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+            <sv:value>new-folder</sv:value>
+            <sv:value>new-translated-folder</sv:value>
+        </sv:property>
+        <sv:node sv:name="administration">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippostd:folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>0954a7ca-093e-43bb-a2cc-fa21acdd409b</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-resource-bundle</sv:value>
+                <sv:value>new-untranslated-folder</sv:value>
+            </sv:property>
+            <sv:node sv:name="labels">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippostd:folder</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                    <sv:value>mix:referenceable</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:uuid" sv:type="String">
+                    <sv:value>5f3ff168-1fd6-487d-ad8a-eb7486616f74</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                    <sv:value>new-resource-bundle</sv:value>
+                    <sv:value>new-untranslated-folder</sv:value>
+                </sv:property>
+                <sv:node sv:name="global">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>e364f0d5-d79a-469a-9099-80b1bb509de0</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>Global</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="global">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>7e3090e8-0aa2-4778-ac3d-2a0b6c55d864</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>git diff/documents/administration/labels/global</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>published</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T22:10:13.443+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2014-08-21T22:10:52.812+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                            <sv:value>2014-08-21T22:10:54.657+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Text shown in the global page footer.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.global</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>footer.text</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>©2017</sv:value>
+                        </sv:property>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="homepage">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>ba23e184-d680-4b7a-aa3c-23a6d9cc4853</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>Homepage</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="homepage">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>63b38e2f-2c83-4d01-88d8-bf5359cc6706</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>content/documents/administration/labels/homepage</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>published</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:08:08.703+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:11:53.242+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:11:55.239+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Title displayed on homepage.</sv:value>
+                            <sv:value>Text displayed on homepage.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.homepage</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>homepage.title</sv:value>
+                            <sv:value>homepage.text</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>Home Page</sv:value>
+                            <sv:value>Every website comes with its own styling requirements. Hippo's setup application can therefore not address site styling. Instead, the generated pages use minimal styling to render the content. It is the task of the Hippo developer to adjust the front-end to the site's needs.</sv:value>
+                        </sv:property>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="pagenotfound">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>55f0b5a8-2827-4553-b86d-80b3416b82bc</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>Page not found</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="pagenotfound">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>d5b329c2-7c0b-42de-87a3-27b3350433e8</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>content/documents/administration/labels/pagenotfound/pagenotfound[2]</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>published</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:08:08.703+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2018-05-21T14:37:15.296+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                            <sv:value>2018-05-21T14:37:22.832+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Title displayed when page is not found.</sv:value>
+                            <sv:value>Text displayed when page is not found.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.pagenotfound</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>pagenotfound.title</sv:value>
+                            <sv:value>pagenotfound.text</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>404 - Not Found</sv:value>
+                            <sv:value>Sorry, but the page you were trying to view doesn't exist. This could be the result of either:  &lt;ul&gt;&lt;li&gt;a mistyped address&lt;/li&gt;&lt;li&gt;an out of date link&lt;/li&gt;&lt;/ul&gt;</sv:value>
+                        </sv:property>
+                    </sv:node>
+                    <sv:node sv:name="pagenotfound">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:versionable</sv:value>
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>6dd50be4-da87-4b47-b226-e8de69bbcb1d</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>content/documents/administration/labels/pagenotfound/pagenotfound</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>unpublished</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:08:08.703+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2018-05-21T14:37:15.296+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Title displayed when page is not found.</sv:value>
+                            <sv:value>Text displayed when page is not found.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.pagenotfound</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>pagenotfound.title</sv:value>
+                            <sv:value>pagenotfound.text</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>404 - Not Found</sv:value>
+                            <sv:value>Sorry, but the page you were trying to view doesn't exist. This could be the result of either:  &lt;ul&gt;&lt;li&gt;a mistyped address&lt;/li&gt;&lt;li&gt;an out of date link&lt;/li&gt;&lt;/ul&gt;</sv:value>
+                        </sv:property>
+                    </sv:node>
+                    <sv:node sv:name="pagenotfound">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>b9a32265-2123-4afa-b47e-21d75fc0ecb4</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>content/documents/administration/labels/pagenotfound/pagenotfound[2]</sv:value>
+                            <sv:value>content/documents/administration/labels/pagenotfound/pagenotfound</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>draft</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:08:08.703+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2018-05-21T14:35:43.249+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Title displayed when page is not found.</sv:value>
+                            <sv:value>Text displayed when page is not found.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.pagenotfound</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>pagenotfound.title</sv:value>
+                            <sv:value>pagenotfound.text</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>404 - Not Found</sv:value>
+                            <sv:value>Sorry, but the page you were trying to view doesn't exist. This could be the result of either:  &lt;ul&gt;&lt;li&gt;a mistyped address&lt;/li&gt;&lt;li&gt;an out of date link&lt;/li&gt;&lt;/ul&gt;</sv:value>
+                        </sv:property>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="pagination">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>0c8ea796-546f-4968-aebb-617d9a50e7ac</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>Pagination</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="pagination">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>resourcebundle:resourcebundle</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>2d9f2fda-9221-48c9-b381-4df6e7938051</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>content/documents/administration/labels/pagination</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>published</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2014-08-21T14:30:14.382+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:03:32.811+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>admin</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
+                            <sv:value>2014-08-21T17:06:47.420+02:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:descriptions" sv:type="String" sv:multiple="true">
+                            <sv:value>Used in the indication, how many results were found. The label is appended to the number of results.</sv:value>
+                            <sv:value>Label used for the link to the previous page.</sv:value>
+                            <sv:value>Label used for the link to the next page.</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:id" sv:type="String">
+                            <sv:value>essentials.pagination</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:keys" sv:type="String" sv:multiple="true">
+                            <sv:value>results.indication</sv:value>
+                            <sv:value>page.previous</sv:value>
+                            <sv:value>page.next</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="resourcebundle:messages" sv:type="String" sv:multiple="true">
+                            <sv:value>document(s)</sv:value>
+                            <sv:value>Previous</sv:value>
+                            <sv:value>Next</sv:value>
+                        </sv:property>
+                    </sv:node>
+                </sv:node>
+            </sv:node>
+            <sv:node sv:name="resourcebundles">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippostd:folder</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                    <sv:value>mix:versionable</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:uuid" sv:type="String">
+                    <sv:value>add0fdf7-bb3e-43f9-9eb2-7341abceb272</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                    <sv:value>new-resource-bundle</sv:value>
+                    <sv:value>new-untranslated-folder</sv:value>
+                </sv:property>
+            </sv:node>
+        </sv:node>
+        <sv:node sv:name="govscot">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippostd:folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-mourning-banner</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="gallery">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippogallery:stdImageGallery</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+            <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>37aa21b2-d5dd-4ac2-9e1c-9cb0f82dd099</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+            <sv:value>new-govscot-BannerImages-folder</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+            <sv:value>govscot:BannerImages</sv:value>
+        </sv:property>
+        <sv:node sv:name="people">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippogallery:stdImageGallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>418180db-e45d-4471-9a35-1f994a8c7ab1</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>People</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-govscot-People-folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+                <sv:value>govscot:People</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="featureditems">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippogallery:stdImageGallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>33ed2f93-ecf2-4cd1-a7dd-ebdf4cf9ee79</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>Featured items</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-govscot-FeaturedItems-folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+                <sv:value>govscot:FeaturedItems</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="banners">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippogallery:stdImageGallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>52b7904c-04ab-4c52-aae4-760362233c99</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>Banners</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-govscot-BannerImages-folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+                <sv:value>govscot:BannerImages</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="govscot">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippogallery:stdImageGallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>4ac36430-fbdb-4894-bf86-2e8aa76a831c</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>govscot</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-govscot-People-folder</sv:value>
+                <sv:value>new-govscot-CoverImage-folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+                <sv:value>govscot:People</sv:value>
+                <sv:value>govscot:CoverImage</sv:value>
+            </sv:property>
+        </sv:node>
+        <sv:node sv:name="publications">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippogallery:stdImageGallery</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>50c87cc4-f9b7-4c47-9fb1-5be2b74113fc</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>publications</sv:value>
+            </sv:property>
+        </sv:node>
+    </sv:node>
+    <sv:node sv:name="assets">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippogallery:stdAssetGallery</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+            <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>64eb45b7-5bc5-458b-86cf-274652390358</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+            <sv:value>new-file-folder</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:gallerytype" sv:type="String" sv:multiple="true">
+            <sv:value>hippogallery:exampleAssetSet</sv:value>
+        </sv:property>
+    </sv:node>
+    <sv:node sv:name="attic">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippostd:folder</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+            <sv:value>mix:referenceable</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+            <sv:value>b576e833-4910-4c42-987c-8eeb8b23e06d</sv:value>
+        </sv:property>
+    </sv:node>
+    <sv:node sv:name="taxonomies">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippotaxonomy:container</sv:value>
+        </sv:property>
+        <sv:node sv:name="publication-types">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippo:handle</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>mix:versionable</sv:value>
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>43f496e2-fb6c-4925-b509-4affad8a6ffe</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>Publication Types</sv:value>
+            </sv:property>
+            <sv:node sv:name="publication-types">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippotaxonomy:taxonomy</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                    <sv:value>hippostd:container</sv:value>
+                    <sv:value>hippostd:relaxed</sv:value>
+                    <sv:value>hippo:container</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
+                    <sv:value>hippostd:publishableSummary</sv:value>
+                    <sv:value>hippo:derived</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:uuid" sv:type="String">
+                    <sv:value>c90f8444-487a-4739-beb7-1ad2a6111c50</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                    <sv:value>live</sv:value>
+                    <sv:value>preview</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                    <sv:value>content/taxonomies/publication-types</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:state" sv:type="String">
+                    <sv:value>published</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                    <sv:value>live</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                    <sv:value>admin</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                    <sv:value>2018-04-30T22:53:27.504+01:00</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                    <sv:value>2018-04-30T22:53:27.504+01:00</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                    <sv:value>admin</sv:value>
+                </sv:property>
+                <sv:node sv:name="consultations">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippotaxonomy:category</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                        <sv:value>consultations</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="hippotaxonomy:categoryinfos">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="en">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                <sv:value>Consultations</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="consultation-paper">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>consultation-paper</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Consultation paper</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="consultation-responses">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>consultation-responses</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Consultation responses</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="corporate">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippotaxonomy:category</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                        <sv:value>corporate</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="hippotaxonomy:categoryinfos">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="en">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                <sv:value>Corporate</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="corporate-report">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>corporate-report</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Corporate report</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:synonyms" sv:type="String" sv:multiple="true">
+                                    <sv:value>report</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="foi-eir-release">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>foi-eir-release</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>FOI/EIR release</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="transparency-data">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>transparency-data</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Transparency data</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="policy-and-guidance">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippotaxonomy:category</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                        <sv:value>policy-and-guidance</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="hippotaxonomy:categoryinfos">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="en">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                <sv:value>Policy and guidance</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="advice-and-guidance">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>advice-and-guidance</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Advice and guidance</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:synonyms" sv:type="String" sv:multiple="true">
+                                    <sv:value>guidance</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="agreement">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>agreement</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Agreement</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="correspondence">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>correspondence</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value> Correspondence</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:synonyms" sv:type="String" sv:multiple="true">
+                                    <sv:value>newsletter</sv:value>
+                                    <sv:value>letter-circular</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="legislation">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>legislation</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Legislation</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="legislative-consent">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>legislative-consent</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Legislative consent</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="minutes">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>minutes</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Minutes</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="research-and-statistics">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippotaxonomy:category</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                        <sv:value>research-and-statistics</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="hippotaxonomy:categoryinfos">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="en">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                <sv:value>Research and statistics</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="research-finding">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>research-finding</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Research finding</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="research-publication">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>research-publication</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Research publication</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="statistics-dataset">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>statistics-dataset</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Statistics dataset</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="statistics-publication">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>statistics-publication</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Statistics publication</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="other">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippotaxonomy:category</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                        <sv:value>other</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="hippotaxonomy:categoryinfos">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="en">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                <sv:value>Other</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="factsheet">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>factsheet</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Factsheet</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="form">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>form</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Form</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="map">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>map</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Map</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="publication">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>publication</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Publication</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="speech---statement">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>hippotaxonomy:category</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotaxonomy:key" sv:type="String">
+                            <sv:value>speech---statement</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="hippotaxonomy:categoryinfos">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippotaxonomy:categoryinfos</sv:value>
+                            </sv:property>
+                            <sv:node sv:name="en">
+                                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                    <sv:value>hippotaxonomy:categoryinfo</sv:value>
+                                </sv:property>
+                                <sv:property sv:name="hippotaxonomy:name" sv:type="String">
+                                    <sv:value>Speech / Statement</sv:value>
+                                </sv:property>
+                            </sv:node>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+            </sv:node>
+        </sv:node>
+    </sv:node>
+</sv:node>

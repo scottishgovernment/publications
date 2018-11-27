@@ -45,7 +45,7 @@ public class PublicationUploader  {
 
     ZipUtil zipUtil = new ZipUtil();
 
-    public void importPublication(final Publication publication) {
+    public void importPublication(Publication publication) {
         File downloadedFile = null;
         try {
             // mark it as processing

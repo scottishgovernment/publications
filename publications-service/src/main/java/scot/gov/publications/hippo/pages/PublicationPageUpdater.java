@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,7 +85,7 @@ public class PublicationPageUpdater {
                 throws IOException, RepositoryException, ApsZipImporterException {
 
         Node pages = ensurePagesNode(publicationFolder);
-        List<ZipEntry> htmlEntries = zipFile.stream().filter(ZipEntryUtil::isHtml).collect(toList());
+        List<ZipEntry> htmlEntries = zipFile.stream().filter(ZipEntryUtil::isHtml).sorted(Comparator.comparing(ZipEntry::getName)).collect(toList());
         Map<String, Node> pageNodesByEntry = new HashMap<>();
         int i = 0;
         for (ZipEntry htmlEntry : htmlEntries) {

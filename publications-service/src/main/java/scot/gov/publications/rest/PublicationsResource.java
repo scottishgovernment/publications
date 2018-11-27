@@ -175,7 +175,7 @@ public class PublicationsResource {
         }
     }
 
-    private void importPublication(final Publication publication) {
+    private void importPublication(Publication publication) {
         executor.submit(() -> publicationUploader.importPublication(publication));
     }
 
