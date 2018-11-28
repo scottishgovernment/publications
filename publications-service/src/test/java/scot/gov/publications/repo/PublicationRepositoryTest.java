@@ -3,6 +3,7 @@ package scot.gov.publications.repo;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.flywaydb.core.Flyway;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.After;
@@ -14,7 +15,10 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -214,7 +218,33 @@ public class PublicationRepositoryTest {
         // ASSERT - see expected
     }
 
-    //, State.PENDING
+    @Test
+    public void allChecksumsGreenpath() throws Exception {
+        // ARRANGE
+        createPublications(5, "one"); // these will all have the same checksum
+
+        // change the checksum of one of the items
+        Publication one = sut.get(sut.list(0, 10, "").getPublications().get(0).getId());
+        one.setChecksum("changedchecksum");
+        sut.update(one);
+
+        Set<String> expected = new HashSet<>();
+        Collections.addAll(expected, "onechecksum", "changedchecksum");
+
+        // ACT
+        Set<String> actual = sut.allChecksums();
+
+        // ASSERT
+        assertEquals(expected, actual);
+    }
+
+    @Test(expected = PublicationRepositoryException.class)
+    public void allChecksumsExceptionWrapped() throws Exception {
+        sut.queryRunner = exceptionThrowingQueryRunner();
+
+        sut.allChecksums();
+    }
+
     private void createPublications(int count, String prefix) throws Exception {
         createPublications(count, prefix, State.PENDING);
     }

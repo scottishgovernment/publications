@@ -3,13 +3,16 @@ package scot.gov.publications.repo;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.dbutils.handlers.ColumnListHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Repository for storing publication uploads.
@@ -131,7 +134,7 @@ public class PublicationRepository {
     /**
      * Get a list of publications that are waiting to be processed, i.e. have not reached a terminal state.
      *
-     * @return Lisot of publications in a non terminal state.
+     * @return List of publications in a non terminal state.
      * @throws PublicationRepositoryException
      */
     public Collection<Publication> waitingPublications() throws PublicationRepositoryException {
@@ -143,6 +146,20 @@ public class PublicationRepository {
         }
     }
 
+    /**
+     * Get the set of checksums stored in the repo.
+     *
+     * @return Set of checksums.
+     * @throws PublicationRepositoryException
+     */
+    public Set<String> allChecksums() throws PublicationRepositoryException {
+        try {
+            List<String> checksumList = queryRunner.query("SELECT checksum FROM publication", new ColumnListHandler<String>(1));
+            return new HashSet<>(checksumList);
+        } catch (SQLException e) {
+            throw new PublicationRepositoryException("Failed to list checksums", e);
+        }
+    }
 
     private Object[] insertQueryArgs(Publication publication) {
         Timestamp now = timestampSource.now();

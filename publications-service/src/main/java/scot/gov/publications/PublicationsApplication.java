@@ -1,6 +1,7 @@
 package scot.gov.publications;
 
 import scot.gov.publications.rest.HealthCheckResource;
+import scot.gov.publications.rest.MaintenanceResource;
 import scot.gov.publications.rest.PublicationsResource;
 
 import javax.inject.Inject;
@@ -18,11 +19,15 @@ public class PublicationsApplication extends Application {
     @Inject
     HealthCheckResource healthCheckResource;
 
+    @Inject
+    MaintenanceResource maintainanceResource;
+
     @Override
     public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<>();
         Collections.addAll(singletons,
                 publicationsResource,
+                maintainanceResource,
                 healthCheckResource);
         return singletons;
     }
