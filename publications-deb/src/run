@@ -3,5 +3,5 @@
 set -eu
 
 exec ${JAVA_HOME:-/usr}/bin/java \
-  -Dlogback.configurationFile=/opt/publications/publications.xml \
+  -Dlogback.configurationFile=/opt/publications/logback.xml \
   -jar /opt/publications/publications.jar "$@"
