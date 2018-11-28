@@ -86,7 +86,7 @@ public class PublicationsConfiguration {
         }
     }
 
-    public class Datasource {
+    public static class Datasource {
 
         @NotNull
         String url;
@@ -132,7 +132,7 @@ public class PublicationsConfiguration {
         }
     }
 
-    public class S3 {
+    public static class S3 {
 
         private String bucketName;
 
