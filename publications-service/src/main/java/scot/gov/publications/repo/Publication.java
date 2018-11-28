@@ -20,8 +20,6 @@ public class Publication {
 
     private String statedetails;
 
-    private String stacktrace;
-
     private String checksum;
 
     private Timestamp createddate;
@@ -79,14 +77,6 @@ public class Publication {
         this.statedetails = statedetails;
     }
 
-    public String getStacktrace() {
-        return stacktrace;
-    }
-
-    public void setStacktrace(String stacktrace) {
-        this.stacktrace = stacktrace;
-    }
-
     public String getChecksum() {
         return checksum;
     }
@@ -119,9 +109,4 @@ public class Publication {
         this.fullcount = fullcount;
     }
 
-    public void populateStackTrace(Throwable t) {
-        StringWriter stringWriter = new StringWriter();
-        t.printStackTrace(new PrintWriter(stringWriter));
-        this.stacktrace = stringWriter.toString();
-    }
 }

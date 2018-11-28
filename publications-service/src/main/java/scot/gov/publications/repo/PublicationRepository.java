@@ -153,7 +153,6 @@ public class PublicationRepository {
                 publication.getEmbargodate(),
                 publication.getState(),
                 publication.getStatedetails(),
-                publication.getStacktrace(),
                 publication.getChecksum(),
                 now,
                 now
@@ -168,7 +167,6 @@ public class PublicationRepository {
                 publication.getEmbargodate(),
                 publication.getState(),
                 publication.getStatedetails(),
-                publication.getStacktrace(),
                 publication.getChecksum(),
                 now,
                 publication.getId()

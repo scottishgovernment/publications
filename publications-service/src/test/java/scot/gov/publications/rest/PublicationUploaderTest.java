@@ -54,13 +54,12 @@ public class PublicationUploaderTest {
         // ACT
         sut.importPublication(publication);
 
-        // ASSERT - the repository should be updated with details and a stacktrace
+        // ASSERT - the repository should be updated with details
         verify(sut.repository, atLeastOnce())
                 .update(
                         argThat(
                                 pub -> pub.getState().equals(State.FAILED.name()) &&
-                                        pub.getStatedetails().equals("Failed to save publication to database") &&
-                                        !pub.getStacktrace().isEmpty()
+                                        pub.getStatedetails().equals("Failed to save publication to database")
                         ));
     }
 
@@ -81,13 +80,12 @@ public class PublicationUploaderTest {
         // ACT
         sut.importPublication(publication);
 
-        // ASSERT - the repository should be updated with details and a stacktrace
+        // ASSERT - the repository should be updated with details
         verify(sut.repository, atLeastOnce())
                 .update(
                         argThat(
                                 pub -> pub.getState().equals(State.FAILED.name()) &&
-                                        pub.getStatedetails().equals("Failed to save publication as a temp file") &&
-                                        !pub.getStacktrace().isEmpty()
+                                        pub.getStatedetails().equals("Failed to save publication as a temp file")
                         ));
     }
 
@@ -106,13 +104,12 @@ public class PublicationUploaderTest {
         // ACT
         sut.importPublication(publication);
 
-        // ASSERT - the repository should be updated with details and a stacktrace
+        // ASSERT - the repository should be updated with details
         verify(sut.repository, atLeastOnce())
                 .update(
                         argThat(
                                 pub -> pub.getState().equals(State.FAILED.name()) &&
-                                        pub.getStatedetails().equals("Failed to get publication from s3") &&
-                                        !pub.getStacktrace().isEmpty()
+                                        pub.getStatedetails().equals("Failed to get publication from s3")
                         ));
     }
 
@@ -132,13 +129,12 @@ public class PublicationUploaderTest {
         // ACT
         sut.importPublication(publication);
 
-        // ASSERT - the repository should be updated with details and a stacktrace
+        // ASSERT - the repository should be updated with details
         verify(sut.repository, atLeastOnce())
                 .update(
                         argThat(
                                 pub -> pub.getState().equals(State.FAILED.name()) &&
-                                        pub.getStatedetails().equals("Failed to import contents of zip") &&
-                                        !pub.getStacktrace().isEmpty()
+                                        pub.getStatedetails().equals("Failed to import contents of zip")
                         ));
     }
 }

@@ -6,7 +6,6 @@ CREATE TABLE publication
   embargodate timestamp,
   state character varying(20) NOT NULL,
   statedetails character varying,
-  stacktrace character varying,
   checksum character varying NOT NULL,
   createddate timestamp,
   lastmodifieddate timestamp,

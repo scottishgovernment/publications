@@ -57,7 +57,6 @@ public class PublicationRepositoryTest {
         assertEquals(in.getState(), out.getState());
         assertEquals(in.getEmbargodate(), out.getEmbargodate());
         assertEquals(in.getStatedetails(), out.getStatedetails());
-        assertEquals(in.getStacktrace(), out.getStacktrace());
         assertEquals(in.getChecksum(), out.getChecksum());
         assertEquals(out.getCreateddate(), new Timestamp(1));
         assertEquals(out.getLastmodifieddate(), new Timestamp(1));
@@ -239,7 +238,6 @@ public class PublicationRepositoryTest {
         publication.setIsbn(prefix + "isbn");
         publication.setState(State.PENDING.name());
         publication.setEmbargodate(Timestamp.from(Instant.now()));
-        publication.setStacktrace(prefix + "stacktrace");
         publication.setStatedetails(prefix + "statedetails");
         publication.setChecksum(prefix + "checksum");
         return publication;

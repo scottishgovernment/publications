@@ -7,8 +7,8 @@ hippo:
 
 datasource:
   url: jdbc:postgresql://localhost:5432/publications
-  username:
-  password:
+  username: publications
+  password: publications
   maxPoolSize: 2
 
 s3:

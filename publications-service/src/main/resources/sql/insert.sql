@@ -5,8 +5,7 @@ INSERT INTO publication (
   embargodate,
   state,
   statedetails,
-  stacktrace,
   checksum,
   createddate,
   lastmodifieddate)
-  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  values(?, ?, ?, ?, ?, ?, ?, ?, ?)

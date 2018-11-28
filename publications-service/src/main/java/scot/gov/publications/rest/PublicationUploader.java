@@ -64,13 +64,13 @@ public class PublicationUploader  {
             // save it as done
             publication.setState(State.DONE.name());
         } catch (IOException e) {
-            populateErrorInformation(publication, "Failed to save publication as a temp file", e);
+            populateErrorInformation(publication, "Failed to save publication as a temp file");
         } catch (PublicationStorageException e) {
-            populateErrorInformation(publication, "Failed to get publication from s3", e);
+            populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
-            populateErrorInformation(publication, "Failed to save publication to database", e);
+            populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
-            populateErrorInformation(publication, "Failed to import contents of zip", e);
+            populateErrorInformation(publication, "Failed to import contents of zip");
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
         }
@@ -82,9 +82,8 @@ public class PublicationUploader  {
         }
     }
 
-    private void populateErrorInformation(Publication publication, String details, Throwable t) {
+    private void populateErrorInformation(Publication publication, String details) {
         publication.setState(State.FAILED.name());
         publication.setStatedetails(details);
-        publication.populateStackTrace(t);
     }
 }

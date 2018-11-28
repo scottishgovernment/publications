@@ -4,7 +4,6 @@ UPDATE publication SET
   embargodate = ?,
   state = ?,
   statedetails = ?,
-  stacktrace = ?,
   checksum = ?,
   lastmodifieddate = ?
   WHERE id = ?

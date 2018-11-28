@@ -183,7 +183,6 @@ public class HealthCheckResourceTest {
         publication.setEmbargodate(new Timestamp(Instant.now().toEpochMilli()));
         publication.setState(State.DONE.name());
         publication.setStatedetails("");
-        publication.setStacktrace("");
         publication.setChecksum("checksum");
         publication.setCreateddate(new Timestamp(Instant.now().toEpochMilli()));
         publication.setLastmodifieddate(new Timestamp(Instant.now().toEpochMilli()));
