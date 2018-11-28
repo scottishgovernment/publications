@@ -64,12 +64,16 @@ public class PublicationUploader  {
             // save it as done
             publication.setState(State.DONE.name());
         } catch (IOException e) {
+            LOG.error("{} Failed to save publication as a temp file", publication.getId(), e);
             populateErrorInformation(publication, "Failed to save publication as a temp file");
         } catch (PublicationStorageException e) {
+            LOG.error("{} Failed to get publication from s3", publication.getId(), e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
+            LOG.error("{} FFailed to save publication to database", publication.getId(), e);
             populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
+            LOG.error("{} Failed to import contents of zip", publication.getId(), e);
             populateErrorInformation(publication, "Failed to import contents of zip");
         } finally {
             FileUtils.deleteQuietly(downloadedFile);

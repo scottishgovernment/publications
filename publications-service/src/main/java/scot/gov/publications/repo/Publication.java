@@ -2,8 +2,6 @@ package scot.gov.publications.repo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 
 public class Publication {
