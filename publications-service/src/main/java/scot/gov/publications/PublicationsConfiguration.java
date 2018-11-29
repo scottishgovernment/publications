@@ -134,7 +134,9 @@ public class PublicationsConfiguration {
 
     public static class S3 {
 
-        private String bucketName;
+        private String region;
+
+        private String bucket;
 
         private String key;
 
@@ -142,12 +144,20 @@ public class PublicationsConfiguration {
 
         private String path;
 
-        public String getBucketName() {
-            return bucketName;
+        public String getRegion() {
+            return region;
         }
 
-        public void setBucketName(String bucketName) {
-            this.bucketName = bucketName;
+        public void setRegion(String region) {
+            this.region = region;
+        }
+
+        public String getBucket() {
+            return bucket;
+        }
+
+        public void setBucket(String bucket) {
+            this.bucket = bucket;
         }
 
         public String getKey() {

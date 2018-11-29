@@ -36,13 +36,13 @@ public class S3PublicationStorage implements PublicationStorage {
         try {
             // test if we can determin the existence of the readme file
             String path = path("README.txt");
-            if (s3.doesObjectExist(configuration.getBucketName(), path)) {
+            if (s3.doesObjectExist(configuration.getBucket(), path)) {
                 return true;
             }
 
             // the file does not exist, try to write it
             ObjectMetadata objectMetadata = new ObjectMetadata();
-            String bucketName = configuration.getBucketName();
+            String bucketName = configuration.getBucket();
             InputStream in = S3PublicationStorage.class.getResourceAsStream("/StorageReadme.txt");
             PutObjectRequest put = new PutObjectRequest(bucketName, path, in, objectMetadata);
 
@@ -55,7 +55,7 @@ public class S3PublicationStorage implements PublicationStorage {
 
     public void save(Publication publication, File file) throws PublicationStorageException {
         String path = getPath(publication);
-        PutObjectRequest put = new PutObjectRequest(configuration.getBucketName(), path, file);
+        PutObjectRequest put = new PutObjectRequest(configuration.getBucket(), path, file);
         try {
             s3.putObject(put);
         } catch (AmazonClientException e) {
@@ -65,7 +65,7 @@ public class S3PublicationStorage implements PublicationStorage {
 
     public InputStream get(Publication publication) throws PublicationStorageException {
         String path = getPath(publication);
-        GetObjectRequest get = new GetObjectRequest(configuration.getBucketName(), path);
+        GetObjectRequest get = new GetObjectRequest(configuration.getBucket(), path);
         try {
             S3Object s3Object = s3.getObject(get);
             return s3Object.getObjectContent();

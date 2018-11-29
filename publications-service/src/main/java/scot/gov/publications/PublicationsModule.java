@@ -6,6 +6,9 @@ import com.amazonaws.auth.AWSCredentialsProviderChain;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
+import com.amazonaws.regions.AwsRegionProvider;
+import com.amazonaws.regions.AwsRegionProviderChain;
+import com.amazonaws.regions.DefaultAwsRegionProviderChain;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.zaxxer.hikari.HikariDataSource;
@@ -78,13 +81,18 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    AmazonS3 s3Client(AWSCredentialsProvider configProvider) {
-        AWSCredentialsProvider provider = new AWSCredentialsProviderChain(
+    AmazonS3 s3Client(AWSCredentialsProvider credentials, AwsRegionProvider region) {
+        AWSCredentialsProvider credentialsProvider = new AWSCredentialsProviderChain(
                 DefaultAWSCredentialsProviderChain.getInstance(),
-                configProvider
+                credentials
+        );
+        AwsRegionProvider regionProvider = new AwsRegionProviderChain(
+                new DefaultAwsRegionProviderChain(),
+                region
         );
         return AmazonS3ClientBuilder.standard()
-                .withCredentials(provider)
+                .withCredentials(credentialsProvider)
+                .withRegion(regionProvider.getRegion())
                 .build();
     }
 
@@ -95,6 +103,17 @@ class PublicationsModule {
             @Override
             public AWSCredentials getCredentials() {
                 return new BasicAWSCredentials(configuration.getKey(), configuration.getSecret());
+            }
+        };
+    }
+
+    @Provides
+    @Singleton
+    AwsRegionProvider configurationAWSRegion(PublicationsConfiguration.S3 configuration) {
+        return new AwsRegionProvider() {
+            @Override
+            public String getRegion() {
+                return configuration.getRegion();
             }
         };
     }

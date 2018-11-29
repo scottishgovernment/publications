@@ -12,7 +12,7 @@ datasource:
   maxPoolSize: 2
 
 s3:
-  bucketName:
+  bucket:
   key:
   secret:
   path:

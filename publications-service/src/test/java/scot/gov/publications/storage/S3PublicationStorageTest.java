@@ -4,9 +4,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
-import org.junit.Assert;
 import org.junit.Test;
-import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.PublicationsConfiguration.S3;
 import scot.gov.publications.repo.Publication;
 
@@ -79,7 +77,7 @@ public class S3PublicationStorageTest {
         S3PublicationStorage sut = new S3PublicationStorage();
         sut.configuration = new S3();
         sut.configuration.setPath("path");
-        sut.configuration.setBucketName("bucket");
+        sut.configuration.setBucket("bucket");
         sut.s3 = mock(AmazonS3Client.class);
         Publication publication = new Publication();
         publication.setChecksum("checksum");
@@ -103,7 +101,7 @@ public class S3PublicationStorageTest {
         S3PublicationStorage sut = new S3PublicationStorage();
         sut.configuration = new S3();
         sut.configuration.setPath("path");
-        sut.configuration.setBucketName("bucket");
+        sut.configuration.setBucket("bucket");
         sut.s3 = mock(AmazonS3Client.class);
         when(sut.s3.putObject(any())).thenThrow(new AmazonClientException(""));
         Publication publication = new Publication();
@@ -123,7 +121,7 @@ public class S3PublicationStorageTest {
         S3PublicationStorage sut = new S3PublicationStorage();
         sut.configuration = new S3();
         sut.configuration.setPath("path");
-        sut.configuration.setBucketName("bucket");
+        sut.configuration.setBucket("bucket");
         sut.s3 = mock(AmazonS3Client.class);
         S3Object s3Obj = mock(S3Object.class);
         when(sut.s3.getObject(any())).thenReturn(s3Obj);
@@ -148,7 +146,7 @@ public class S3PublicationStorageTest {
         S3PublicationStorage sut = new S3PublicationStorage();
         sut.configuration = new S3();
         sut.configuration.setPath("path");
-        sut.configuration.setBucketName("bucket");
+        sut.configuration.setBucket("bucket");
         sut.s3 = mock(AmazonS3Client.class);
         S3Object s3Obj = mock(S3Object.class);
         when(sut.s3.getObject(any())).thenThrow(new AmazonClientException(""));
