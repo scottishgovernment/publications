@@ -75,12 +75,11 @@
               </mapper>
             </data>
             <data>
-              <type>template</type>
-              <paths>
-                <path>/var/log/publications</path>
-              </paths>
+              <src>${basedir}/src/publications.service</src>
+              <type>file</type>
               <mapper>
                 <type>perm</type>
+                <prefix>/lib/systemd/system</prefix>
               </mapper>
             </data>
           </dataSet>

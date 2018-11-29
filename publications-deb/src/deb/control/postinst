@@ -10,6 +10,6 @@ adduser \
   --gecos "Publications" \
   publications
 
-mkdir -p /var/log/publications
-chmod 755 /var/log/publications
-chown publications:nogroup /var/log/publications
+systemctl daemon-reload
+systemctl enable publications
+systemctl start publications

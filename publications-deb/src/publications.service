@@ -1,0 +1,15 @@
+[Unit]
+Description=Publications service
+After=network.target
+
+[Service]
+User=publications
+WorkingDirectory=/opt/publications
+EnvironmentFile=-/etc/default/publications
+ExecStart=/opt/publications/run
+SyslogIdentifier=publications
+Restart=on-failure
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
