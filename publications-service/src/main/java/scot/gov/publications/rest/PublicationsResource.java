@@ -73,9 +73,9 @@ public class PublicationsResource {
      * Get a paged list of publications with an optional queryString that can be used to perform a partial and case insensitive
      * match against the list of publications.
      *
-     * @param page the page to feths
+     * @param page the page to fetch, 1 based
      * @param size the number of items to fetch
-     * @param queryString optional query string used to filter by title or isbm
+     * @param queryString optional query string used to filter by title or isbn
      * @return A paged list of publications.
      */
     @GET
