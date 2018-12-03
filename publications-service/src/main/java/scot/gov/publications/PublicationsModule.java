@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.repo.TimestampSource;
 import scot.gov.publications.rest.MaintenanceStatus;
+import scot.gov.publications.rest.TopLevelExceptionHandler;
 import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.S3PublicationStorage;
 import scot.mygov.config.Configuration;
@@ -123,4 +124,8 @@ class PublicationsModule {
         return new MaintenanceStatus();
     }
 
+    @Provides
+    TopLevelExceptionHandler topLevelExceptionHandler() {
+        return new TopLevelExceptionHandler();
+    }
 }

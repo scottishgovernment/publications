@@ -46,7 +46,6 @@ public class MaintenanceResource {
     @Produces({ MediaType.APPLICATION_JSON })
     @Path("orphans")
     public Set<String> getOrphans() {
-
         try {
             Set<String> inStorage = storage.listKeys();
             Set<String> inRepo = repository.allChecksums();

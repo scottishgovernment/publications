@@ -13,9 +13,6 @@ public class UploadResponse {
     // message - 'acepted' if it was accetped and an reason string if it was not
     private String message;
 
-    // the stack trace that caused the submission to fail (if any)
-    private String stackTrace;
-
     private Publication publication;
 
     public boolean isAccepted() {
@@ -34,14 +31,6 @@ public class UploadResponse {
         this.message = message;
     }
 
-    public String getStackTrace() {
-        return stackTrace;
-    }
-
-    public void setStackTrace(String stackTrace) {
-        this.stackTrace = stackTrace;
-    }
-
     public Publication getPublication() {
         return publication;
     }
@@ -50,13 +39,10 @@ public class UploadResponse {
         this.publication = publication;
     }
 
-    public static UploadResponse error(String message, Throwable t) {
+    public static UploadResponse error(String message) {
         UploadResponse response = new UploadResponse();
         response.setAccepted(false);
         response.setMessage(message);
-        StringWriter sw = new StringWriter();
-        t.printStackTrace(new PrintWriter(sw));
-        response.setStackTrace(sw.toString());
         return response;
     }
 

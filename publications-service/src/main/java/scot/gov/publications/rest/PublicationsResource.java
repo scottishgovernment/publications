@@ -135,11 +135,11 @@ public class PublicationsResource {
             // the up-loaded zip file contains a zip - extract it
             extractedZipFile = zipUtil.extractNestedZipFile(zipFile);
         } catch (IllegalArgumentException | IOException e) {
-            // return a cleint error since we were not able to extract the zip file.  ensure that any temp files are deleted.
+            // return a client error since we were not able to extract the zip file.  ensure that any temp files are deleted.
             LOG.error("Failed to extract zip", e);
             FileUtils.deleteQuietly(zipFile);
             FileUtils.deleteQuietly(extractedZipFile);
-            return Response.status(400).entity(UploadResponse.error("Failed to extract zip file", e)).build();
+            return Response.status(400).entity(UploadResponse.error("Failed to extract zip file")).build();
         }
 
         Publication publication = null;
@@ -159,15 +159,15 @@ public class PublicationsResource {
         } catch (ApsZipImporterException e) {
             String msg = "Failed to extract metadata from zip";
             LOG.error(msg,  e);
-            return Response.status(400).entity(UploadResponse.error(msg, e)).build();
+            return Response.status(400).entity(UploadResponse.error(msg)).build();
         } catch (PublicationStorageException e) {
             String msg = "Failed to upload zip file to s3";
             LOG.error(msg,  e);
-            return Response.status(500).entity(UploadResponse.error(msg, e)).build();
+            return Response.status(500).entity(UploadResponse.error(msg)).build();
         } catch (PublicationRepositoryException e) {
             String msg = "Failed to save publication to the repository";
             LOG.error(msg, e);
-            return Response.status(500).entity(UploadResponse.error("Failed to save publication to the repository", e)).build();
+            return Response.status(500).entity(UploadResponse.error("Failed to save publication to the repository")).build();
         } finally {
             // ensure that temp files are deleted
             FileUtils.deleteQuietly(zipFile);
