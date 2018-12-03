@@ -1,5 +1,6 @@
 package scot.gov.publications.rest;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import java.time.LocalDateTime;
@@ -15,6 +16,11 @@ public class MaintenanceStatus {
     private boolean inMaintenance = false;
     private LocalDateTime lastStartTime = null;
     private Map<String, String> data = new HashMap<>();
+
+    @Inject
+    public MaintenanceStatus() {
+        // default constructor for injection
+    }
 
     public void assertAvailable() {
         synchronized (lock) {
