@@ -18,8 +18,6 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scot.gov.publications.storage.PublicationStorage;
-import scot.gov.publications.storage.S3PublicationStorage;
 import scot.mygov.config.Configuration;
 
 import javax.inject.Singleton;

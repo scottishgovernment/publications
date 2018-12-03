@@ -95,7 +95,7 @@ public class PublicationUploader  {
             LOG.error("Failed to save publication status", e);
         } finally {
             MDC.remove("publicationID");
-            LOG.error("Failed to save publication status: {}", publication.getId(), e);
+            MDC.remove("username");
         }
     }
 
