@@ -51,7 +51,7 @@ public class TopicMappings {
 
         // if this node already has topics set then do not do anything
         if (node.hasNode("govscot:topics")) {
-            LOG.info("{} already had topics, ignoring", node.getPath());
+            LOG.info("Already had topics, ignoring: {}", node.getPath());
             return;
         }
 
@@ -76,7 +76,7 @@ public class TopicMappings {
     private String getTopic(String key) {
         String value = topics.get(key);
         if (value == null) {
-            LOG.warn("{} topic is not mapped, ignoring topic field", key);
+            LOG.warn("topic is not mapped: {}, ignoring topic field", key);
         }
         return value;
     }
