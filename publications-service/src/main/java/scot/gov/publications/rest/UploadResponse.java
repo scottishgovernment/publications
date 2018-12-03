@@ -2,9 +2,6 @@ package scot.gov.publications.rest;
 
 import scot.gov.publications.repo.Publication;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 public class UploadResponse {
 
     // was the upload accepted?
