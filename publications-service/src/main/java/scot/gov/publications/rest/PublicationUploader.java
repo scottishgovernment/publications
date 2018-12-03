@@ -74,7 +74,7 @@ public class PublicationUploader  {
             LOG.error("Failed to save publication as a temp file", e);
             populateErrorInformation(publication, "Failed to save publication as a temp file");
         } catch (PublicationStorageException e) {
-            LOG.error("Failed to get publication from s3", e);
+            LOG.error("Failed to get publication from s3: {}", publication.getId(), e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
             populateErrorInformation(publication, "Failed to save publication to database");
@@ -84,7 +84,6 @@ public class PublicationUploader  {
         } catch (RuntimeException e) {
             // ensure that we mark the publicaiton as failed if we get an unchecked exception
             LOG.error("{} Failed to import contents of zip", publication.getId(), e);
-            populateErrorInformation(publication, "Failed to import contents of zip");
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
         }
@@ -96,6 +95,7 @@ public class PublicationUploader  {
             LOG.error("Failed to save publication status", e);
         } finally {
             MDC.remove("publicationID");
+            LOG.error("Failed to save publication status: {}", publication.getId(), e);
         }
     }
 
