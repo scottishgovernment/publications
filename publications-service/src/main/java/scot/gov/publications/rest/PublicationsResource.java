@@ -88,7 +88,7 @@ public class PublicationsResource {
             ListResult result = repository.list(page, size, queryString);
             return Response.ok(result).build();
         } catch (PublicationRepositoryException e) {
-            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
+            throw new WebApplicationException(e, Response.status(500).build());
         }
     }
 
@@ -101,16 +101,16 @@ public class PublicationsResource {
     @GET
     @Path("{id}")
     @Produces({ MediaType.APPLICATION_JSON })
-    public Publication get(@PathParam("id") String id) {
+    public Response get(@PathParam("id") String id) {
         try {
             Publication publication = repository.get(id);
             if (publication == null) {
-                throw new WebApplicationException(Response.status(404).entity("Not Found").build());
+                return Response.status(Response.Status.NOT_FOUND).build();
             }
-            return publication;
+            return Response.ok(publication).build();
         } catch (PublicationRepositoryException e) {
             LOG.error("Failed to get publication {}", id, e);
-            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 

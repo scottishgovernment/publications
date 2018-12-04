@@ -30,7 +30,7 @@ public class TopLevelExceptionHandler implements ExceptionMapper<Throwable> {
      */
     public Response toResponse(Throwable t) {
         LOG.error("Unhandled throwable", t);
-        return Response.status(500).entity(UploadResponse.error("Unhandled exception")).build();
+        return Response.status(500).build();
     }
 
 }

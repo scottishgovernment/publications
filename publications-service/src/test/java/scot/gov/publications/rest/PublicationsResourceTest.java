@@ -1,6 +1,7 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.MetadataExtractor;
@@ -73,14 +74,15 @@ public class PublicationsResourceTest {
         when(sut.repository.get("id")).thenReturn(publication);
 
         // ACT
-        Publication actual = sut.get("id");
+        Response reponse = sut.get("id");
+        Publication actual = (Publication) reponse.getEntity();
 
         // ASSERT
         assertSame(actual, publication);
     }
 
-    @Test(expected = WebApplicationException.class)
-    public void getWrapsRepoException() throws Exception {
+    @Test
+    public void getReturns500ForException() throws Exception {
         // ARRANGE
         PublicationsResource sut = new PublicationsResource();
         Publication publication = new Publication();
@@ -88,13 +90,14 @@ public class PublicationsResourceTest {
         when(sut.repository.get("id")).thenThrow(new PublicationRepositoryException("arg", new RuntimeException("arg")));
 
         // ACT
-        Publication actual = sut.get("id");
+        Response actual = sut.get("id");
 
-        // ASSERT - see exception
+        // ASSERT
+        assertEquals(actual.getStatus(), 500);
     }
 
-    @Test(expected = WebApplicationException.class)
-    public void getThrowsExceptionIfPubNotFound() throws Exception {
+    @Test
+    public void getReturns404IfPubNotFound() throws Exception {
         // ARRANGE
         PublicationsResource sut = new PublicationsResource();
         Publication publication = new Publication();
@@ -102,9 +105,10 @@ public class PublicationsResourceTest {
         when(sut.repository.get("id")).thenReturn(null);
 
         // ACT
-        Publication actual = sut.get("id");
+        Response actual = sut.get("id");
 
-        // ASSERT - see exception
+        // ASSERT
+        assertEquals(actual.getStatus(), 404);
     }
 
     @Test
