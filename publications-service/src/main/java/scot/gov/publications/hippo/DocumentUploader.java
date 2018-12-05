@@ -1,12 +1,15 @@
 package scot.gov.publications.hippo;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.imageprocessing.ThumbnailsProvider;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestEntry;
 import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.rest.PublicationsResource;
 import scot.gov.publications.util.Exif;
 import scot.gov.publications.util.FileType;
 
@@ -24,6 +27,8 @@ import static scot.gov.publications.hippo.Constants.*;
  * Responsible for uploading documents to hippo.
  */
 public class DocumentUploader {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DocumentUploader.class);
 
     private Session session;
 
@@ -60,11 +65,15 @@ public class DocumentUploader {
             Manifest manifest,
             Metadata metadata) throws RepositoryException, IOException {
 
+        LOG.info("Uploading {} documents", manifest.getEntries().size());
+
         Map<String, Node> filenameToDocument = new HashMap<>();
         List<String> path = hippoUtils.pathFromNode(pubFolder);
         path.add("documents");
         Node documentsFolder = hippoPaths.ensurePath(path);
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
+        LOG.info("Existing document titles: {}", existingDocumentTitles);
+
         hippoUtils.removeChildren(documentsFolder);
         for (ManifestEntry manifestEntry : manifest.getEntries()) {
             Node docNode = uploadDocument(
@@ -135,9 +144,13 @@ public class DocumentUploader {
      */
     private String getTitle(ManifestEntry manifestEntry, SortedMap<String, String> existingDocumentTitles) {
         String filename = manifestEntry.getFilename();
-        return existingDocumentTitles.containsKey(filename)
-                ? existingDocumentTitles.get(filename)
-                : manifestEntry.getTitleOrFilename();
+
+        if (existingDocumentTitles.containsKey(filename)) {
+            String existingtitle = existingDocumentTitles.get(filename);
+            LOG.info("Using existing document title \"{}\"", existingtitle);
+            return existingtitle;
+        }
+        return manifestEntry.getTitleOrFilename();
     }
 
     private void createThumbnails(Node documentNode) throws RepositoryException, IOException {

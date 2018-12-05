@@ -5,6 +5,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.hippo.HippoNodeFactory;
@@ -36,6 +38,8 @@ import static scot.gov.publications.hippo.Constants.GOVSCOT_CONTENT;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
 
 public class PublicationPageUpdater {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationPageUpdater.class);
 
     private static final String PAGES = "pages";
 
@@ -86,6 +90,8 @@ public class PublicationPageUpdater {
 
         Node pages = ensurePagesNode(publicationFolder);
         List<ZipEntry> htmlEntries = zipFile.stream().filter(ZipEntryUtil::isHtml).sorted(Comparator.comparing(ZipEntry::getName)).collect(toList());
+
+        LOG.info("Adding {} pages", htmlEntries.size());
         Map<String, Node> pageNodesByEntry = new HashMap<>();
         int i = 0;
         for (ZipEntry htmlEntry : htmlEntries) {

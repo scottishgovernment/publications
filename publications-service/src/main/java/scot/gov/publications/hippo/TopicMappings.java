@@ -9,6 +9,9 @@ import javax.jcr.Session;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Specifies how topics should be mapped.
+ */
 public class TopicMappings {
 
     private static final Logger LOG = LoggerFactory.getLogger(TopicMappings.class);
@@ -20,7 +23,6 @@ public class TopicMappings {
     Session session;
 
     HippoUtils hippoUtils = new HippoUtils();
-
 
     public TopicMappings(Session session) {
         this.session = session;
@@ -51,12 +53,12 @@ public class TopicMappings {
 
         // if this node already has topics set then do not do anything
         if (node.hasNode("govscot:topics")) {
-            LOG.info("Already had topics, ignoring: {}", node.getPath());
+            LOG.debug("Node already has topics, will not change them. {}", node.getPath());
             return;
         }
 
         // map the topic from the publications api to the one in Hippo
-        String mappedTopic = getTopic(topic);
+        String mappedTopic = getTopic(topic, node);
         if (mappedTopic == null) {
             return;
         }
@@ -69,14 +71,14 @@ public class TopicMappings {
             Node mirror = node.addNode("govscot:topics", "hippo:mirror");
             mirror.setProperty("hippo:docbase", topicNode.getIdentifier());
         } else {
-            LOG.info("No topic found for {}", topic);
+            LOG.error("No topic found for topic {} for node {}", topic, node.getPath());
         }
     }
 
-    private String getTopic(String key) {
+    private String getTopic(String key, Node node) throws RepositoryException {
         String value = topics.get(key);
         if (value == null) {
-            LOG.warn("topic is not mapped: {}, ignoring topic field", key);
+            LOG.warn("No mapping for topic: {}, topic will be ignored for node {}", key, node.getPath());
         }
         return value;
     }
