@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 /**
  * Extracts and parser the metadata file from a zipfile.
  *
- * The extactor works by expecting a single json file in the zip and then parsing it.  It will throw and exception
+ * The extractor works by expecting a single json file in the zip and then parsing it.  It will throw and exception
  * if there is not exactly one json file in the zip.
  */
 public class MetadataExtractor {

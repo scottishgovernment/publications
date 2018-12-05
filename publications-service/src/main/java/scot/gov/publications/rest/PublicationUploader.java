@@ -1,6 +1,7 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.FileUtils;
+import org.jboss.logging.MDC;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporter;
@@ -47,6 +48,9 @@ public class PublicationUploader  {
 
     public void importPublication(Publication publication) {
         File downloadedFile = null;
+        MDC.put("publicationID", publication.getId());
+        LOG.info("Importing publication");
+
         try {
             // mark it as processing
             publication.setState(State.PROCESSING.name());
@@ -64,16 +68,16 @@ public class PublicationUploader  {
             // save it as done
             publication.setState(State.DONE.name());
         } catch (IOException e) {
-            LOG.error("Failed to save publication as a temp file: {} ", publication.getId(), e);
+            LOG.error("Failed to save publication as a temp file", e);
             populateErrorInformation(publication, "Failed to save publication as a temp file");
         } catch (PublicationStorageException e) {
-            LOG.error("Failed to get publication from s3: {}", publication.getId(), e);
+            LOG.error("Failed to get publication from s3", e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
-            LOG.error("Failed to save publication to database: {}", publication.getId(), e);
+            LOG.error("Failed to save publication to database", e);
             populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
-            LOG.error("Failed to import contents of zip: {}", publication.getId(), e);
+            LOG.error("Failed to import contents of zip", e);
             populateErrorInformation(publication, "Failed to import contents of zip");
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
@@ -82,7 +86,9 @@ public class PublicationUploader  {
         try {
             repository.update(publication);
         } catch (PublicationRepositoryException e) {
-            LOG.error("Failed to save publication status: {}", publication.getId(), e);
+            LOG.error("Failed to save publication status", e);
+        } finally {
+            MDC.remove("publicationID");
         }
     }
 
