@@ -66,12 +66,13 @@ public class DocumentUploader {
             Metadata metadata) throws RepositoryException, IOException, ApsZipImporterException {
 
         LOG.info("Uploading {} documents to {}", manifest.getEntries().size(), pubFolder.getPath());
-
         Map<String, Node> filenameToDocument = new HashMap<>();
         List<String> path = hippoUtils.pathFromNode(pubFolder);
         path.add("documents");
         Node documentsFolder = hippoPaths.ensurePath(path);
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
+        LOG.info("Existing document titles: {}", existingDocumentTitles);
+
         hippoUtils.removeChildren(documentsFolder);
         for (ManifestEntry manifestEntry : manifest.getEntries()) {
             Node docNode = uploadDocument(

@@ -74,7 +74,7 @@ public class PublicationUploader  {
             LOG.error("Failed to save publication as a temp file", e);
             populateErrorInformation(publication, "Failed to save publication as a temp file");
         } catch (PublicationStorageException e) {
-            LOG.error("Failed to get publication from s3: {}", publication.getId(), e);
+            LOG.error("Failed to get publication from s3", e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
             populateErrorInformation(publication, "Failed to save publication to database");
