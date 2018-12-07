@@ -15,6 +15,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import dagger.Module;
 import dagger.Provides;
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.repo.TimestampSource;
@@ -45,6 +46,7 @@ class PublicationsModule {
     @Provides
     @Singleton
     public DataSource dataSource(PublicationsConfiguration configuration) {
+        LOG.info("Creating Hikari connection pool");
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setDriverClassName("org.postgresql.Driver");
         dataSource.setJdbcUrl(configuration.getDatasource().getUrl());
@@ -80,19 +82,26 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    AmazonS3 s3Client(AWSCredentialsProvider credentials, AwsRegionProvider region) {
-        AWSCredentialsProvider credentialsProvider = new AWSCredentialsProviderChain(
-                DefaultAWSCredentialsProviderChain.getInstance(),
-                credentials
+    AmazonS3 s3Client(AWSCredentialsProvider credentialsProvider, AwsRegionProvider regionProvider) {
+        LOG.info("Creating Amazon S3 client");
+        StopWatch watch = StopWatch.createStarted();
+
+        AWSCredentialsProvider credentialsProviderChain= new AWSCredentialsProviderChain(
+                credentialsProvider,
+                DefaultAWSCredentialsProviderChain.getInstance()
         );
-        AwsRegionProvider regionProvider = new AwsRegionProviderChain(
-                new DefaultAwsRegionProviderChain(),
-                region
+
+        AwsRegionProvider regionProviderChain = new AwsRegionProviderChain(
+                regionProvider,
+                new DefaultAwsRegionProviderChain()
         );
-        return AmazonS3ClientBuilder.standard()
-                .withCredentials(credentialsProvider)
-                .withRegion(regionProvider.getRegion())
+
+        AmazonS3 client = AmazonS3ClientBuilder.standard()
+                .withCredentials(credentialsProviderChain)
+                .withRegion(regionProviderChain.getRegion())
                 .build();
+        LOG.info("Created Amazon S3 client in {}ms", watch.getTime());
+        return client;
     }
 
     @Provides
@@ -101,6 +110,10 @@ class PublicationsModule {
         return new EnvironmentVariableCredentialsProvider() {
             @Override
             public AWSCredentials getCredentials() {
+                if (configuration.getKey() == null || configuration.getSecret() == null) {
+                    return null;
+                }
+                LOG.info("Using AWS credentials from configuration");
                 return new BasicAWSCredentials(configuration.getKey(), configuration.getSecret());
             }
         };
