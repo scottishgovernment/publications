@@ -11,6 +11,8 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.google.common.collect.Lists;
+import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.PublicationsConfiguration;
@@ -123,15 +125,7 @@ public class S3PublicationStorage implements PublicationStorage {
 
     public Map<String, String> deleteKeys(Collection<String> keys) throws PublicationStorageException {
         // split into arrays no larger than 1000
-        List<List<String>> chunks = new ArrayList<>();
-        chunks.add(new ArrayList<>());
-
-        for (String key : keys) {
-            if (chunks.get(chunks.size() - 1).size() >= 1000) {
-                chunks.add(new ArrayList<>());
-            }
-            chunks.get(chunks.size() - 1).add(path(key));
-        }
+        List<List<String>> chunks = partition(keys, 1000);
 
         // delete each chunk and record the results
         Map<String, String> results = new HashMap<>();
@@ -139,6 +133,15 @@ public class S3PublicationStorage implements PublicationStorage {
             results.putAll(deleteChunk(chunk));
         }
         return results;
+    }
+
+    <T> List<List<T>> partition(Collection<T> collection, int size) {
+        List<List<T>> chunks = new ArrayList<>();
+        List<T> list = new ArrayList<>(collection);
+        for (int i = 0; i < list.size(); i += size) {
+            chunks.add(list.subList(i, Math.min(i + size, list.size())));
+        }
+        return chunks;
     }
 
     private Map<String, String> deleteChunk(List<String> chunk) {

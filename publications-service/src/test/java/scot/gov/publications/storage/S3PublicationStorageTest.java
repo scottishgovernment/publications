@@ -19,8 +19,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -241,10 +245,22 @@ public class S3PublicationStorageTest {
         verify(sut.s3, times(3)).deleteObjects(any());
     }
 
+    @Test
+    public void batchesDeletes() {
+        S3PublicationStorage storage = new S3PublicationStorage();
+        List<List<Integer>> batches = storage.partition(asList(0, 1, 2, 3, 4), 2);
+        assertThat(batches).hasSize(3);
+        assertThat(batches.get(0)).isEqualTo(asList(0, 1));
+        assertThat(batches.get(1)).isEqualTo(asList(2, 3));
+        assertThat(batches.get(2)).isEqualTo(asList(4));
+
+        assertThat(storage.partition(emptyList(), 5)).hasSize(0);
+    }
+
     ObjectListing listing(boolean truncted, S3ObjectSummary...summaries) {
         ObjectListing listing = mock(ObjectListing.class);
         when(listing.isTruncated()).thenReturn(truncted);
-        when(listing.getObjectSummaries()).thenReturn(Arrays.asList(summaries));
+        when(listing.getObjectSummaries()).thenReturn(asList(summaries));
         return listing;
     }
 
