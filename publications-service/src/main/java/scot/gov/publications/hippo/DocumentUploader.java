@@ -71,8 +71,6 @@ public class DocumentUploader {
         path.add("documents");
         Node documentsFolder = hippoPaths.ensurePath(path);
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
-        LOG.info("Existing document titles: {}", existingDocumentTitles);
-
         hippoUtils.removeChildren(documentsFolder);
         for (ManifestEntry manifestEntry : manifest.getEntries()) {
             Node docNode = uploadDocument(

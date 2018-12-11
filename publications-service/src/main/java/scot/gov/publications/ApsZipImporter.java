@@ -46,8 +46,6 @@ public class ApsZipImporter {
 
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);
-            LOG.info("Extracted manifest, contains {} entries", manifest.getEntries().size());
-
             Metadata metadata = metadataExtractor.extract(zipFile);
             LOG.info("Extracted metadata, isbn is {}, title is {}", metadata.getIsbn(), metadata.getTitle());
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
