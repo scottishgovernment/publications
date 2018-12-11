@@ -165,6 +165,7 @@ public class PublicationRepository {
         Timestamp now = timestampSource.now();
         return new Object[] {
                 publication.getId(),
+                publication.getUsername(),
                 publication.getTitle(),
                 publication.getIsbn(),
                 publication.getEmbargodate(),
@@ -179,6 +180,7 @@ public class PublicationRepository {
     private Object[] updateQueryArgs(Publication publication) {
         Timestamp now = timestampSource.now();
         return new Object[] {
+                publication.getUsername(),
                 publication.getTitle(),
                 publication.getIsbn(),
                 publication.getEmbargodate(),

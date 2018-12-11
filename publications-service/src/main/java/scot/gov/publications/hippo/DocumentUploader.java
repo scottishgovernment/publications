@@ -65,15 +65,13 @@ public class DocumentUploader {
             Manifest manifest,
             Metadata metadata) throws RepositoryException, IOException {
 
-        LOG.info("Uploading {} documents", manifest.getEntries().size());
+        LOG.info("Uploading {} documents to {}", manifest.getEntries().size(), pubFolder.getPath());
 
         Map<String, Node> filenameToDocument = new HashMap<>();
         List<String> path = hippoUtils.pathFromNode(pubFolder);
         path.add("documents");
         Node documentsFolder = hippoPaths.ensurePath(path);
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
-        LOG.info("Existing document titles: {}", existingDocumentTitles);
-
         hippoUtils.removeChildren(documentsFolder);
         for (ManifestEntry manifestEntry : manifest.getEntries()) {
             Node docNode = uploadDocument(
@@ -147,9 +145,11 @@ public class DocumentUploader {
 
         if (existingDocumentTitles.containsKey(filename)) {
             String existingtitle = existingDocumentTitles.get(filename);
-            LOG.info("Using existing document title \"{}\"", existingtitle);
+            LOG.info("Using existing document title \"{}\" for {}", existingtitle, filename);
             return existingtitle;
         }
+
+        LOG.info("Using title from manifest \"{}\" for {}", manifestEntry.getTitleOrFilename(), filename);
         return manifestEntry.getTitleOrFilename();
     }
 

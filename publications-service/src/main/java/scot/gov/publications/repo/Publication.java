@@ -8,6 +8,8 @@ public class Publication {
 
     private String id;
 
+    private String username;
+
     private String title;
 
     private String isbn;
@@ -33,6 +35,14 @@ public class Publication {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getTitle() {

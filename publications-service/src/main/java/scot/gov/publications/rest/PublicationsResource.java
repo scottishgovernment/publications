@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -117,13 +118,14 @@ public class PublicationsResource {
     /**
      * Upload a new zip file to be processed.
      *
-     * @param fileUpload A multipart file upload containing a zip in the expecte format.
+     * @param fileUpload A multipart file upload containing a zip in the expected format.
+     * @param username the user posting this content *(set by proxette)
      * @return Response indicating if the zip has been accepted.
      */
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response postFormData(@MultipartForm UploadRequest fileUpload) {
+    public Response postFormData(@MultipartForm UploadRequest fileUpload, @HeaderParam("X-User") String username) {
 
         // extract the zip file from the uploaded file
         File zipFile = null;
@@ -145,7 +147,7 @@ public class PublicationsResource {
         Publication publication = null;
         try {
             // get the publication details from the zip
-            publication = newPublication(zipFile, extractedZipFile);
+            publication = newPublication(zipFile, extractedZipFile, username);
 
             // upload the file to s3
             storage.save(publication, zipFile);
@@ -179,10 +181,11 @@ public class PublicationsResource {
         executor.submit(() -> publicationUploader.importPublication(publication));
     }
 
-    private Publication newPublication(File zip, File extractedZip) throws ApsZipImporterException {
+    private Publication newPublication(File zip, File extractedZip, String username) throws ApsZipImporterException {
         Metadata metadata = metadataExtractor.extract(extractedZip);
         Publication publication = new Publication();
         publication.setId(UUID.randomUUID().toString());
+        publication.setUsername(username);
         publication.setIsbn(metadata.getIsbn());
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());

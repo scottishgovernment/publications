@@ -123,7 +123,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(202, actual.getStatus());
@@ -143,7 +143,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/examplezip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(400, actual.getStatus());
@@ -165,7 +165,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(400, actual.getStatus());
@@ -186,7 +186,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(400, actual.getStatus());
@@ -207,7 +207,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(500, actual.getStatus());
@@ -226,7 +226,7 @@ public class PublicationsResourceTest {
         UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
 
         // ACT
-        Response actual = sut.postFormData(uploadRequest);
+        Response actual = sut.postFormData(uploadRequest, "username");
 
         // ASSERT
         assertEquals(500, actual.getStatus());

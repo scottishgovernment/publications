@@ -1,8 +1,6 @@
 package scot.gov.publications;
 
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.DocumentUploader;
 import scot.gov.publications.hippo.ImageUploader;
 import scot.gov.publications.hippo.PublicationNodeUpdater;
@@ -25,8 +23,6 @@ import java.util.zip.ZipFile;
  */
 public class ApsZipImporter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ApsZipImporter.class);
-
     @Inject
     PublicationsConfiguration configuration;
 
@@ -46,11 +42,7 @@ public class ApsZipImporter {
 
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);
-            LOG.info("Extracted manifest, contains {} entries", manifest.getEntries().size());
-
             Metadata metadata = metadataExtractor.extract(zipFile);
-            LOG.info("Extracted metadata, isbn is {}, title is {}", metadata.getIsbn(), metadata.getTitle());
-
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);

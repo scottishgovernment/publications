@@ -33,7 +33,7 @@ public class RequestLogger implements ContainerRequestFilter, ContainerResponseF
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String user = requestContext.getHeaderString("X-User");
-        MDC.put("user", user);
+        MDC.put("username", user);
         StopWatch stopwatch = new StopWatch();
         requestContext.setProperty("stopwatch", stopwatch);
         stopwatch.start();

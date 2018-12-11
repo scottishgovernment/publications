@@ -28,7 +28,7 @@ import java.util.zip.ZipFile;
  */
 public class PublicationUploader  {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PublicationsResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationUploader.class);
 
     @Inject
     PublicationsConfiguration configuration;
@@ -49,7 +49,9 @@ public class PublicationUploader  {
     public void importPublication(Publication publication) {
         File downloadedFile = null;
         MDC.put("publicationID", publication.getId());
-        LOG.info("Importing publication");
+        MDC.put("username", publication.getUsername());
+
+        LOG.info("Importing publication \"{}\"", publication.getTitle());
 
         try {
             // mark it as processing
@@ -85,6 +87,7 @@ public class PublicationUploader  {
 
         try {
             repository.update(publication);
+            LOG.info("Finished importing publication \"{}\"", publication.getTitle());
         } catch (PublicationRepositoryException e) {
             LOG.error("Failed to save publication status", e);
         } finally {

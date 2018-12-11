@@ -1,5 +1,6 @@
 INSERT INTO publication (
   id,
+  username,
   title,
   isbn,
   embargodate,
@@ -8,4 +9,4 @@ INSERT INTO publication (
   checksum,
   createddate,
   lastmodifieddate)
-  values(?, ?, ?, ?, ?, ?, ?, ?, ?)
+  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

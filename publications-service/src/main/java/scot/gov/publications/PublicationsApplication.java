@@ -3,6 +3,7 @@ package scot.gov.publications;
 import scot.gov.publications.rest.HealthCheckResource;
 import scot.gov.publications.rest.MaintenanceResource;
 import scot.gov.publications.rest.PublicationsResource;
+import scot.gov.publications.rest.RequestLogger;
 import scot.gov.publications.rest.TopLevelExceptionHandler;
 
 import javax.inject.Inject;
@@ -26,6 +27,9 @@ public class PublicationsApplication extends Application {
     @Inject
     TopLevelExceptionHandler topLevelExceptionHandler;
 
+    @Inject
+    RequestLogger requestLogger;
+
     @Override
     public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<>();
@@ -33,7 +37,8 @@ public class PublicationsApplication extends Application {
                 publicationsResource,
                 maintainanceResource,
                 healthCheckResource,
-                topLevelExceptionHandler);
+                topLevelExceptionHandler,
+                requestLogger);
         return singletons;
     }
 }

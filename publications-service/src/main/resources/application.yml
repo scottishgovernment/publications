@@ -2,7 +2,7 @@ port: 9111
 
 hippo:
   url: rmi://localhost:1099/hipporepository
-  user:
+  username:
   password:
 
 datasource:
