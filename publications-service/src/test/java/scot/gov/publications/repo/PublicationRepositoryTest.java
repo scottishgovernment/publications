@@ -13,7 +13,9 @@ import org.mockito.Mockito;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Clock;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -30,14 +32,15 @@ public class PublicationRepositoryTest {
 
     PublicationRepository sut;
 
+    Instant instant;
+
     @Before
     public void setup() {
         sut = new PublicationRepository();
         JdbcConnectionPool connectionPool = JdbcConnectionPool.create("jdbc:h2:mem:testing", "user", "password");
         Flyway.configure().dataSource(connectionPool).load().migrate();
         sut.queryRunner = new QueryRunner(connectionPool);
-        sut.timestampSource = mock(TimestampSource.class);
-        when(sut.timestampSource.now()).thenReturn(new Timestamp(1), new Timestamp(2), new Timestamp(3), new Timestamp(4), new Timestamp(5));
+        sut.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
     }
 
     @After
@@ -62,8 +65,8 @@ public class PublicationRepositoryTest {
         assertEquals(in.getEmbargodate(), out.getEmbargodate());
         assertEquals(in.getStatedetails(), out.getStatedetails());
         assertEquals(in.getChecksum(), out.getChecksum());
-        assertEquals(out.getCreateddate(), new Timestamp(1));
-        assertEquals(out.getLastmodifieddate(), new Timestamp(1));
+        assertEquals(out.getCreateddate(), Timestamp.from(sut.clock.instant()));
+        assertEquals(out.getLastmodifieddate(), Timestamp.from(sut.clock.instant()));
     }
 
     @Test(expected = PublicationRepositoryException.class)

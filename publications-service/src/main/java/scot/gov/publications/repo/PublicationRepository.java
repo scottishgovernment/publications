@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.inject.Inject;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Clock;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +26,7 @@ public class PublicationRepository {
     QueryRunner queryRunner;
 
     @Inject
-    TimestampSource timestampSource;
+    Clock clock;
 
     QueryLoader queryLoader = new QueryLoader();
 
@@ -65,7 +66,7 @@ public class PublicationRepository {
      * @throws PublicationRepositoryException if the update the publication.
      */
     public void update(Publication publication) throws PublicationRepositoryException {
-        publication.setLastmodifieddate(timestampSource.now());
+        publication.setLastmodifieddate(Timestamp.from(clock.instant()));
         try {
             Object[] args = updateQueryArgs(publication);
             queryRunner.update(updateSQL, args);
@@ -162,7 +163,7 @@ public class PublicationRepository {
     }
 
     private Object[] insertQueryArgs(Publication publication) {
-        Timestamp now = timestampSource.now();
+        Timestamp now = Timestamp.from(clock.instant());
         return new Object[] {
                 publication.getId(),
                 publication.getUsername(),
@@ -178,7 +179,7 @@ public class PublicationRepository {
     }
 
     private Object[] updateQueryArgs(Publication publication) {
-        Timestamp now = timestampSource.now();
+        Timestamp now = Timestamp.from(clock.instant());
         return new Object[] {
                 publication.getUsername(),
                 publication.getTitle(),

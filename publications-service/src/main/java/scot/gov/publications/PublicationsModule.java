@@ -24,6 +24,7 @@ import scot.mygov.config.Configuration;
 
 import javax.inject.Singleton;
 import javax.sql.DataSource;
+import java.time.Clock;
 
 @Module(injects = Publications.class)
 class PublicationsModule {
@@ -63,8 +64,8 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    public PublicationStorage publicationStorage(S3PublicationStorage s3Storage) {
-        return s3Storage;
+    public Clock clock() {
+        return Clock.systemDefaultZone();
     }
 
     @Provides
