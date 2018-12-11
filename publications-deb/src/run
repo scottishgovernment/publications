@@ -1,8 +1,9 @@
 #!/bin/sh
+JAVA=${JAVA_HOME:-/usr}/bin/java
 . /etc/profile
 set -eu
 
-exec ${JAVA_HOME:-/usr}/bin/java \
+exec ${JAVA} \
   -Dlogback.configurationFile=/opt/publications/logback.xml \
   -XX:+UseParallelGC \
   -XX:GCTimeRatio=10 \
