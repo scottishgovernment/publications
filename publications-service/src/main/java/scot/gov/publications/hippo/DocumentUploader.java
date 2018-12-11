@@ -103,7 +103,7 @@ public class DocumentUploader {
                 slug,
                 title,
                 "govscot:DocumentInformation",
-                metadata.getPublicationDate());
+                metadata.getPublicationDateWithTimezone());
         documentInfoNode.setProperty(GOVSCOT_TITLE, title);
         documentInfoNode.setProperty("govscot:accessible", false);
         documentInfoNode.setProperty("govscot:highlighted", false);

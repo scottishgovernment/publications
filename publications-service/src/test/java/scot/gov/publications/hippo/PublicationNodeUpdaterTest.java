@@ -10,6 +10,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static org.mockito.Mockito.*;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
@@ -139,6 +140,7 @@ public class PublicationNodeUpdaterTest {
         metadata.setIsbn("isbn");
         metadata.setTitle("title");
         metadata.setPublicationDate(LocalDateTime.now());
+        metadata.setPublicationDateWithTimezone(ZonedDateTime.now());
         metadata.setUrl("https://www2.gov.scot/url");
         metadata.setAlternateUrl("https://www2.gov.scot/alternateurl");
         metadata.setExecutiveSummary("executive summary");

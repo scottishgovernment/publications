@@ -6,6 +6,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.ZonedDateTime;
+import java.util.TimeZone;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -18,6 +20,7 @@ public class MetadataParser {
         try {
             Metadata metadata = doParse(in);
             assertRequiredFields(metadata);
+            calculateZonedPublicationDatetime(metadata);
             return metadata;
         } catch (IOException e) {
             throw new MetadataParserException("Failed to parse metadata", e);
@@ -53,5 +56,13 @@ public class MetadataParser {
         if (metadata.getPublicationDate() == null) {
             throw new MetadataParserException("Missing required field: publicationDate");
         }
+    }
+
+    private void calculateZonedPublicationDatetime(Metadata metadata) {
+        // the publication date contained in the metadata is specified without a timezone.
+        // To ensure it is published at the right time we convert this to the right timezone.
+        TimeZone timezone = TimeZone.getTimeZone("Europe/London");
+        ZonedDateTime zonedDateTime = metadata.getPublicationDate().atZone(timezone.toZoneId());
+        metadata.setPublicationDateWithTimezone(zonedDateTime);
     }
 }

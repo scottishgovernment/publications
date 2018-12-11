@@ -72,7 +72,8 @@ public class PublicationNodeUpdater {
             node.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.getPublicationType()));
             node.setProperty("govscot:isbn", metadata.normalisedIsbn());
             populateUrls(node, metadata);
-            node.setProperty("govscot:publicationDate", toCalendar(metadata.getPublicationDate()));
+            node.setProperty("govscot:publicationDate",
+                    GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
 
             Node handle = node.getParent();
             // return the folder
@@ -109,7 +110,7 @@ public class PublicationNodeUpdater {
                     "index",
                     metadata.getTitle(),
                     "govscot:Publication",
-                    metadata.getPublicationDate());
+                    metadata.getPublicationDateWithTimezone());
         }
         return pubNode;
     }

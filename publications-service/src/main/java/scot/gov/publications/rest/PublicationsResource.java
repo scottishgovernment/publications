@@ -35,8 +35,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneOffset;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -189,8 +187,7 @@ public class PublicationsResource {
         publication.setIsbn(metadata.getIsbn());
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());
-        Instant publishInstant = metadata.getPublicationDate().toInstant(ZoneOffset.UTC);
-        publication.setEmbargodate(Timestamp.from(publishInstant));
+        publication.setEmbargodate(Timestamp.from(metadata.getPublicationDateWithTimezone().toInstant()));
         try {
             publication.setChecksum(fileUtil.hash(zip));
         } catch (IOException e) {

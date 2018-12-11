@@ -6,6 +6,7 @@ import scot.gov.publications.PublicationsConfiguration;
 import javax.jcr.*;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -25,7 +26,7 @@ public class HippoNodeFactoryTest {
         when(sut.hippoUtils.createNode(handle, "slug", "type", DOCUMENT_MIXINS)).thenReturn(node);
 
         // ACT
-        sut.newDocumentNode(handle, "slug", "title", "type", LocalDateTime.now().minusDays(1));
+        sut.newDocumentNode(handle, "slug", "title", "type", ZonedDateTime.now().minusDays(1));
 
         // ASSERT
         verify(node).setProperty("hippostd:state", "published");
@@ -47,7 +48,7 @@ public class HippoNodeFactoryTest {
         when(triggers.addNode("default", "hipposched:simpletrigger")).thenReturn(defaultNode);
 
         // ACT
-        sut.newDocumentNode(handle, "slug", "title", "type", LocalDateTime.now().plusDays(1));
+        sut.newDocumentNode(handle, "slug", "title", "type", ZonedDateTime.now().plusDays(1));
 
         // ASSERT
         verify(node).setProperty("hippostd:state", "unpublished");

@@ -8,8 +8,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.UUID;
@@ -43,7 +42,7 @@ public class HippoNodeFactory {
             String slug,
             String title,
             String type,
-            LocalDateTime publishDateTime) throws RepositoryException {
+            ZonedDateTime publishDateTime) throws RepositoryException {
 
         Node node = hippoUtils.createNode(handle, slug, type, DOCUMENT_MIXINS);
         node.setProperty("hippo:name", Sanitiser.sanitise(title));
@@ -56,7 +55,7 @@ public class HippoNodeFactory {
         node.setProperty("hippostdpubwf:lastModificationDate", now);
 
         // if the publish date of this item is in the future then create a request to publish it.
-        if (publishDateTime.isBefore(LocalDateTime.now())) {
+        if (publishDateTime.isBefore(ZonedDateTime.now())) {
             node.setProperty("hippo:availability", new String[]{"live", "preview"});
             node.setProperty("hippostd:state", "published");
             node.setProperty("hippostd:stateSummary", "live");
@@ -68,7 +67,7 @@ public class HippoNodeFactory {
         return node;
     }
 
-    public void addWorkflowJob(Node handle, LocalDateTime publishDateTime) throws RepositoryException {
+    public void addWorkflowJob(Node handle, ZonedDateTime publishDateTime) throws RepositoryException {
         Node job = handle.addNode("hippo:request", "hipposched:workflowjob");
         job.setProperty("hipposched:attributeNames", new String[] { "hipposched:subjectId", "hipposched:methodName"});
         job.setProperty("hipposched:attributeValues", new String[] { handle.getIdentifier(), "publish"});
@@ -78,7 +77,7 @@ public class HippoNodeFactory {
         Node defaultNode = triggers.addNode("default", "hipposched:simpletrigger");
         defaultNode.addMixin("mix:lockable");
         defaultNode.addMixin("mix:referenceable");
-        Calendar publishTime = GregorianCalendar.from(publishDateTime.atZone(ZoneId.systemDefault()));
+        Calendar publishTime = GregorianCalendar.from(publishDateTime);
         defaultNode.setProperty("hipposched:nextFireTime", publishTime);
         defaultNode.setProperty("hipposched:startTime", publishTime);
     }

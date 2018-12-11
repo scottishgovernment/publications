@@ -51,7 +51,7 @@ public class ApsZipImporter {
                     publicationFolder,
                     imgMap,
                     docMap,
-                    metadata.getPublicationDate());
+                    metadata.getPublicationDateWithTimezone());
             session.save();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +65,7 @@ public class PublicationPageUpdater {
             Node publicationFolder,
             Map<String, String> filenameToImageId,
             Map<String, Node> docnameToNode,
-            LocalDateTime publishDateTime) throws ApsZipImporterException {
+            ZonedDateTime publishDateTime) throws ApsZipImporterException {
 
         try {
             // map the names of all pages we have created
@@ -85,7 +86,7 @@ public class PublicationPageUpdater {
             ZipFile zipFile,
             Node publicationFolder,
             Map<String, String> filenameToImageId,
-            LocalDateTime publishDateTime)
+            ZonedDateTime publishDateTime)
                 throws IOException, RepositoryException, ApsZipImporterException {
 
         Node pages = ensurePagesNode(publicationFolder);
@@ -120,7 +121,7 @@ public class PublicationPageUpdater {
             String page,
             int index,
             Map<String, String> filenameToImageId,
-            LocalDateTime publishDateTime)
+            ZonedDateTime publishDateTime)
                 throws RepositoryException, ApsZipImporterException {
 
         Document htmlDoc = Jsoup.parse(page);

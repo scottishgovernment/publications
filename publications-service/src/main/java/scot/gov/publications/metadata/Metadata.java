@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Metadata {
@@ -15,6 +16,8 @@ public class Metadata {
     String title;
 
     LocalDateTime publicationDate;
+
+    ZonedDateTime publicationDateWithTimezone;
 
     String url;
 
@@ -68,6 +71,14 @@ public class Metadata {
 
     public void setPublicationDate(LocalDateTime publicationDate) {
         this.publicationDate = publicationDate;
+    }
+
+    public ZonedDateTime getPublicationDateWithTimezone() {
+        return publicationDateWithTimezone;
+    }
+
+    public void setPublicationDateWithTimezone(ZonedDateTime publicationDateWithTimezone) {
+        this.publicationDateWithTimezone = publicationDateWithTimezone;
     }
 
     public String getUrl() {
