@@ -63,7 +63,7 @@ public class DocumentUploader {
             ZipFile zipFile,
             Node pubFolder,
             Manifest manifest,
-            Metadata metadata) throws RepositoryException, IOException {
+            Metadata metadata) throws RepositoryException, IOException, ApsZipImporterException {
 
         LOG.info("Uploading {} documents to {}", manifest.getEntries().size(), pubFolder.getPath());
 
@@ -92,9 +92,14 @@ public class DocumentUploader {
             ManifestEntry manifestEntry,
             Node documentsFolder,
             SortedMap<String, String> existingDocumentTitles,
-            Metadata metadata) throws RepositoryException, IOException {
+            Metadata metadata) throws RepositoryException, IOException, ApsZipImporterException {
 
         ZipEntry zipEntry = manifest.findZipEntry(zipFile, manifestEntry);
+
+        if (zipEntry == null) {
+            throw new ApsZipImporterException(
+                    "Manifest specifies document not present in zip: " + manifestEntry.getFilename());
+        }
         String title = getTitle(manifestEntry, existingDocumentTitles);
         String slug = hippoPaths.slugify(title);
         Node handle = nodeFactory.newHandle(title, documentsFolder, slug);

@@ -33,7 +33,7 @@ public class ApsZipImporter {
 
     MetadataExtractor metadataExtractor = new MetadataExtractor();
 
-    public void importApsZip(ZipFile zipFile) throws ApsZipImporterException {
+    public String importApsZip(ZipFile zipFile) throws ApsZipImporterException {
         Session session = newJCRSession();
         PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
         PublicationPageUpdater publicationPageUpdater = new PublicationPageUpdater(session, configuration);
@@ -53,6 +53,7 @@ public class ApsZipImporter {
                     docMap,
                     metadata.getPublicationDateWithTimezone());
             session.save();
+            return publicationFolder.getPath();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
         } finally {
