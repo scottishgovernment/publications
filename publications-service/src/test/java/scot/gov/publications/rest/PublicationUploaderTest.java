@@ -122,7 +122,7 @@ public class PublicationUploaderTest {
         when(sut.storage.get(any())).thenReturn(PublicationUploaderTest.class.getResourceAsStream("/nestedzip.zip"));
         sut.repository = mock(PublicationRepository.class);
         sut.apsZipImporter = mock(ApsZipImporter.class);
-        doThrow(new ApsZipImporterException("")).when(sut.apsZipImporter).importApsZip(any());
+        doThrow(new ApsZipImporterException("error message")).when(sut.apsZipImporter).importApsZip(any());
         Publication publication = new Publication();
         publication.setId("id");
 
@@ -134,7 +134,7 @@ public class PublicationUploaderTest {
                 .update(
                         argThat(
                                 pub -> pub.getState().equals(State.FAILED.name()) &&
-                                        pub.getStatedetails().equals("Failed to import contents of zip")
+                                        pub.getStatedetails().equals("error message")
                         ));
     }
 }

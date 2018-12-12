@@ -54,7 +54,7 @@ public class PublicationUploader  {
         LOG.info("Importing publication \"{}\"", publication.getTitle());
 
         try {
-            // mark it as processing
+            // mark it as processingq
             publication.setState(State.PROCESSING.name());
             repository.update(publication);
 
@@ -65,10 +65,11 @@ public class PublicationUploader  {
             ZipFile zipFile = new ZipFile(extractedZip);
 
             // try to import it
-            apsZipImporter.importApsZip(zipFile);
+            String path = apsZipImporter.importApsZip(zipFile);
 
             // save it as done
             publication.setState(State.DONE.name());
+            publication.setStatedetails(path);
         } catch (IOException e) {
             LOG.error("Failed to save publication as a temp file", e);
             populateErrorInformation(publication, "Failed to save publication as a temp file");
@@ -76,10 +77,13 @@ public class PublicationUploader  {
             LOG.error("Failed to get publication from s3", e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
-            LOG.error("Failed to save publication to database", e);
             populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
-            LOG.error("Failed to import contents of zip", e);
+            LOG.error("{} Failed to import contents of zip", publication.getId(), e);
+            populateErrorInformation(publication, e.getMessage());
+        } catch (RuntimeException e) {
+            // ensure that we mark the publicaiton as failed if we get an unchecked exception
+            LOG.error("{} Failed to import contents of zip", publication.getId(), e);
             populateErrorInformation(publication, "Failed to import contents of zip");
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
