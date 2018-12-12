@@ -96,8 +96,8 @@ public class PublicationRepository {
      *
      * @param page the page number to fetch
      * @param size the size of the page
-     * @param queryTerm Optional search term.  This will perform a case insensitive partial match against the title
-     *                  and isbn columns.
+     * @param queryTerm Optional search term.  This will perform a case insensitive partial match against the
+     *                  title, filename and isbn columns.
      * @return Collection of matching publications
      * @throws PublicationRepositoryException if it fails to list publications
      */
@@ -119,9 +119,11 @@ public class PublicationRepository {
                     !hasQuery,
                     queryExpression,
                     queryExpression,
+                    queryExpression,
                     size,
                     (page - 1) * size,
                     !hasQuery,
+                    queryExpression,
                     queryExpression,
                     queryExpression);
             int totalsize = publications.isEmpty() ? 0 : publications.get(0).getFullcount();
@@ -169,6 +171,7 @@ public class PublicationRepository {
                 publication.getUsername(),
                 publication.getTitle(),
                 publication.getIsbn(),
+                publication.getFilename(),
                 publication.getEmbargodate(),
                 publication.getState(),
                 publication.getStatedetails(),
@@ -184,6 +187,7 @@ public class PublicationRepository {
                 publication.getUsername(),
                 publication.getTitle(),
                 publication.getIsbn(),
+                publication.getFilename(),
                 publication.getEmbargodate(),
                 publication.getState(),
                 publication.getStatedetails(),

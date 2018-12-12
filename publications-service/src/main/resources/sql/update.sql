@@ -2,6 +2,7 @@ UPDATE publication SET
   title = ?,
   username = ?,
   isbn = ?,
+  filename = ?,
   embargodate = ?,
   state = ?,
   statedetails = ?,

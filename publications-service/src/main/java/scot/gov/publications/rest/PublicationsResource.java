@@ -1,6 +1,7 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -129,6 +130,9 @@ public class PublicationsResource {
         File zipFile = null;
         File extractedZipFile = null;
         try {
+            // assert that the upload contains data and a filename
+            assertRequiredFields(fileUpload);
+
             // save the zip file to disk
             zipFile = fileUtil.createTempFile("zipUpload", "zip", new ByteArrayInputStream(fileUpload.getFileData()));
 
@@ -145,7 +149,7 @@ public class PublicationsResource {
         Publication publication = null;
         try {
             // get the publication details from the zip
-            publication = newPublication(zipFile, extractedZipFile, username);
+            publication = newPublication(zipFile, extractedZipFile, username, fileUpload.getFilename());
 
             // upload the file to s3
             storage.save(publication, zipFile);
@@ -175,16 +179,33 @@ public class PublicationsResource {
         }
     }
 
+    private void assertRequiredFields(UploadRequest request) {
+        if (request.getFileData() == null) {
+            throw new IllegalArgumentException("Upload contains no file");
+        }
+
+        if (StringUtils.isBlank(request.getFilename())) {
+            throw new IllegalArgumentException("Upload contains no filename");
+        }
+    }
+
     private void importPublication(Publication publication) {
         executor.submit(() -> publicationUploader.importPublication(publication));
     }
 
-    private Publication newPublication(File zip, File extractedZip, String username) throws ApsZipImporterException {
+    private Publication newPublication(
+            File zip,
+            File extractedZip,
+            String username,
+            String filename)
+                throws ApsZipImporterException {
+
         Metadata metadata = metadataExtractor.extract(extractedZip);
         Publication publication = new Publication();
         publication.setId(UUID.randomUUID().toString());
         publication.setUsername(username);
         publication.setIsbn(metadata.getIsbn());
+        publication.setFilename(filename);
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());
         publication.setEmbargodate(Timestamp.from(metadata.getPublicationDateWithTimezone().toInstant()));

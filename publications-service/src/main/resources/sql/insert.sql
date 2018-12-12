@@ -3,10 +3,11 @@ INSERT INTO publication (
   username,
   title,
   isbn,
+  filename,
   embargodate,
   state,
   statedetails,
   checksum,
   createddate,
   lastmodifieddate)
-  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

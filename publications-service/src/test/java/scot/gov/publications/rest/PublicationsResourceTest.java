@@ -132,6 +132,48 @@ public class PublicationsResourceTest {
     }
 
     @Test
+    public void postFormData400IfNoFile() throws Exception {
+
+        // ARRANGE
+        PublicationsResource sut = new PublicationsResource();
+        sut.storage = mock(PublicationStorage.class);
+        sut.repository = mock(PublicationRepository.class);
+        sut.executor = mock(ExecutorService.class);
+
+        UploadRequest uploadRequest = new UploadRequest();
+        uploadRequest.setFilename("filename");
+
+        // ACT
+        Response actual = sut.postFormData(uploadRequest, "username");
+
+        // ASSERT
+        assertEquals(400, actual.getStatus());
+        verify(sut.repository, never()).create(any());
+        verify(sut.storage, never()).save(any(), any());
+    }
+
+    @Test
+    public void postFormData400IfNoFilename() throws Exception {
+
+        // ARRANGE
+        PublicationsResource sut = new PublicationsResource();
+        sut.storage = mock(PublicationStorage.class);
+        sut.repository = mock(PublicationRepository.class);
+        sut.executor = mock(ExecutorService.class);
+
+        UploadRequest uploadRequest = upLoadRequest("/nestedzip.zip");
+        uploadRequest.setFilename(null);
+
+        // ACT
+        Response actual = sut.postFormData(uploadRequest, "username");
+
+        // ASSERT
+        assertEquals(400, actual.getStatus());
+        verify(sut.repository, never()).create(any());
+        verify(sut.storage, never()).save(any(), any());
+    }
+
+    @Test
     public void postFormData400NonNestedZip() throws Exception {
 
         // ARRANGE
@@ -237,6 +279,8 @@ public class PublicationsResourceTest {
         byte[] bytes = IOUtils.toByteArray(in);
         UploadRequest request = new UploadRequest();
         request.setFileData(bytes);
+        request.setFilename("filename");
+
         return request;
     }
 

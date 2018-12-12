@@ -6,7 +6,18 @@ import javax.ws.rs.FormParam;
 
 public class UploadRequest {
 
+    private String filename;
+
     private byte[] fileData;
+
+    public String getFilename() {
+        return filename;
+    }
+
+    @FormParam("filename")
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
     public byte[] getFileData() {
         return fileData;

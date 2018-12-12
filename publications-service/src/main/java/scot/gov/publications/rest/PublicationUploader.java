@@ -50,6 +50,7 @@ public class PublicationUploader  {
         File downloadedFile = null;
         MDC.put("publicationID", publication.getId());
         MDC.put("username", publication.getUsername());
+        MDC.put("filename", publication.getFilename());
 
         LOG.info("Importing publication \"{}\"", publication.getTitle());
 
@@ -80,7 +81,7 @@ public class PublicationUploader  {
             LOG.error("Failed to save publication to database", e);
             populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
-            LOG.error("{} Failed to import contents of zip", publication.getId(), e);
+            LOG.error("{} Failed to import contents of zip: {}", publication.getId(), e.getMessage(), e);
             populateErrorInformation(publication, e.getMessage());
         } catch (RuntimeException e) {
             // ensure that we mark the publicaiton as failed if we get an unchecked exception
@@ -97,6 +98,7 @@ public class PublicationUploader  {
         } finally {
             MDC.remove("publicationID");
             MDC.remove("username");
+            MDC.remove("filename");
         }
     }
 

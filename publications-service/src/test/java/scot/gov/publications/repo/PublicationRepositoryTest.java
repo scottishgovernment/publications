@@ -268,6 +268,7 @@ public class PublicationRepositoryTest {
         Publication publication = new Publication();
         publication.setId(UUID.randomUUID().toString());
         publication.setUsername("username");
+        publication.setFilename("filename");
         publication.setTitle(prefix + "title");
         publication.setIsbn(prefix + "isbn");
         publication.setState(State.PENDING.name());

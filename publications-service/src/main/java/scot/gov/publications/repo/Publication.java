@@ -10,6 +10,8 @@ public class Publication {
 
     private String username;
 
+    private String filename;
+
     private String title;
 
     private String isbn;
@@ -43,6 +45,14 @@ public class Publication {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getTitle() {

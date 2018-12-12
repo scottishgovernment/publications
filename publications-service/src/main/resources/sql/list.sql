@@ -2,6 +2,7 @@ SELECT * FROM
   (SELECT * FROM publication WHERE
     ? OR
     LOWER(isbn) LIKE ? OR
+    LOWER(filename) LIKE ? OR
     LOWER(title) LIKE ?
     ORDER BY lastmodifieddate DESC LIMIT ? OFFSET ?
   ) AS s1
@@ -9,5 +10,6 @@ SELECT * FROM
   (SELECT count(*) as fullcount FROM publication WHERE
     ?
     OR LOWER(isbn) LIKE ?
+    OR LOWER(filename) LIKE ?
     OR LOWER(title) LIKE ?) AS s2
   ON true
