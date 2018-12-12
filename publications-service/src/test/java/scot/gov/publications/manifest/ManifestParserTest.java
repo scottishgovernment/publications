@@ -62,6 +62,23 @@ public class ManifestParserTest {
         assertEquals(actual.getEntries().get(0).getTitle(), "title contains a colon: and a subtitle");
     }
 
+    @Test
+    public void ignoresBlankLines() throws Exception {
+        // ARRANGE
+        ManifestParser sut = new ManifestParser();
+        InputStream in = new ByteArrayInputStream("filename.pdf : title\n\nfilename2.pdf: title2".getBytes());
+
+        // ACT
+        Manifest actual = sut.parse(in);
+
+        //ASSERT
+        assertEquals(actual.getEntries().size(), 2);
+        assertEquals(actual.getEntries().get(0).getFilename(), "filename.pdf");
+        assertEquals(actual.getEntries().get(0).getTitle(), "title");
+        assertEquals(actual.getEntries().get(1).getFilename(), "filename2.pdf");
+        assertEquals(actual.getEntries().get(1).getTitle(), "title2");
+    }
+
     @Test(expected = ManifestParserException.class)
     public void exceptionThrownIfInputStreamIsNull() throws Exception {
         // ARRANGE

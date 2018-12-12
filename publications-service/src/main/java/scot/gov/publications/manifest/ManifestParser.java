@@ -37,7 +37,9 @@ public class ManifestParser {
         String line;
         Manifest manifest = new Manifest();
         while ((line = reader.readLine()) != null) {
-            manifest.getEntries().add(entry(line));
+            if (StringUtils.isNotBlank(line)) {
+                manifest.getEntries().add(entry(line));
+            }
         }
         return manifest;
     }
