@@ -47,7 +47,10 @@ public class ApsZipImporter {
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);
             Metadata metadata = metadataExtractor.extract(zipFile);
-            LOG.info("Extracted metadata, isbn is {}, title is {}", metadata.getIsbn(), metadata.getTitle());
+            LOG.info("Extracted metadata, isbn is {}, title is {}, publication date is {}",
+                    metadata.getIsbn(),
+                    metadata.getTitle(),
+                    metadata.getPublicationDateWithTimezone());
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
