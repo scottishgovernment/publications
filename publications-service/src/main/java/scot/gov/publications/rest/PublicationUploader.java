@@ -77,6 +77,7 @@ public class PublicationUploader  {
             LOG.error("Failed to get publication from s3", e);
             populateErrorInformation(publication, "Failed to get publication from s3");
         } catch(PublicationRepositoryException e) {
+            LOG.error("Failed to save publication to database", e);
             populateErrorInformation(publication, "Failed to save publication to database");
         } catch (ApsZipImporterException e) {
             LOG.error("{} Failed to import contents of zip", publication.getId(), e);
