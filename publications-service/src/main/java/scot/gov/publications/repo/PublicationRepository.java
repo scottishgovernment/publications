@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -96,42 +97,62 @@ public class PublicationRepository {
      *
      * @param page the page number to fetch
      * @param size the size of the page
-     * @param queryTerm Optional search term.  This will perform a case insensitive partial match against the
-     *                  title, filename and isbn columns.
+     * @param title title to match (partial case insensitive
+     * @param isbn isbn to match (partial case insensitive
+     * @param filename filename to match (partial case insensitive
      * @return Collection of matching publications
      * @throws PublicationRepositoryException if it fails to list publications
      */
-    public ListResult list(int page, int size, String queryTerm) throws PublicationRepositoryException {
+    public ListResult list(int page, int size, String title, String isbn, String filename)
+            throws PublicationRepositoryException {
         BeanListHandler<Publication> handler = new BeanListHandler<>(Publication.class);
         try {
 
             List<Publication> publications;
 
-            // Performs a paged query. If there is a query string we use a LIKE with a towlwere to get a case
-            // insensitive partial match.  If there is no query string then it is or'd with true to return all
-            // results.
-            //
-            // The join is in order to get the total number fo results to support paging.
-            boolean hasQuery = StringUtils.isNotBlank(queryTerm);
-            String queryExpression = hasQuery ? String.format("%%%s%%", queryTerm) : "";
-            publications = queryRunner.query(listSQL,
-                    handler,
-                    !hasQuery,
-                    queryExpression,
-                    queryExpression,
-                    queryExpression,
-                    size,
-                    (page - 1) * size,
-                    !hasQuery,
-                    queryExpression,
-                    queryExpression,
-                    queryExpression);
+            // Performs a paged query with optional search parameters
+            List<Object> whereArgs = new ArrayList<>();
+            StringBuilder whereClause = new StringBuilder();
+            if (StringUtils.isNotBlank(title)) {
+                whereClause.append("LOWER(title) LIKE ? AND ");
+                whereArgs.add(like(title));
+            }
+
+            if (StringUtils.isNotBlank(isbn)) {
+                whereClause.append("LOWER(isbn) LIKE ? AND ");
+                whereArgs.add(like(isbn));
+            }
+
+            if (StringUtils.isNotBlank(filename)) {
+                whereClause.append("LOWER(filename) LIKE ? AND ");
+                whereArgs.add(like(filename));
+            }
+
+            // any clauses are nded with true - this is just a trick to make the query the same even
+            // if no clauses were specified
+            whereClause.append("true");
+
+            // we specify the search params twice soince the same ones are used in both sides of the join
+            List<Object> args = new ArrayList<>();
+            args.addAll(whereArgs);
+            args.add(size);
+            args.add((page - 1) * size);
+            args.addAll(whereArgs);
+
+            String sql = listSQL.replaceAll("<WHERECLAUSE>", whereClause.toString());
+            publications = queryRunner.query(sql, handler, args.toArray());
             int totalsize = publications.isEmpty() ? 0 : publications.get(0).getFullcount();
             return ListResult.result(publications, totalsize, page, size);
-
         } catch (SQLException e) {
             throw new PublicationRepositoryException("Failed to list publications", e);
         }
+    }
+
+    /**
+     * Wrap a term in % to perform a partial match
+     */
+    private String like(String term) {
+        return String.format("%%%s%%", term.toLowerCase());
     }
 
     /**

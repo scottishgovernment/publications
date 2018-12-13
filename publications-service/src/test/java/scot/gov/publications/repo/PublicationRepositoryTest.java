@@ -32,8 +32,6 @@ public class PublicationRepositoryTest {
 
     PublicationRepository sut;
 
-    Instant instant;
-
     @Before
     public void setup() {
         sut = new PublicationRepository();
@@ -139,7 +137,7 @@ public class PublicationRepositoryTest {
         createPublications(50, "one");
 
         // ACT
-        ListResult actual = sut.list(1, 10, "");
+        ListResult actual = sut.list(1, 10, "", "", "");
 
         // ASSERT
         assertEquals(actual.getPage(), 1);
@@ -148,7 +146,7 @@ public class PublicationRepositoryTest {
     }
 
     @Test
-    public void listReturnsRightEntriesForPageWithFilter() throws Exception {
+    public void listReturnsRightEntriesForPageWithTitleFilter() throws Exception {
         // ARRANGE
         for (int i = 0; i < 50; i++) {
             sut.create(examplePublication("one"));
@@ -158,7 +156,50 @@ public class PublicationRepositoryTest {
         }
 
         // ACT
-        ListResult actual = sut.list(1, 10, "one");
+        ListResult actual = sut.list(1, 10, "one", "", "");
+
+        // ASSERT
+        assertEquals(actual.getPage(), 1);
+        assertEquals(actual.getPageSize(), 10);
+        assertEquals(actual.getTotalSize(), 50);
+    }
+
+    @Test
+    public void listReturnsRightEntriesForPageWithIsbnFilter() throws Exception {
+        // ARRANGE
+        for (int i = 0; i < 50; i++) {
+            Publication p = examplePublication("title");
+            p.setIsbn("searchisbn");
+            sut.create(p);
+
+        }
+        for (int i = 0; i < 50; i++) {
+            sut.create(examplePublication("two"));
+        }
+
+        // ACT
+        ListResult actual = sut.list(1, 10, "", "searchisbn", "");
+
+        // ASSERT
+        assertEquals(actual.getPage(), 1);
+        assertEquals(actual.getPageSize(), 10);
+        assertEquals(actual.getTotalSize(), 50);
+    }
+
+    @Test
+    public void listReturnsRightEntriesForPageWithFilenameFilter() throws Exception {
+        // ARRANGE
+        for (int i = 0; i < 50; i++) {
+            Publication p = examplePublication("one");
+            p.setFilename("filenamesearch");
+            sut.create(p);
+        }
+        for (int i = 0; i < 50; i++) {
+            sut.create(examplePublication("two"));
+        }
+
+        // ACT
+        ListResult actual = sut.list(1, 10, "", "", "filenamesearch");
 
         // ASSERT
         assertEquals(actual.getPage(), 1);
@@ -173,7 +214,7 @@ public class PublicationRepositoryTest {
         createPublications(50, "two");
 
         // ACT
-        ListResult actual = sut.list(1, 10, "three");
+        ListResult actual = sut.list(1, 10, "three", "", "");
 
         // ASSERT
         assertEquals(actual.getPage(), 1);
@@ -186,7 +227,7 @@ public class PublicationRepositoryTest {
         // ARRANGE
 
         // ACT
-        ListResult actual = sut.list(1, 10, "");
+        ListResult actual = sut.list(1, 10, "", "", "");
 
         // ASSERT
         assertEquals(actual.getPage(), 1);
@@ -227,7 +268,7 @@ public class PublicationRepositoryTest {
         createPublications(5, "one"); // these will all have the same checksum
 
         // change the checksum of one of the items
-        Publication one = sut.get(sut.list(0, 10, "").getPublications().get(0).getId());
+        Publication one = sut.get(sut.list(0, 10, "", "", "").getPublications().get(0).getId());
         one.setChecksum("changedchecksum");
         sut.update(one);
 

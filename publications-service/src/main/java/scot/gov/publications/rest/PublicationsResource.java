@@ -75,7 +75,9 @@ public class PublicationsResource {
      *
      * @param page the page to fetch, 1 based
      * @param size the number of items to fetch
-     * @param queryString optional query string used to filter by title or isbn
+     * @param title title to match
+     * @param isbn isbn to match
+     * @param isbn filename to match
      * @return A paged list of publications.
      */
     @GET
@@ -83,9 +85,11 @@ public class PublicationsResource {
     public Response list(
             @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("size") int size,
-            @DefaultValue("") @QueryParam("q") String queryString) {
+            @DefaultValue("") @QueryParam("title") String title,
+            @DefaultValue("") @QueryParam("isbn") String isbn,
+            @DefaultValue("") @QueryParam("filename") String filename) {
         try {
-            ListResult result = repository.list(page, size, queryString);
+            ListResult result = repository.list(page, size, title, isbn, filename);
             return Response.ok(result).build();
         } catch (PublicationRepositoryException e) {
             throw new WebApplicationException(e, Response.status(500).build());

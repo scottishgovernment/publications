@@ -38,13 +38,13 @@ public class PublicationsResourceTest {
         PublicationsResource sut = new PublicationsResource();
         sut.repository = mock(PublicationRepository.class);
         ListResult result = new ListResult();
-        when(sut.repository.list(1, 10, "queryString")).thenReturn(result);
+        when(sut.repository.list(1, 10, "queryString", "", "")).thenReturn(result);
 
         // ACT
-        Response actual = sut.list(1, 10, "queryString");
+        Response actual = sut.list(1, 10, "queryString", "", "");
 
         // ASSERT
-        verify(sut.repository).list(1, 10, "queryString");
+        verify(sut.repository).list(1, 10, "queryString", "", "");
         assertSame(actual.getEntity(), result);
     }
 
@@ -55,15 +55,14 @@ public class PublicationsResourceTest {
         PublicationsResource sut = new PublicationsResource();
         sut.repository = mock(PublicationRepository.class);
         ListResult result = new ListResult();
-        when(sut.repository.list(1, 10, "queryString"))
+        when(sut.repository.list(1, 10, "queryString", "", ""))
                 .thenThrow(new PublicationRepositoryException("arg", new RuntimeException("arg")));
 
         // ACT
-        Response actual = sut.list(1, 10, "queryString");
+        Response actual = sut.list(1, 10, "queryString", "", "");
 
         // ASSERT - see exception
     }
-
 
     @Test
     public void getReturnsResultFromRepo() throws Exception {
