@@ -1,6 +1,6 @@
 UPDATE publication SET 
-  title = ?,
   username = ?,
+  title = ?,
   isbn = ?,
   filename = ?,
   embargodate = ?,
