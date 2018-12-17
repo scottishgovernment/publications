@@ -34,7 +34,7 @@ public class PublicationNodeUpdater {
 
     TopicMappings topicMappings;
 
-    PublicationPathStrategy pathStrategy = new PublicationPathStrategy();
+    PublicationPathStrategy pathStrategy;
 
     HippoUtils hippoUtils = new HippoUtils();
 
@@ -43,6 +43,7 @@ public class PublicationNodeUpdater {
         this.hippoPaths = new HippoPaths(session);
         this.nodeFactory = new HippoNodeFactory(session, configuration);
         this.topicMappings = new TopicMappings(session);
+        this.pathStrategy = new PublicationPathStrategy(session);
     }
 
     /**
@@ -116,6 +117,8 @@ public class PublicationNodeUpdater {
     }
 
     private Node findPublishedNode(Metadata metadata) throws RepositoryException {
+        // Query to see if a publications with this ISBN already exist.  If it does then we will update the existing
+        // node rather than create a new one
         String sql = String.format(
                 "SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s' AND hippostd:state = 'published'",
                 metadata.getIsbn());
