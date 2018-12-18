@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.EqualityInfo;
 import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.repo.Publication;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -36,7 +37,7 @@ public class PublicationNodeUpdaterTest {
         Metadata input = metadata();
 
         // ACT
-        sut.createOrUpdatePublicationNode(input);
+        sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - should not have created any new document nodes
         Mockito.verify(sut.nodeFactory, never()).newDocumentNode(any(), any(), any(), any(), any());
@@ -61,7 +62,7 @@ public class PublicationNodeUpdaterTest {
         Metadata input = metadata();
 
         // ACT
-        sut.createOrUpdatePublicationNode(input);
+        sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - should have created new document node
         Mockito.verify(sut.nodeFactory).newDocumentNode(any(), any(), any(), any(), any());
@@ -82,7 +83,7 @@ public class PublicationNodeUpdaterTest {
         input.setUrl("");
 
         // ACT
-        sut.createOrUpdatePublicationNode(input);
+        sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - should not have created any new document nodes
         Mockito.verify(nodeWithISBN, never()).setProperty(eq(GOVSCOT_GOVSCOTURL), anyString());
@@ -108,7 +109,7 @@ public class PublicationNodeUpdaterTest {
         input.setUrl("INVALID URL");
 
         // ACT
-        sut.createOrUpdatePublicationNode(input);
+        sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - see expected exception
     }
@@ -132,7 +133,7 @@ public class PublicationNodeUpdaterTest {
         Metadata input = metadata();
 
         // ACT
-        sut.createOrUpdatePublicationNode(input);
+        sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - see expected exception
     }

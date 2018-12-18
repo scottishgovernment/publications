@@ -66,7 +66,7 @@ public class PublicationUploader  {
             ZipFile zipFile = new ZipFile(extractedZip);
 
             // try to import it
-            String path = apsZipImporter.importApsZip(zipFile);
+            String path = apsZipImporter.importApsZip(zipFile, publication);
 
             // save it as done
             publication.setState(State.DONE.name());

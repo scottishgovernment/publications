@@ -12,6 +12,7 @@ import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
+import scot.gov.publications.repo.Publication;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -37,7 +38,7 @@ public class ApsZipImporter {
 
     MetadataExtractor metadataExtractor = new MetadataExtractor();
 
-    public String importApsZip(ZipFile zipFile) throws ApsZipImporterException {
+    public String importApsZip(ZipFile zipFile, Publication publication) throws ApsZipImporterException {
         Session session = newJCRSession();
         PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
         PublicationPageUpdater publicationPageUpdater = new PublicationPageUpdater(session, configuration);
@@ -51,7 +52,7 @@ public class ApsZipImporter {
                     metadata.getIsbn(),
                     metadata.getTitle(),
                     metadata.getPublicationDateWithTimezone());
-            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata);
+            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
             publicationPageUpdater.addPages(

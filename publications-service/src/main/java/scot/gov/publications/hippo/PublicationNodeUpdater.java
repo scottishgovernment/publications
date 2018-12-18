@@ -4,6 +4,7 @@ import org.apache.commons.lang.StringUtils;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.repo.Publication;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -51,10 +52,12 @@ public class PublicationNodeUpdater {
      *
      * @return Node representing the folder the publiation is contained in.
      */
-    public Node createOrUpdatePublicationNode(Metadata metadata) throws ApsZipImporterException {
+    public Node createOrUpdatePublicationNode(Metadata metadata, Publication publication)
+            throws ApsZipImporterException {
 
         try {
             Node node = doCreateOrUpdate(metadata);
+            setPublicationAuditFields(node, publication);
             String title = Sanitiser.sanitise(metadata.getTitle());
             nodeFactory.addBasicFields(node, metadata.getTitle());
 
@@ -65,6 +68,7 @@ public class PublicationNodeUpdater {
             hippoUtils.setPropertyIfAbsent(node, "govscot:metaDescription", metadata.getDescription());
             hippoUtils.setPropertyIfAbsent(node, "govscot:notes", "");
             hippoUtils.addHtmlNodeIfAbsent(node, "govscot:content", metadata.getExecutiveSummary());
+
             // Contact seems to be missing this from the metadata ... have asked Jon to add, waiting on GDPR issue being resolved
             hippoUtils.setPropertyStringsIfAbsent(node, "hippostd:tags", Collections.emptyList());
             topicMappings.updateTopics(node, metadata.getTopic());
@@ -76,13 +80,23 @@ public class PublicationNodeUpdater {
             node.setProperty("govscot:publicationDate",
                     GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
 
-            Node handle = node.getParent();
             // return the folder
+            Node handle = node.getParent();
             return handle.getParent();
 
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to create or update publication node", e);
         }
+    }
+
+    /**
+     * Add preoprties from the Publications to allow us to connect the publication in the repo to the publications
+     * database.
+     */
+    private void setPublicationAuditFields(Node node, Publication publication) throws RepositoryException {
+        node.setProperty("govscot:publicaitonId", publication.getId());
+        node.setProperty("govscot:publicationFilename", publication.getFilename());
+        node.setProperty("govscot:publicationUsername", publication.getUsername());
     }
 
     private void populateUrls(Node node, Metadata metadata) throws RepositoryException, ApsZipImporterException {

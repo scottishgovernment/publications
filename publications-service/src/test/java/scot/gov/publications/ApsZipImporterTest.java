@@ -15,6 +15,7 @@ import scot.gov.publications.hippo.pages.PublicationPageUpdater;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
+import scot.gov.publications.repo.Publication;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -58,7 +59,7 @@ public class ApsZipImporterTest {
         // ARRANGE
 
         // ACT
-        sut.importApsZip(ZipFixtures.exampleZip());
+        sut.importApsZip(ZipFixtures.exampleZip(), new Publication());
 
         // ASSERT
         String expectedPath = "/content/documents/govscot/publications/publication/2018/09/social-security-scotland-digital-technology-strategy";
