@@ -4,6 +4,7 @@ import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.DocumentUploader;
+import scot.gov.publications.hippo.HippoUtils;
 import scot.gov.publications.hippo.ImageUploader;
 import scot.gov.publications.hippo.PublicationNodeUpdater;
 import scot.gov.publications.hippo.SessionFactory;
@@ -18,6 +19,8 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
@@ -33,6 +36,8 @@ public class ApsZipImporter {
 
     @Inject
     SessionFactory sessionFactory;
+
+    HippoUtils hippoUtils = new HippoUtils();
 
     ManifestExtractor manifestExtractor = new ManifestExtractor();
 
@@ -61,6 +66,7 @@ public class ApsZipImporter {
                     imgMap,
                     docMap,
                     metadata.getPublicationDateWithTimezone());
+            ensureFolderActions(publicationFolder);
             session.save();
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
@@ -68,6 +74,24 @@ public class ApsZipImporter {
         } finally {
             session.logout();
         }
+    }
+
+    private void ensureFolderActions(Node publicationFolder) throws RepositoryException {
+        // We might have created a new month or year folder ... ensure that they have the right actions
+        Node monthFolder = publicationFolder.getParent();
+        Node yearFolder = monthFolder.getParent();
+        hippoUtils.setPropertyStrings(
+                monthFolder,
+                "hippostd:foldertype",
+                actions("new-publication-folder", "new-complex-document-folder"));
+        hippoUtils.setPropertyStrings(
+                yearFolder,
+                "hippostd:foldertype",
+                actions("new-publication-month-folder"));
+    }
+
+    private Collection<String> actions(String ...actions) {
+        return Arrays.asList(actions);
     }
 
     private Session newJCRSession() throws ApsZipImporterException {
