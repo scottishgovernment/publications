@@ -70,7 +70,7 @@ public class DocumentUploader {
         List<String> path = hippoUtils.pathFromNode(pubFolder);
         path.add("documents");
         Node documentsFolder = hippoPaths.ensurePath(path);
-        documentsFolder.setProperty("hippostd:foldertype", new String[]{"new-publication-document-info", "new-publication-documents-folder"});
+        documentsFolder.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{"new-publication-document-info", "new-publication-documents-folder"});
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
         hippoUtils.removeChildren(documentsFolder);
         for (ManifestEntry manifestEntry : manifest.getEntries()) {

@@ -16,7 +16,9 @@ public final class Constants {
     public static final String HIPPOSTD_PUBLISHABLE = "hippostd:publishable";
     public static final String HIPPOSTD_PUBLISHABLESUMMARY = "hippostd:publishableSummary";
     public static final String HIPPOSTD_RELAXED = "hippostd:relaxed";
+    public static final String HIPPOSTD_FOLDERTYPE = "hippostd:foldertype";
     public static final String HIPPOSTDDPUBWF_DOCUMENT = "hippostdpubwf:document";
+
 
     public static final String MIX_REFERENCEABLE = "mix:referenceable";
     public static final String MIX_SIMPLE_VERSIONABLE = "mix:simpleVersionable";

@@ -24,6 +24,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
+
 /**
  * Imports zip files into Hippo.
  */
@@ -82,11 +84,11 @@ public class ApsZipImporter {
         Node yearFolder = monthFolder.getParent();
         hippoUtils.setPropertyStrings(
                 monthFolder,
-                "hippostd:foldertype",
+                HIPPOSTD_FOLDERTYPE,
                 actions("new-publication-folder", "new-complex-document-folder"));
         hippoUtils.setPropertyStrings(
                 yearFolder,
-                "hippostd:foldertype",
+                HIPPOSTD_FOLDERTYPE,
                 actions("new-publication-month-folder"));
     }
 

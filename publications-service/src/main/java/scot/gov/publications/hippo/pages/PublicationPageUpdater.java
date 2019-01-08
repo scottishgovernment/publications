@@ -37,6 +37,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_CONTENT;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
 
 public class PublicationPageUpdater {
 
@@ -90,6 +91,7 @@ public class PublicationPageUpdater {
                 throws IOException, RepositoryException, ApsZipImporterException {
 
         Node pages = ensurePagesNode(publicationFolder);
+        pages.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{"new-publication-page"});
         List<ZipEntry> htmlEntries = zipFile.stream().filter(ZipEntryUtil::isHtml).sorted(Comparator.comparing(ZipEntry::getName)).collect(toList());
 
         LOG.info("Adding {} pages", htmlEntries.size());
