@@ -7,7 +7,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-public class LinkRewriter {
+/**
+ * Used by PublicationLinkRewriter to convert href's in links to facet style links.
+ */
+class LinkRewriter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkRewriter.class);
 
@@ -15,7 +18,14 @@ public class LinkRewriter {
 
     public static final String CONTENT_ATTRIB  = "hippostd:content";
 
-    public void rewriteLink(Node pageNode, String from, Node to) throws RepositoryException {
+    /**
+     * Rewrite a link to a node to use a facet.
+     *
+     * @param pageNode The node for this page.
+     * @param from The href to be rewritten
+     * @param to The node to link to
+     */
+    void rewriteLink(Node pageNode, String from, Node to) throws RepositoryException {
         // determine of we already link to this
         Node contentNode = pageNode.getNode("govscot:content");
         Node facet = ensueFacetSelect(contentNode, to);

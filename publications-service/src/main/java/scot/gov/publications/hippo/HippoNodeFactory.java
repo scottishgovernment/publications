@@ -45,7 +45,7 @@ public class HippoNodeFactory {
             ZonedDateTime publishDateTime) throws RepositoryException {
 
         Node node = hippoUtils.createNode(handle, slug, type, DOCUMENT_MIXINS);
-        node.setProperty("hippo:name", Sanitiser.sanitise(title));
+        node.setProperty(HIPPO_NAME, Sanitiser.sanitise(title));
         node.setProperty("hippotranslation:locale", "en");
         node.setProperty("hippotranslation:id", UUID.randomUUID().toString());
         Calendar now = Calendar.getInstance();

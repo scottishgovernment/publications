@@ -14,6 +14,15 @@ import java.util.Map;
 import static java.util.stream.Collectors.toList;
 import static scot.gov.publications.hippo.rewriter.LinkRewriter.CONTENT_ATTRIB;
 
+/**
+ * Rewrite links in the content of a page node such that
+ * makes the link portable - if the linked to item is moved within hippo then the link will automatically update.
+ *
+ * Links that this rewrites look like this:
+ * <a href="SCT01188871401-00.pdf">pdf format</a>
+ *
+ * The map passed into this class contains a map of filenamed to the publicaiton nodes for those attachments.
+ */
 public class PublicationLinkRewriter {
 
     LinkRewriter linkRewriter = new LinkRewriter();

@@ -7,6 +7,9 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+/**
+ * Sanitize titles of nodes.
+ */
 public class Sanitiser {
 
     private static final Map<Character, Character> replacements;

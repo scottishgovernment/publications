@@ -39,6 +39,9 @@ import static scot.gov.publications.hippo.Constants.GOVSCOT_CONTENT;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
 
+/**
+ * Contains the logic used to ad page nodes from a zip file to a publicaiton folder.
+ */
 public class PublicationPageUpdater {
 
     private static final Logger LOG = LoggerFactory.getLogger(PublicationPageUpdater.class);
@@ -61,6 +64,17 @@ public class PublicationPageUpdater {
         this.hippoPaths = new HippoPaths(session);
     }
 
+    /**
+     * Ensure that the publication folder contains a pages folder containing a page node for each of the html pages
+     * contained in the zip file.
+     *
+     * @param zipFile The zip file containing the publicaiton
+     * @param publicationFolder Node of the folder containing the publication in the repo
+     * @param filenameToImageId Map image filenames to the node of tat image in the repo
+     * @param docnameToNode Map from the document name to the node of that document in the repo
+     * @param publishDateTime The embargo date to use when creating page nodes
+     * @throws ApsZipImporterException
+     */
     public void addPages(
             ZipFile zipFile,
             Node publicationFolder,
@@ -176,7 +190,7 @@ public class PublicationPageUpdater {
             List<String> imageLinks,
             Map<String, String> filenameToImageId) throws RepositoryException {
 
-        // create facets for each images we know about
+        // create facets for each of the images we know about
         Set<String> imageNames = imageLinks.stream()
                 .filter(filenameToImageId::containsKey)
                 .collect(toSet());

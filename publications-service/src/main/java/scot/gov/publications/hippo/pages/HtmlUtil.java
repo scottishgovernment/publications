@@ -12,10 +12,17 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
-public class HtmlUtil {
+/**
+ * Utility methods used to update publication pages.
+ */
+class HtmlUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(HtmlUtil.class);
 
+    /**
+     * Determine the title of a publication page.  If the page contains any h3 elements then the first one will be used
+     * as its title. Otherwise the index will be used to format a generic title e.g. "Page 1"
+     */
     String getTitle(Element div, int index) {
         List<Element> headings = div.select("h3");
         if (headings.isEmpty()) {
@@ -25,6 +32,11 @@ public class HtmlUtil {
         return headings.get(0).text();
     }
 
+    /**
+     * Extract the contents of the .mainText div.
+     *
+     * @throws ApsZipImporterException If the document does not contains exactly one mainText div.
+     */
     Element getMainText(Document htmlDoc) throws ApsZipImporterException {
         List<Element> elements = htmlDoc.select(".mainText");
         if (elements.size() != 1) {
@@ -33,6 +45,10 @@ public class HtmlUtil {
         return elements.get(0);
     }
 
+    /**
+     * Determine if theis is a contents page.  Contents pages are ones whose first h3 element is either
+     * "Content" or "Table of contents" (case insensitive)
+     */
     boolean isContentsPage(String html) {
         if (StringUtils.isEmpty(html)) {
             return false;
