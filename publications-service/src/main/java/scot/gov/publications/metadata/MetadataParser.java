@@ -20,6 +20,7 @@ public class MetadataParser {
         try {
             Metadata metadata = doParse(in);
             assertRequiredFields(metadata);
+            assertValidFields(metadata);
             calculateZonedPublicationDatetime(metadata);
             return metadata;
         } catch (IOException e) {
@@ -58,6 +59,13 @@ public class MetadataParser {
         }
     }
 
+    private void assertValidFields(Metadata metadata) throws MetadataParserException {
+        // the isbn should only contain letters, numbers and hyphens
+        if (!validISBN(metadata.getIsbn())) {
+            throw new MetadataParserException("Invalid field: isbn = " + metadata.getIsbn());
+        }
+    }
+
     private void calculateZonedPublicationDatetime(Metadata metadata) {
         // the publication date contained in the metadata is specified without a timezone.
         // To ensure it is published at the right time we convert this to the right timezone.
@@ -65,4 +73,12 @@ public class MetadataParser {
         ZonedDateTime zonedDateTime = metadata.getPublicationDate().atZone(timezone.toZoneId());
         metadata.setPublicationDateWithTimezone(zonedDateTime);
     }
+
+    private boolean validISBN(String isbn) {
+        // a valid isbn should only contain numbers and hyphens.  However, we sometimes get isbn's from aps that
+        // contain postfixes like -resonses and so we just want assert that the isbn only contains letters, number
+        // and hyphens.
+        return isbn.matches("^[a-zA-Z0-9\\-]+$");
+    }
+
 }

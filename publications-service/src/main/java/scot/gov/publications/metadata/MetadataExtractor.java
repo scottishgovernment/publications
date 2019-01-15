@@ -48,7 +48,7 @@ public class MetadataExtractor {
         }
 
         if (jsonEntries.size() > 1) {
-            throw new ApsZipImporterException("More than one JSON file in zip, unable to indentify metadata file");
+            throw new ApsZipImporterException("More than one JSON file in zip, unable to identify metadata file");
         }
 
         try {

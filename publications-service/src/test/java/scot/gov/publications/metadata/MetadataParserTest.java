@@ -35,6 +35,21 @@ public class MetadataParserTest {
         assertEquals(actual.getPublicationDate(), LocalDateTime.of(2018, 9, 11, 9, 0, 0));
     }
 
+    @Test
+    public void canParseMetadataWithResponsesIsbn() throws Exception {
+
+        // ARRANGE
+        String input = metadata("example").replaceAll("9781787811980", "9781787811980-responses");
+        MetadataParser sut = new MetadataParser();
+
+        // ACT
+        Metadata actual = sut.parse(new ByteArrayInputStream(input.getBytes()));
+
+        // ASSERT
+        assertEquals(actual.getId(), "5131");
+        assertEquals(actual.getPublicationDate(), LocalDateTime.of(2018, 9, 11, 9, 0, 0));
+    }
+
     @Test(expected = MetadataParserException.class)
     public void exceptionThrowsIfIdIsBlank() throws Exception {
         MetadataParser sut = new MetadataParser();
@@ -50,6 +65,17 @@ public class MetadataParserTest {
     public void exceptionThrowsIfIsbnIsBlank() throws Exception {
         MetadataParser sut = new MetadataParser();
         String input = metadata("example").replaceAll("9781787811980", "");
+
+        // ACT
+        sut.parse(new ByteArrayInputStream(input.getBytes()));
+
+        // ASSERT -- expected exception
+    }
+
+    @Test(expected = MetadataParserException.class)
+    public void exceptionThrowsIfIsbnContainsUnexpectedChars() throws Exception {
+        MetadataParser sut = new MetadataParser();
+        String input = metadata("example").replaceAll("9781787811980", "9781787811980!!!!");
 
         // ACT
         sut.parse(new ByteArrayInputStream(input.getBytes()));

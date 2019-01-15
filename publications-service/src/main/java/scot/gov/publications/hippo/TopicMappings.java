@@ -64,6 +64,7 @@ public class TopicMappings {
         }
 
         // get the topic node for this topic
+        // Note, we do not need to escape the topic here since the topic will be a known value from the topics map.
         String template = "SELECT * FROM govscot:Topic WHERE hippostd:state = 'published' AND govscot:title = '%s'";
         Node topicNode = hippoUtils.findOne(session, template, mappedTopic);
 
