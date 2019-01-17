@@ -5,7 +5,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * Decode what slug we should use for a publication based on its title.
+ * Decide what slug we should use for a publication based on its title.
  *
  * The strategy used to avoid clashes is simply to add a number to the end of the slug starting with 2.
  */
@@ -38,7 +38,7 @@ public class SlugAllocationStrategy {
             return slug;
         }
 
-        // the slug is already used, try appendinf a number starting from 2
+        // the slug is already used, try appending a number starting from 2
         // i.e. rather than try my-document-1 we will start from my-document-2
         return disambiguate(slug, 2);
     }
