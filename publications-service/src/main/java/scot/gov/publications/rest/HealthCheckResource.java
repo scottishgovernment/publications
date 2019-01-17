@@ -25,7 +25,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.Collection;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Healthcheck endpoint for publications api.
@@ -101,16 +105,30 @@ public class HealthCheckResource {
     }
 
     /**
-     * Check that we can connect to the jcr repository and can see the root node.
+     * Check that we can connect to the jcr repository and can see the root node.  Specify a timeout period so that
+     * the healthcheck will return in a timely way even if the repo is not responding
      */
     private void addJCRInfo(ArrayNode errors) {
+        FutureTask<Void> future = new FutureTask<>(() -> addJCRInfoBlocking(errors));
+        Executors.newSingleThreadExecutor().execute(future);
+        try {
+            future.get(10, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException| TimeoutException e) {
+            LOG.error("Timeout trying to contact JCR repository : " + e.getMessage(), e);
+            errors.add("Timeout trying to contact JCR repository:" + e.getMessage());
+        }
+    }
+
+    private Void addJCRInfoBlocking(ArrayNode errors) {
         try {
             Session session = sessionFactory.newSession();
             session.itemExists(HippoPaths.ROOT);
+            session.logout();
         } catch (RepositoryException | RemoteRuntimeException e) {
-            LOG.error("Failed to contact JCR: " + e.getMessage(), e);
+            LOG.error("Failed to contact JCR repository : " + e.getMessage(), e);
             errors.add("Unable to contact the JCR repository:" + e.getMessage());
         }
+        return null;
     }
 
     private void addStorageInfo(ArrayNode errors) {
