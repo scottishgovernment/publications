@@ -45,6 +45,10 @@ public class HippoNodeFactory {
             ZonedDateTime publishDateTime) throws RepositoryException {
 
         Node node = hippoUtils.createNode(handle, slug, type, DOCUMENT_MIXINS);
+
+        // the folder has been created using the SlugAllocations strategy so we can use it name as the govscot:slug
+        // property that is used to determine the url of this publication.
+        node.setProperty("govscot:slug", handle.getParent().getName());
         node.setProperty(HIPPO_NAME, Sanitiser.sanitise(title));
         node.setProperty("hippotranslation:locale", "en");
         node.setProperty("hippotranslation:id", UUID.randomUUID().toString());

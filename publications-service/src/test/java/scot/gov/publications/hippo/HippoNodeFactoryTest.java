@@ -20,9 +20,12 @@ public class HippoNodeFactoryTest {
     public void newDocumentNodePublishesNodeIfPublicationDateHasPassed() throws Exception {
         // ARRANGE
         HippoNodeFactory sut = new HippoNodeFactory(mock(Session.class), new PublicationsConfiguration());
+        Node folder = mock(Node.class);
         Node handle = mock(Node.class);
         Node node = mock(Node.class);
         sut.hippoUtils = mock(HippoUtils.class);
+        when(folder.getName()).thenReturn("folder-name");
+        when(handle.getParent()).thenReturn(folder);
         when(sut.hippoUtils.createNode(handle, "slug", "type", DOCUMENT_MIXINS)).thenReturn(node);
 
         // ACT
@@ -36,6 +39,7 @@ public class HippoNodeFactoryTest {
     public void newDocumentNodeScheduledToPublishIfPublicationDateHasNotPassed() throws Exception {
         // ARRANGE
         HippoNodeFactory sut = new HippoNodeFactory(mock(Session.class), new PublicationsConfiguration());
+        Node folder = mock(Node.class);
         Node handle = mock(Node.class);
         Node node = mock(Node.class);
         Node job = mock(Node.class);
@@ -43,7 +47,9 @@ public class HippoNodeFactoryTest {
         Node defaultNode = mock(Node.class);
         sut.hippoUtils = mock(HippoUtils.class);
         when(sut.hippoUtils.createNode(handle, "slug", "type", DOCUMENT_MIXINS)).thenReturn(node);
+        when(folder.getName()).thenReturn("folder-name");
         when(handle.addNode("hippo:request", "hipposched:workflowjob")).thenReturn(job);
+        when(handle.getParent()).thenReturn(folder);
         when(job.addNode("hipposched:triggers", "hipposched:triggers")).thenReturn(triggers);
         when(triggers.addNode("default", "hipposched:simpletrigger")).thenReturn(defaultNode);
 
@@ -52,6 +58,7 @@ public class HippoNodeFactoryTest {
 
         // ASSERT
         verify(node).setProperty("hippostd:state", "unpublished");
+        verify(node).setProperty("govscot:slug", "folder-name");
     }
 
     @Test
