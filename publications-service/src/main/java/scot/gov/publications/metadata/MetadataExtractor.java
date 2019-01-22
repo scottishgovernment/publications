@@ -1,6 +1,7 @@
 package scot.gov.publications.metadata;
 
 import scot.gov.publications.ApsZipImporterException;
+import scot.gov.publications.hippo.TitleSanitiser;
 import scot.gov.publications.util.ZipEntryUtil;
 import scot.gov.publications.util.ZipUtil;
 
@@ -52,11 +53,17 @@ public class MetadataExtractor {
         }
 
         try {
-            return metadataParser.parse(zipFile.getInputStream(jsonEntries.get(0)));
+            Metadata metadata = metadataParser.parse(zipFile.getInputStream(jsonEntries.get(0)));
+            return sanitizeData(metadata);
         } catch (MetadataParserException e) {
             throw new ApsZipImporterException("Unable to parse metadata file", e);
         } catch (IOException e) {
             throw new ApsZipImporterException("Unable to read metadata file", e);
         }
+    }
+
+    private Metadata sanitizeData(Metadata metadata) {
+        metadata.setTitle(TitleSanitiser.sanitise(metadata.getTitle()));
+        return metadata;
     }
 }

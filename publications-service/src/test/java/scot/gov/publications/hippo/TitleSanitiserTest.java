@@ -7,7 +7,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class SanitiserTest {
+public class TitleSanitiserTest {
 
     @Test
     public void titlesSanitisedAsExpected() {
@@ -16,7 +16,7 @@ public class SanitiserTest {
         inputs.put("word", "word");
         inputs.put("", "");
 
-        inputs.entrySet().forEach(entry -> assertEquals(Sanitiser.sanitise(entry.getKey()), entry.getValue()));
+        inputs.entrySet().forEach(entry -> assertEquals(TitleSanitiser.sanitise(entry.getKey()), entry.getValue()));
     }
 
 }

@@ -54,8 +54,9 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
+        Node folder = mock(Node.class);
+        when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
-
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
         when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
 
@@ -100,8 +101,9 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
+        Node folder = mock(Node.class);
+        when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
-
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
         when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
 
@@ -125,6 +127,8 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
+        Node folder = mock(Node.class);
+        when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
 
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);

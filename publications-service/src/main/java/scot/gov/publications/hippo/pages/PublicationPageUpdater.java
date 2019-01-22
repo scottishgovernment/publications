@@ -12,7 +12,7 @@ import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.hippo.HippoNodeFactory;
 import scot.gov.publications.hippo.HippoPaths;
 import scot.gov.publications.hippo.HippoUtils;
-import scot.gov.publications.hippo.Sanitiser;
+import scot.gov.publications.hippo.TitleSanitiser;
 import scot.gov.publications.hippo.rewriter.PublicationLinkRewriter;
 import scot.gov.publications.util.ZipEntryUtil;
 
@@ -22,7 +22,6 @@ import javax.jcr.Session;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -142,12 +141,12 @@ public class PublicationPageUpdater {
 
         Document htmlDoc = Jsoup.parse(page);
         Element mainTextDiv = htmlUtil.getMainText(htmlDoc);
-        String title = htmlUtil.getTitle(mainTextDiv, index);
+        String title = TitleSanitiser.sanitise(htmlUtil.getTitle(mainTextDiv, index));
         String slug = Integer.toString(index);
         Node pageHandle = nodeFactory.newHandle(title, pagesNode, slug);
         Node pageNode = nodeFactory.newDocumentNode(pageHandle, slug, title, "govscot:PublicationPage", publishDateTime);
         nodeFactory.addBasicFields(pageNode, title);
-        pageNode.setProperty(GOVSCOT_TITLE, Sanitiser.sanitise(title));
+        pageNode.setProperty(GOVSCOT_TITLE, title);
         createPageContentAndLinkImages(mainTextDiv, pageNode, filenameToImageId);
         return  pageNode;
     }

@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import static java.util.Collections.emptyList;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
 
@@ -58,19 +58,16 @@ public class PublicationNodeUpdater {
         try {
             Node node = doCreateOrUpdate(metadata);
             setPublicationAuditFields(node, publication);
-            String title = Sanitiser.sanitise(metadata.getTitle());
             nodeFactory.addBasicFields(node, metadata.getTitle());
 
             // these fields are edited by users, do not overwrite them if they already have a value
-            hippoUtils.setPropertyIfAbsent(node, GOVSCOT_TITLE, title);
+            hippoUtils.setPropertyIfAbsent(node, GOVSCOT_TITLE, metadata.getTitle());
             hippoUtils.setPropertyIfAbsent(node, "govscot:summary", metadata.getDescription());
-            hippoUtils.setPropertyIfAbsent(node, "govscot:seoTitle", title);
+            hippoUtils.setPropertyIfAbsent(node, "govscot:seoTitle", metadata.getTitle());
             hippoUtils.setPropertyIfAbsent(node, "govscot:metaDescription", metadata.getDescription());
             hippoUtils.setPropertyIfAbsent(node, "govscot:notes", "");
             hippoUtils.addHtmlNodeIfAbsent(node, "govscot:content", metadata.getExecutiveSummary());
-
-            // Contact seems to be missing this from the metadata ... have asked Jon to add, waiting on GDPR issue being resolved
-            hippoUtils.setPropertyStringsIfAbsent(node, "hippostd:tags", Collections.emptyList());
+            hippoUtils.setPropertyStringsIfAbsent(node, "hippostd:tags", emptyList());
             topicMappings.updateTopics(node, metadata.getTopic());
 
             // always set these properties
@@ -119,6 +116,8 @@ public class PublicationNodeUpdater {
         if (pubNode == null) {
             List<String> path = pathStrategy.path(metadata);
             Node pubFolder = hippoPaths.ensurePath(path);
+            pubFolder.setProperty("hippo:name", metadata.getTitle());
+
             Node handle = nodeFactory.newHandle(metadata.getTitle(), pubFolder, "index");
             pubNode = nodeFactory.newDocumentNode(
                     handle,

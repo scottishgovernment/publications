@@ -49,7 +49,7 @@ public class PublicationPathStrategy {
         LocalDate pubDate = metadata.getPublicationDate().toLocalDate();
         String yearString = Integer.toString(pubDate.getYear());
         String monthString = String.format("%02d", pubDate.getMonthValue());
-        String sanitizedTitle = Sanitiser.sanitise(metadata.getTitle());
+        String sanitizedTitle = TitleSanitiser.sanitise(metadata.getTitle());
         String slug = slugAllocationStrategy.allocate(sanitizedTitle);
 
         return asList(

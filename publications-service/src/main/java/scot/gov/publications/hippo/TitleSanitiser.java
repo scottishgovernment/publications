@@ -8,9 +8,9 @@ import java.util.Set;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
- * Sanitize titles of nodes.
+ * Sanitize titles of nodes.  This is used for the title of pages and publicaitons.
  */
-public class Sanitiser {
+public class TitleSanitiser {
 
     private static final Map<Character, Character> replacements;
 
@@ -22,7 +22,7 @@ public class Sanitiser {
         replacements.put('”', '"');
     }
 
-    private Sanitiser() {
+    private TitleSanitiser() {
         // utility class
     }
 
