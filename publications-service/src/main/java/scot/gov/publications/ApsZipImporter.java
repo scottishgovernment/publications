@@ -60,6 +60,7 @@ public class ApsZipImporter {
                     metadata.getTitle(),
                     metadata.getPublicationDateWithTimezone());
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
+            LOG.info("publication folder is {}", publicationFolder.getPath());
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
             publicationPageUpdater.addPages(

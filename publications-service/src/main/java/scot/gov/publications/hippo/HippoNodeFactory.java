@@ -64,6 +64,7 @@ public class HippoNodeFactory {
             node.setProperty("hippostd:state", "published");
             node.setProperty("hippostd:stateSummary", "live");
         } else {
+            node.setProperty("hippo:availability", new String[]{"preview"});
             node.setProperty("hippostd:state", "unpublished");
             node.setProperty("hippostd:stateSummary", "new");
             addWorkflowJob(handle, publishDateTime);
