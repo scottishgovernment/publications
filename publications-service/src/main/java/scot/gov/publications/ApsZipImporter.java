@@ -82,14 +82,9 @@ public class ApsZipImporter {
         // We might have created a new month or year folder ... ensure that they have the right actions
         Node monthFolder = publicationFolder.getParent();
         Node yearFolder = monthFolder.getParent();
-        hippoUtils.setPropertyStrings(
-                monthFolder,
-                HIPPOSTD_FOLDERTYPE,
-                actions("new-publication-folder", "new-complex-document-folder"));
-        hippoUtils.setPropertyStrings(
-                yearFolder,
-                HIPPOSTD_FOLDERTYPE,
-                actions("new-publication-month-folder"));
+        hippoUtils.setPropertyStrings(publicationFolder, HIPPOSTD_FOLDERTYPE, actions());
+        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
+        hippoUtils.setPropertyStrings(yearFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-month-folder"));
     }
 
     private Collection<String> actions(String ...actions) {
