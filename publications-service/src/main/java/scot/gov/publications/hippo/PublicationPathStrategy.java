@@ -3,9 +3,10 @@ package scot.gov.publications.hippo;
 import scot.gov.publications.metadata.Metadata;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
 import javax.jcr.RepositoryException;
@@ -46,17 +47,30 @@ public class PublicationPathStrategy {
      * @return A list containing the required path elements for this metadata
      */
     public List<String> path(Metadata metadata) throws RepositoryException {
+        String sanitizedTitle = TitleSanitiser.sanitise(metadata.getTitle());
+        String slug = slugAllocationStrategy.allocate(sanitizedTitle);
+        List<String> folderPath = monthFolderPath(metadata);
+        folderPath.add(slug);
+        return folderPath;
+    }
+
+    /**
+     * Determine the month folder a publication belongs in.
+     *
+     * @param metadata Metadata for a publication
+     * @return A list containing the required path elements for this metadata
+     */
+    public List<String> monthFolderPath(Metadata metadata) {
         LocalDate pubDate = metadata.getPublicationDate().toLocalDate();
         String yearString = Integer.toString(pubDate.getYear());
         String monthString = String.format("%02d", pubDate.getMonthValue());
-        String sanitizedTitle = TitleSanitiser.sanitise(metadata.getTitle());
-        String slug = slugAllocationStrategy.allocate(sanitizedTitle);
 
-        return asList(
+        List<String> path = new ArrayList<>();
+        Collections.addAll(path,
                 "Publications",
                 defaultIfBlank(metadata.getPublicationType(), "Publication"),
                 yearString,
-                monthString,
-                slug);
+                monthString);
+        return path;
     }
 }

@@ -25,6 +25,7 @@ public class HippoNodeFactoryTest {
         Node node = mock(Node.class);
         sut.hippoUtils = mock(HippoUtils.class);
         when(folder.getName()).thenReturn("folder-name");
+        when(node.getParent()).thenReturn(handle);
         when(handle.getParent()).thenReturn(folder);
         when(sut.hippoUtils.createNode(handle, "slug", "type", DOCUMENT_MIXINS)).thenReturn(node);
 
@@ -50,6 +51,7 @@ public class HippoNodeFactoryTest {
         when(folder.getName()).thenReturn("folder-name");
         when(handle.addNode("hippo:request", "hipposched:workflowjob")).thenReturn(job);
         when(handle.getParent()).thenReturn(folder);
+        when(node.getParent()).thenReturn(handle);
         when(job.addNode("hipposched:triggers", "hipposched:triggers")).thenReturn(triggers);
         when(triggers.addNode("default", "hipposched:simpletrigger")).thenReturn(defaultNode);
 
@@ -77,24 +79,6 @@ public class HippoNodeFactoryTest {
         // ASSERT
         verify(resourceNode).setProperty(JCR_MIMETYPE, "application/pdf");
     }
-
-    // TODO finish this
-//    @Test
-//    public void ioExceptionRethrownAsRepoExceptionByCreateResourceNode() throws Exception {
-//        // ARRANGE
-//        HippoNodeFactory sut = new HippoNodeFactory(session());
-//        ZipFile zipFile = exampleZip();
-//        ZipEntry zipEntry = zipFile.getEntry("SCT04185156361/SCT04185156361.pdf");
-//        Node parent = mock(Node.class);
-//        Node resourceNode = mock(Node.class);
-//        when(parent.addNode("govscot:document", "hippo:resource")).thenReturn(resourceNode);
-//
-//        // ACT
-//        sut.newResourceNode(parent, "govscot:document", "SCT04185156361.pdf", zipFile, zipEntry);
-//
-//        // ASSERT
-//        verify(resourceNode).setProperty(JCR_MIMETYPE, "application/pdf");
-//    }
 
     Session session() throws RepositoryException {
         Session session = mock(Session.class);

@@ -70,6 +70,7 @@ public class ApsZipImporter {
                     docMap,
                     metadata.getPublicationDateWithTimezone());
             ensureFolderActions(publicationFolder);
+            publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             session.save();
             return publicationFolder.getPath();
         } catch (RepositoryException e) {

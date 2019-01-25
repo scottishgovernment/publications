@@ -1,27 +1,29 @@
 package scot.gov.publications.hippo;
 
+import org.apache.jackrabbit.value.StringValue;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.ApsZipImporterException;
-import scot.gov.publications.metadata.EqualityInfo;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.repo.Publication;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.Workspace;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 
 public class PublicationNodeUpdaterTest {
-
-    /**
-     * Throws exception if old url is unparsable
-     * wraps jcr expection as expected
-     */
 
     @Test
     public void resusesNodeWithISBNIfPresent() throws Exception {
@@ -30,10 +32,17 @@ public class PublicationNodeUpdaterTest {
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
         sut.topicMappings = mock(TopicMappings.class);
+        sut.pathStrategy = mock(PublicationPathStrategy.class);
+        sut.hippoPaths = mock(HippoPaths.class);
+        Node publicationFolder = mock(Node.class);
+
+        when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);
-        when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(nodeWithISBN);
+        Property state =  stringProperty("published");
+        when(nodeWithISBN.getProperty(eq("hippostd:state"))).thenReturn(state);
+        sut.session = sessionbWithPubs(nodeWithISBN);
         Metadata input = metadata();
 
         // ACT
@@ -41,6 +50,14 @@ public class PublicationNodeUpdaterTest {
 
         // ASSERT - should not have created any new document nodes
         Mockito.verify(sut.nodeFactory, never()).newDocumentNode(any(), any(), any(), any(), any());
+    }
+
+    Property stringProperty(String value) throws RepositoryException {
+        Property p = mock(Property.class);
+        StringValue val = mock(StringValue.class);
+        when(val.getString()).thenReturn(value);
+        when(p.getString()).thenReturn(value);
+        return p;
     }
 
     @Test
@@ -52,6 +69,7 @@ public class PublicationNodeUpdaterTest {
         sut.topicMappings = mock(TopicMappings.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
+        sut.session = sessionbWithPubs();
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
@@ -76,17 +94,24 @@ public class PublicationNodeUpdaterTest {
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
         sut.topicMappings = mock(TopicMappings.class);
+        sut.pathStrategy = mock(PublicationPathStrategy.class);
+        sut.hippoPaths = mock(HippoPaths.class);
+        Node publicationFolder = mock(Node.class);
+
+        when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);
-        when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(nodeWithISBN);
+        Property state =  stringProperty("published");
+        when(nodeWithISBN.getProperty(eq("hippostd:state"))).thenReturn(state);
+        sut.session = sessionbWithPubs(nodeWithISBN);
         Metadata input = metadata();
         input.setUrl("");
 
         // ACT
         sut.createOrUpdatePublicationNode(input, new Publication());
 
-        // ASSERT - should not have created any new document nodes
+        // ASSERT
         Mockito.verify(nodeWithISBN, never()).setProperty(eq(GOVSCOT_GOVSCOTURL), anyString());
     }
 
@@ -99,6 +124,7 @@ public class PublicationNodeUpdaterTest {
         sut.topicMappings = mock(TopicMappings.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
+        sut.session = sessionbWithPubs();
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
@@ -125,6 +151,7 @@ public class PublicationNodeUpdaterTest {
         sut.topicMappings = mock(TopicMappings.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
+        sut.session = sessionbWithPubs();
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
@@ -140,6 +167,20 @@ public class PublicationNodeUpdaterTest {
         sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - see expected exception
+    }
+
+    Session sessionbWithPubs(Node ...pubs) throws RepositoryException {
+        Session session = mock(Session.class);
+        Workspace workspace = mock(Workspace.class);
+        QueryManager queryManager = mock(QueryManager.class);
+        Query query = mock(Query.class);
+        QueryResult result = mock(QueryResult.class);
+        when(session.getWorkspace()).thenReturn(workspace);
+        when(workspace.getQueryManager()).thenReturn(queryManager);
+        when(queryManager.createQuery(any(), any())).thenReturn(query);
+        when(query.execute()).thenReturn(result);
+        when(result.getNodes()).thenReturn(HippoUtilsTest.iterator(Arrays.asList(pubs)));
+        return session;
     }
 
     Metadata metadata() {

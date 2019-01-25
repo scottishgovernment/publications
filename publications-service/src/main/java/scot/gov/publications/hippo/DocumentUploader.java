@@ -133,10 +133,13 @@ public class DocumentUploader {
         NodeIterator it = documentsFolder.getNodes();
         while (it.hasNext()) {
             Node handle = it.nextNode();
-            Node documentInfoNode = hippoUtils.mostRecentDraft(handle);
-            String title = documentInfoNode.getProperty("govscot:title").getString();
-            String name = documentInfoNode.getNode("govscot:document").getProperty("hippo:filename").getString();
-            titleByName.put(name, title);
+
+            if ("hippo:handle".equals(handle.getPrimaryNodeType())) {
+                Node documentInfoNode = hippoUtils.mostRecentDraft(handle);
+                String title = documentInfoNode.getProperty("govscot:title").getString();
+                String name = documentInfoNode.getNode("govscot:document").getProperty("hippo:filename").getString();
+                titleByName.put(name, title);
+            }
         }
         return titleByName;
     }

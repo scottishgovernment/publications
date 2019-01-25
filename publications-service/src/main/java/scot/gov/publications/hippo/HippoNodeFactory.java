@@ -57,9 +57,20 @@ public class HippoNodeFactory {
         node.setProperty("hippostdpubwf:creationDate", now);
         node.setProperty("hippostdpubwf:lastModifiedBy", configuration.getHippo().getUser());
         node.setProperty("hippostdpubwf:lastModificationDate", now);
+        ensurePublicationStatus(node, publishDateTime);
+        return node;
+    }
 
-        // if the publish date of this item is in the future then create a request to publish it.
+    /**
+     * Ensure that the publication status and wny required workflow job exists for htis publication
+     */
+    public void ensurePublicationStatus(Node node, ZonedDateTime publishDateTime) throws RepositoryException {
+        // remove any workflow job that exists.  If it is needed then we will recreate it
+        ensureWorkflowJobDeleted(node);
+
+
         if (publishDateTime.isBefore(ZonedDateTime.now())) {
+            // the publicaiton can be p
             node.setProperty("hippo:availability", new String[]{"live", "preview"});
             node.setProperty("hippostd:state", "published");
             node.setProperty("hippostd:stateSummary", "live");
@@ -67,13 +78,27 @@ public class HippoNodeFactory {
             node.setProperty("hippo:availability", new String[]{"preview"});
             node.setProperty("hippostd:state", "unpublished");
             node.setProperty("hippostd:stateSummary", "new");
-            addWorkflowJob(handle, publishDateTime);
+            ensureWorkflowJob(node.getParent(), publishDateTime);
         }
-        return node;
     }
 
-    public void addWorkflowJob(Node handle, ZonedDateTime publishDateTime) throws RepositoryException {
-        Node job = handle.addNode("hippo:request", "hipposched:workflowjob");
+    /**
+     * If this publication node has a workflow job attached to its handle then remove it
+     */
+    public void ensureWorkflowJobDeleted(Node node) throws RepositoryException {
+        Node handle = node.getParent();
+        if (handle.hasNode(HIPPO_REQUEST)) {
+            String requestPath = handle.getNode(HIPPO_REQUEST).getPath();
+            session.removeItem(requestPath);
+        }
+    }
+
+    /**
+     * Create a workflow job to publish this publication at the specified publication date
+     */
+    public void ensureWorkflowJob(Node handle, ZonedDateTime publishDateTime) throws RepositoryException {
+        // create the job needed to publish this node
+        Node job = handle.addNode(HIPPO_REQUEST, "hipposched:workflowjob");
         job.setProperty("hipposched:attributeNames", new String[] { "hipposched:subjectId", "hipposched:methodName"});
         job.setProperty("hipposched:attributeValues", new String[] { handle.getIdentifier(), "publish"});
         job.setProperty("hipposched:repositoryJobClass",

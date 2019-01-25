@@ -49,6 +49,12 @@ public class HippoPaths {
         stopWords.addAll(asList(stopwords.split(",")));
     }
 
+    public String slugify(String pathElement, boolean removeStopwords) {
+        return removeStopwords
+                ? slugify(pathElement)
+                : slugify.slugify(pathElement);
+    }
+
     public String slugify(String pathElement) {
         String slug = slugify.slugify(pathElement);
         StringBuilder simplifiedSlug = new StringBuilder();
@@ -76,13 +82,22 @@ public class HippoPaths {
         }
 
         String element = path.get(pos);
-        String elementSlug = slugify(element);
+        String elementSlug = slugify(element, removeStopWords(pos, path));
 
         Node next = parent.hasNode(elementSlug)
                 ? parent.getNode(elementSlug)
                 : folderNode(parent, element);
         int newPos = pos + 1;
         return ensurePathInternal(next, newPos, path);
+    }
+
+    /**
+     * Should stopwords be removed when constructing this path element? We always remove stopwords unless this is
+     * a publication type.  this is because the publications types were generated at a time when stopwords were always
+     * included.
+     */
+    private boolean removeStopWords(int pos, List<String> path) {
+        return pos == 4 && "Publications".equals(path.get(pos - 1));
     }
 
     public Node folderNode(Node parent, String name) throws RepositoryException {
