@@ -30,6 +30,7 @@ public class PublicationNodeUpdaterTest {
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
         sut.topicMappings = mock(TopicMappings.class);
+        sut.pathStrategy = mock(PublicationPathStrategy.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);
@@ -76,6 +77,7 @@ public class PublicationNodeUpdaterTest {
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
         sut.topicMappings = mock(TopicMappings.class);
+        sut.pathStrategy = mock(PublicationPathStrategy.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);

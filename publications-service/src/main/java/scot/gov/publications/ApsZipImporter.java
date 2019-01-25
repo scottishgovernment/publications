@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipFile;
 
@@ -71,6 +72,8 @@ public class ApsZipImporter {
                     metadata.getPublicationDateWithTimezone());
             ensureFolderActions(publicationFolder);
             session.save();
+
+            publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);

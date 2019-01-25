@@ -50,6 +50,7 @@ public class HippoNodeFactoryTest {
         when(folder.getName()).thenReturn("folder-name");
         when(handle.addNode("hippo:request", "hipposched:workflowjob")).thenReturn(job);
         when(handle.getParent()).thenReturn(folder);
+        when(node.getParent()).thenReturn(handle);
         when(job.addNode("hipposched:triggers", "hipposched:triggers")).thenReturn(triggers);
         when(triggers.addNode("default", "hipposched:simpletrigger")).thenReturn(defaultNode);
 

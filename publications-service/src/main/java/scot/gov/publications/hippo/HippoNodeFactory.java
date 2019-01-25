@@ -57,7 +57,11 @@ public class HippoNodeFactory {
         node.setProperty("hippostdpubwf:creationDate", now);
         node.setProperty("hippostdpubwf:lastModifiedBy", configuration.getHippo().getUser());
         node.setProperty("hippostdpubwf:lastModificationDate", now);
+        ensurePublicationStatus(node, publishDateTime);
+        return node;
+    }
 
+    public void ensurePublicationStatus(Node node, ZonedDateTime publishDateTime) throws RepositoryException {
         // if the publish date of this item is in the future then create a request to publish it.
         if (publishDateTime.isBefore(ZonedDateTime.now())) {
             node.setProperty("hippo:availability", new String[]{"live", "preview"});
@@ -67,12 +71,17 @@ public class HippoNodeFactory {
             node.setProperty("hippo:availability", new String[]{"preview"});
             node.setProperty("hippostd:state", "unpublished");
             node.setProperty("hippostd:stateSummary", "new");
-            addWorkflowJob(handle, publishDateTime);
+            ensureWorkflowJob(node.getParent(), publishDateTime);
         }
-        return node;
     }
 
-    public void addWorkflowJob(Node handle, ZonedDateTime publishDateTime) throws RepositoryException {
+    public void ensureWorkflowJob(Node handle, ZonedDateTime publishDateTime) throws RepositoryException {
+        // if there is an existing request then remove it now
+        if (handle.hasNode("hippo:request")) {
+            session.removeItem(handle.getNode("hippo:request").getPath());
+        }
+
+        // create the job needed to publish this node
         Node job = handle.addNode("hippo:request", "hipposched:workflowjob");
         job.setProperty("hipposched:attributeNames", new String[] { "hipposched:subjectId", "hipposched:methodName"});
         job.setProperty("hipposched:attributeValues", new String[] { handle.getIdentifier(), "publish"});
