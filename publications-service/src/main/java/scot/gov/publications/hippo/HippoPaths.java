@@ -17,7 +17,7 @@ import static java.util.Arrays.asList;
  */
 public class HippoPaths {
 
-    private List<String> stopWords = new ArrayList<>();
+    private static List<String> stopWords = new ArrayList<>();
 
     public static final String ROOT = "/content/documents/govscot/";
 
@@ -25,7 +25,7 @@ public class HippoPaths {
 
     Session session;
 
-    private final Slugify slugify = new Slugify();
+    private static final Slugify slugify = new Slugify();
 
     public HippoPaths(Session session) {
         this.session = session;
@@ -34,10 +34,14 @@ public class HippoPaths {
         replacements.put("'", "");
         replacements.put("&", "");
         slugify.withCustomReplacements(replacements);
+
+    }
+
+    static {
         initStopwords();
     }
 
-    private void initStopwords() {
+    private static void initStopwords() {
         String stopwords =
                 "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been," +
                         "but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got," +
@@ -55,7 +59,7 @@ public class HippoPaths {
                 : slugify.slugify(pathElement);
     }
 
-    public String slugify(String pathElement) {
+    public static String slugify(String pathElement) {
         String slug = slugify.slugify(pathElement);
         StringBuilder simplifiedSlug = new StringBuilder();
         for(String word : slug.split("-")) {

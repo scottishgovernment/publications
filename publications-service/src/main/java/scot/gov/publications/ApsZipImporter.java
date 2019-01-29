@@ -3,11 +3,7 @@ package scot.gov.publications;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scot.gov.publications.hippo.DocumentUploader;
-import scot.gov.publications.hippo.HippoUtils;
-import scot.gov.publications.hippo.ImageUploader;
-import scot.gov.publications.hippo.PublicationNodeUpdater;
-import scot.gov.publications.hippo.SessionFactory;
+import scot.gov.publications.hippo.*;
 import scot.gov.publications.hippo.pages.PublicationPageUpdater;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
@@ -38,6 +34,8 @@ public class ApsZipImporter {
 
     @Inject
     SessionFactory sessionFactory;
+
+    HippoPaths hippoPaths;
 
     HippoUtils hippoUtils = new HippoUtils();
 

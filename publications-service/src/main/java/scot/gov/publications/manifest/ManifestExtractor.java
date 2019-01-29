@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static java.util.stream.Collectors.groupingBy;
+
 /**
  * Extracts Manifest from a ZipFile and parses it using a ManifestParser
  */
@@ -29,7 +31,9 @@ public class ManifestExtractor {
             throw new ApsZipImporterException("No manifest file in zip");
         }
         try {
-            return manifestParser.parse(zipFile.getInputStream(entry));
+            Manifest manifest = manifestParser.parse(zipFile.getInputStream(entry));
+            manifest.assignFriendlyFilenames();
+            return manifest;
         } catch (ManifestParserException e) {
             throw new ApsZipImporterException("Invalid manifest file", e);
         } catch (IOException e) {

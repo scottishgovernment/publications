@@ -1,5 +1,6 @@
 package scot.gov.publications.hippo;
 
+import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,7 +10,6 @@ import scot.gov.publications.imageprocessing.ThumbnailsProvider;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestEntry;
 import scot.gov.publications.metadata.Metadata;
-import scot.gov.publications.rest.PublicationsResource;
 import scot.gov.publications.util.Exif;
 import scot.gov.publications.util.FileType;
 
@@ -21,6 +21,7 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static java.util.stream.Collectors.groupingBy;
 import static scot.gov.publications.hippo.Constants.*;
 
 /**
@@ -73,6 +74,7 @@ public class DocumentUploader {
         documentsFolder.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{"new-publication-document-info", "new-publication-documents-folder"});
         SortedMap<String, String> existingDocumentTitles = existingDocumentTitles(documentsFolder);
         hippoUtils.removeChildren(documentsFolder);
+
         for (ManifestEntry manifestEntry : manifest.getEntries()) {
             Node docNode = uploadDocument(
                     zipFile,
@@ -81,7 +83,7 @@ public class DocumentUploader {
                     documentsFolder,
                     existingDocumentTitles,
                     metadata);
-            filenameToDocument.put(manifestEntry.getFilename(), docNode);
+            filenameToDocument.put(manifestEntry.getFriendlyFilename(), docNode);
         }
         return filenameToDocument;
     }
@@ -117,7 +119,7 @@ public class DocumentUploader {
         Node resourceNode = nodeFactory.newResourceNode(
                 documentInfoNode,
                 "govscot:document",
-                manifestEntry.getFilename(),
+                manifestEntry.getFriendlyFilename(),
                 zipFile,
                 zipEntry);
 
@@ -137,7 +139,7 @@ public class DocumentUploader {
             if ("hippo:handle".equals(handle.getPrimaryNodeType())) {
                 Node documentInfoNode = hippoUtils.mostRecentDraft(handle);
                 String title = documentInfoNode.getProperty("govscot:title").getString();
-                String name = documentInfoNode.getNode("govscot:document").getProperty("hippo:filename").getString();
+                String name = documentInfoNode.getNode("govscot:document").getProperty("hippo:friendlyFilename").getString();
                 titleByName.put(name, title);
             }
         }
@@ -145,8 +147,8 @@ public class DocumentUploader {
     }
 
     /**
-     * Determine the filename to use for this resource.  If it already exists in Hippo and has a title then use that,
-     * otherwise use the title (or filename if the title is empty).
+     * Determine the friendlyFilename to use for this resource.  If it already exists in Hippo and has a title then use that,
+     * otherwise use the title (or friendlyFilename if the title is empty).
      */
     private String getTitle(ManifestEntry manifestEntry, SortedMap<String, String> existingDocumentTitles) {
         String filename = manifestEntry.getFilename();

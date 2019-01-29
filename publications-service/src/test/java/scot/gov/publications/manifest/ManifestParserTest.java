@@ -5,6 +5,10 @@ import org.junit.Test;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,13 +97,31 @@ public class ManifestParserTest {
     }
 
     @Test(expected = ManifestParserException.class)
-    public void exceptionThrowsIfIOExceptionIsThrown() throws Exception {
+    public void exceptionThrownIfIOExceptionIsThrown() throws Exception {
         // ARRANGE
         ManifestParser sut = new ManifestParser();
         InputStream in = exceptionThowingInputStream();
 
         // ACT
         sut.parse(in);
+
+        //ASSERT -- see expected exception
+    }
+
+    @Test(expected = ManifestParserException.class)
+    public void exceptionThrownIfThereAreDuplicateFilenamesInTheManifest() throws Exception {
+        // ARRANGE
+        ManifestParser sut = new ManifestParser();
+        List<String> lines = new ArrayList<>();
+        Collections.addAll(lines,
+                "filename.pdf : title contains a colon: and a subtitle",
+                "filename2.pdf : title contains a colon: and a subtitle",
+                "filename.pdf : title contains a colon: and a subtitle"
+                );
+        InputStream in = new ByteArrayInputStream(lines.stream().collect(Collectors.joining("\n\n")).getBytes());
+
+        // ACT
+        Manifest actual = sut.parse(in);
 
         //ASSERT -- see expected exception
     }

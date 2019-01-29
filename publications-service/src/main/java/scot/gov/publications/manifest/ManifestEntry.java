@@ -11,6 +11,8 @@ public class ManifestEntry {
 
     private final String title;
 
+    private String friendlyFilename;
+
     public ManifestEntry(String filename, String title) {
         this.filename = filename;
         this.title = title;
@@ -28,4 +30,11 @@ public class ManifestEntry {
         return StringUtils.isEmpty(title) ?  getFilename() : title;
     }
 
+    public String getFriendlyFilename() {
+        return friendlyFilename;
+    }
+
+    public void setFriendlyFilename(String friendlyFilename) {
+        this.friendlyFilename = friendlyFilename;
+    }
 }

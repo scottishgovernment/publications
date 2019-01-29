@@ -56,7 +56,6 @@ public class ManifestExtractorTest {
         return entry;
     }
 
-    @SuppressWarnings("unchecked")
     ZipFile zipFileWithDirname(String name) {
         ZipFile zipFile = mock(ZipFile.class);
         ZipEntry entry = entryWithName(name);

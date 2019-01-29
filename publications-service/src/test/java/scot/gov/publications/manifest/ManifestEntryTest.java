@@ -1,4 +1,4 @@
-package scot.gov.manifest;
+package scot.gov.publications.manifest;
 
 import org.junit.Test;
 import scot.gov.publications.manifest.ManifestEntry;
