@@ -84,6 +84,16 @@ public class HippoUtils {
         }
     }
 
+    public void removeSiblings(Node node) throws RepositoryException {
+        NodeIterator it = node.getParent().getNodes();
+        while (it.hasNext()) {
+            Node sibling = it.nextNode();
+            if (!sibling.getIdentifier().equals(node.getIdentifier())) {
+                sibling.remove();
+            }
+        }
+    }
+
     public void setPropertyStrings(Node node, String property, Collection<String> values) throws RepositoryException {
         node.setProperty(property, values.toArray(new String[values.size()]), PropertyType.STRING);
     }

@@ -123,7 +123,8 @@ public class PublicationNodeUpdater {
     }
 
     private Node doCreateOrUpdate(Metadata metadata) throws RepositoryException {
-        Node pubNode = findPublicaitonNodeToUpdate(metadata);
+        Node pubNode = findPublicationNodeToUpdate(metadata);
+
         if (pubNode == null) {
             List<String> newPath = pathStrategy.path(metadata);
             Node pubFolder = hippoPaths.ensurePath(newPath);
@@ -137,6 +138,9 @@ public class PublicationNodeUpdater {
                     metadata.getPublicationDateWithTimezone());
             return pubNode;
         } else {
+            // remove any other nodes there are ...
+            hippoUtils.removeSiblings(pubNode);
+
             // the node already exists, make sure its publications status matches what is in the zip
             nodeFactory.ensurePublicationStatus(pubNode, metadata.getPublicationDateWithTimezone());
         }
@@ -165,7 +169,7 @@ public class PublicationNodeUpdater {
      * node we want to find all of then and then decide which noide to use if there are multiple drafts.  If a
      * published node exists then use that. Then fall back to using the upublished one and then finally to draft.
      */
-    private Node findPublicaitonNodeToUpdate(Metadata metadata) throws RepositoryException {
+    private Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
         // Query to see if a publications with this ISBN already exist.  If it does then we will update the existing
         // node rather than create a new one
         String sql = String.format("SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s'", metadata.getIsbn());
