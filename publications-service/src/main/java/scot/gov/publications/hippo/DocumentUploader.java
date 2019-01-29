@@ -83,7 +83,7 @@ public class DocumentUploader {
                     documentsFolder,
                     existingDocumentTitles,
                     metadata);
-            filenameToDocument.put(manifestEntry.getFriendlyFilename(), docNode);
+            filenameToDocument.put(manifestEntry.getFilename(), docNode);
         }
         return filenameToDocument;
     }
