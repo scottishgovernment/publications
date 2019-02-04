@@ -5,12 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.jcr.TestRepository;
@@ -33,7 +31,6 @@ import static junit.framework.TestCase.assertFalse;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 
 /**
  * These tests run against an embedded JCR repository: see TestRepository.
