@@ -2,8 +2,11 @@ package scot.gov.publications.metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * The metadata file contained in the zip is a json fole with a single metadata property so we need  wrapper object.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Wrapper {
+public class MetadataWrapper {
 
     private Metadata metadata;
 

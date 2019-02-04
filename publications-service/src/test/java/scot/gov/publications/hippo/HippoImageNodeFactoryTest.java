@@ -1,7 +1,7 @@
 package scot.gov.publications.hippo;
 
 import org.junit.Test;
-import scot.gov.publications.imageprocessing.ImageProcessing;
+import scot.gov.publications.imageprocessing.GraphicsMagickImageProcessingImpl;
 import scot.gov.publications.imageprocessing.ImageProcessingException;
 
 import javax.jcr.Node;
@@ -52,7 +52,7 @@ public class HippoImageNodeFactoryTest {
 
         HippoImageNodeFactory sut = new HippoImageNodeFactory();
         sut.hippoUtils = mock(HippoUtils.class);
-        sut.imageProcessing = mock(ImageProcessing.class);
+        sut.imageProcessing = mock(GraphicsMagickImageProcessingImpl.class);
         when(sut.imageProcessing.thumbnail(any(InputStream.class), anyInt()))
                 .thenThrow(new ImageProcessingException("arg"));
         sut.binarySource = mock(BinarySource.class);

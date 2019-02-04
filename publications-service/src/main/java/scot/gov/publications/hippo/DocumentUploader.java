@@ -1,16 +1,17 @@
 package scot.gov.publications.hippo;
 
-import net.logstash.logback.encoder.org.apache.commons.lang.StringUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
+import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.imageprocessing.ThumbnailsProvider;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestEntry;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.util.Exif;
+import scot.gov.publications.util.ExifProcessImpl;
 import scot.gov.publications.util.FileType;
 
 import javax.jcr.*;
@@ -33,6 +34,8 @@ public class DocumentUploader {
 
     private Session session;
 
+    private Exif exif;
+
     private HippoUtils hippoUtils = new HippoUtils();
 
     private HippoNodeFactory nodeFactory;
@@ -41,11 +44,12 @@ public class DocumentUploader {
 
     private ThumbnailsProvider thumbnailsProvider;
 
-    public DocumentUploader(Session session, PublicationsConfiguration configuration) {
+    public DocumentUploader(Session session, ImageProcessing imageProcessing, Exif exif, PublicationsConfiguration configuration) {
         this.session = session;
+        this.exif = exif;
         this.hippoPaths = new HippoPaths(session);
         this.nodeFactory = new HippoNodeFactory(session, configuration);
-        this.thumbnailsProvider = new ThumbnailsProvider();
+        this.thumbnailsProvider = new ThumbnailsProvider(imageProcessing);
     }
 
     public Map<String, Node> uploadDocuments(
@@ -124,7 +128,7 @@ public class DocumentUploader {
                 zipEntry);
 
         String mimeType = resourceNode.getProperty(JCR_MIMETYPE).getString();
-        long pageCount = Exif.pageCount(resourceNode.getProperty(JCR_DATA).getBinary(), mimeType);
+        long pageCount = exif.pageCount(resourceNode.getProperty(JCR_DATA).getBinary(), mimeType);
         documentInfoNode.setProperty(GOVSCOT_PAGE_COUNT, pageCount);
         createThumbnails(resourceNode);
         return resourceNode;

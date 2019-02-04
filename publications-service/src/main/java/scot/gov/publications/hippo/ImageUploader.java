@@ -1,6 +1,7 @@
 package scot.gov.publications.hippo;
 
 import scot.gov.publications.ApsZipImporterException;
+import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.util.ZipEntryUtil;
 
 import javax.jcr.Node;
@@ -24,9 +25,9 @@ public class ImageUploader {
 
     HippoImageNodeFactory imageNodeFactory = new HippoImageNodeFactory();
 
-    public ImageUploader(Session session) {
+    public ImageUploader(Session session, ImageProcessing imageProcessing) {
         this.hippoPaths = new HippoPaths(session);
-        this.imageNodeFactory = new HippoImageNodeFactory(session);
+        this.imageNodeFactory = new HippoImageNodeFactory(session, imageProcessing);
     }
 
     public Map<String, String> createImages(ZipFile zipFile, Node pubFolder) throws ApsZipImporterException {

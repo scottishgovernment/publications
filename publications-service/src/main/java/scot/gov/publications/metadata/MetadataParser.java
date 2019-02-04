@@ -32,7 +32,7 @@ public class MetadataParser {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         om.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        Wrapper wrapper = om.readValue(in, Wrapper.class);
+        MetadataWrapper wrapper = om.readValue(in, MetadataWrapper.class);
         return wrapper.getMetadata();
     }
 
@@ -61,8 +61,8 @@ public class MetadataParser {
 
     private void assertValidFields(Metadata metadata) throws MetadataParserException {
         // the isbn should only contain letters, numbers and hyphens
-        if (!validISBN(metadata.getIsbn())) {
-            throw new MetadataParserException("Invalid field: isbn = " + metadata.getIsbn());
+        if (!validISBN(metadata.normalisedIsbn())) {
+            throw new MetadataParserException("Invalid field: isbn = " + metadata.normalisedIsbn());
         }
     }
 

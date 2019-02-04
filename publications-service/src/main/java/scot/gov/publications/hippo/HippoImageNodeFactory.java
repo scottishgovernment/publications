@@ -25,15 +25,16 @@ public class HippoImageNodeFactory {
 
     HippoUtils hippoUtils = new HippoUtils();
 
-    ImageProcessing imageProcessing = new ImageProcessing();
+    ImageProcessing imageProcessing;
 
     HippoImageNodeFactory() {
         // default constructor useful in tests
     }
 
-    public HippoImageNodeFactory(Session session) {
+    public HippoImageNodeFactory(Session session, ImageProcessing imageProcessing) {
         this.session = session;
         this.binarySource = new BinarySource(session);
+        this.imageProcessing = imageProcessing;
     }
 
     public Node ensureImageSetNodeExists(

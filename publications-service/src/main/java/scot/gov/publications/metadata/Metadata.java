@@ -1,6 +1,9 @@
 package scot.gov.publications.metadata;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
@@ -15,6 +18,8 @@ public class Metadata {
 
     String title;
 
+    @JsonSerialize(using= LocalDateTimeSerializer.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime publicationDate;
 
     ZonedDateTime publicationDateWithTimezone;

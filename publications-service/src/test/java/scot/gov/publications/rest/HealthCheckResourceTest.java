@@ -5,7 +5,7 @@ import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.hippo.HippoPaths;
-import scot.gov.publications.hippo.SessionFactory;
+import scot.gov.publications.hippo.HippoSessionFactory;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
@@ -208,16 +208,16 @@ public class HealthCheckResourceTest {
         return storage;
     }
 
-    SessionFactory healthySessionFactory() throws Exception {
-        SessionFactory sessionFactory = mock(SessionFactory.class);
+    HippoSessionFactory healthySessionFactory() throws Exception {
+        HippoSessionFactory sessionFactory = mock(HippoSessionFactory.class);
         Session session = mock(Session.class);
         Mockito.when(session.nodeExists(HippoPaths.ROOT)).thenReturn(true);
         Mockito.when(sessionFactory.newSession()).thenReturn(session);
         return sessionFactory;
     }
 
-    SessionFactory unhealthSessionFactory(Class throwableclass) throws Exception {
-        SessionFactory sessionFactory = mock(SessionFactory.class);
+    HippoSessionFactory unhealthSessionFactory(Class throwableclass) throws Exception {
+        HippoSessionFactory sessionFactory = mock(HippoSessionFactory.class);
         Session session = mock(Session.class);
         Mockito.when(session.itemExists(HippoPaths.ROOT)).thenThrow(throwableclass);
         Mockito.when(sessionFactory.newSession()).thenReturn(session);

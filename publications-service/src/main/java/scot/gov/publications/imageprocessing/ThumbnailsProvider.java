@@ -28,7 +28,11 @@ public class ThumbnailsProvider {
             165,
             107);
 
-    ImageProcessing imageProcessing = new ImageProcessing();
+    private final ImageProcessing imageProcessing;
+
+    public ThumbnailsProvider(ImageProcessing imageProcessing) {
+        this.imageProcessing = imageProcessing;
+    }
 
     FileUtil fileUtil = new FileUtil();
 

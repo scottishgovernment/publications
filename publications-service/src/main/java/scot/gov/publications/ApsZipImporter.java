@@ -5,11 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.*;
 import scot.gov.publications.hippo.pages.PublicationPageUpdater;
+import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.Publication;
+import scot.gov.publications.util.Exif;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -35,7 +37,11 @@ public class ApsZipImporter {
     @Inject
     SessionFactory sessionFactory;
 
-    HippoPaths hippoPaths;
+    @Inject
+    ImageProcessing imageProcessing;
+
+    @Inject
+    Exif exif;
 
     HippoUtils hippoUtils = new HippoUtils();
 
@@ -47,8 +53,8 @@ public class ApsZipImporter {
         Session session = newJCRSession();
         PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
         PublicationPageUpdater publicationPageUpdater = new PublicationPageUpdater(session, configuration);
-        ImageUploader imageUploader = new ImageUploader(session);
-        DocumentUploader documentUploader = new DocumentUploader(session, configuration);
+        ImageUploader imageUploader = new ImageUploader(session, imageProcessing);
+        DocumentUploader documentUploader = new DocumentUploader(session, imageProcessing, exif, configuration);
 
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);

@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "id": 5464,
+    "wpid": null,
+    "title": "This is an example publication",
+    "publicationDate": "2018-10-29T09:30:00",
+    "url": null,
+    "alternateUrl": "",
+    "executiveSummary": "Summary of example publicaition",
+    "description": "Description of exmaple publication",
+    "isbn": "999999999",
+    "topic": "Statistics",
+    "publicationType": "Statistics Publication",
+    "keywords": "Homelessness, Temporary Accommodation, Statistics",
+    "researchCategory": "",
+    "statisticsCategory": "Housing and Regeneration",
+    "equalityInfo": {
+      "gender": false,
+      "age": false,
+      "disability": false,
+      "religion": false,
+      "ethnicity": false,
+      "orientation": false
+    },
+    "links": []
+  }
+}

@@ -28,7 +28,6 @@ import java.util.List;
  * Creates an embedded JCR repository for testing.
  *
  * The data is stored under target/repo.
-
  */
 public class TestRepository {
 
@@ -101,7 +100,10 @@ public class TestRepository {
             "/hcm-config/gallerypickertypes.cnd",
             "/hcm-config/hippotaxonomy.cnd",
             "/hcm-config/resourcebundle.cnd",
+            "/hcm-config/hipposched.cnd",
             "/hcm-config/govscot.cnd");
+
+
         for (String cnd : cnds) {
             loadCND(manager, cnd);
         }

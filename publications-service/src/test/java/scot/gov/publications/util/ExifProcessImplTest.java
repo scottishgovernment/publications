@@ -14,23 +14,14 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 
-public class ExifTest {
-
-//    @Test
-//    public void canExtractPageCountFromPDF() throws Exception {
-//        InputStream in = ExifTest.class.getResourceAsStream("/examplepdf.pdf");
-//        Binary binary = Mockito.mock(Binary.class);
-//        Mockito.when(binary.getStream()).thenReturn(in);
-//        long count = Exif.pageCount(binary, "application/pdf");
-//        assertEquals(50, count);
-//    }
+public class ExifProcessImplTest {
 
     @Test
     public void pageCountIsZeroForNonPDF() throws Exception {
-        InputStream in = ExifTest.class.getResourceAsStream("/examplepdf.xls");
+        InputStream in = ExifProcessImplTest.class.getResourceAsStream("/examplepdf.xls");
         Binary binary = Mockito.mock(Binary.class);
         Mockito.when(binary.getStream()).thenReturn(in);
-        long count = Exif.pageCount(binary, "application/msexcel");
+        long count = new ExifProcessImpl().pageCount(binary, "application/msexcel");
         assertEquals(0, count);
     }
 
@@ -40,7 +31,7 @@ public class ExifTest {
         Mockito.when(in.read(any())).thenThrow(new IOException("arg"));
         Binary binary = Mockito.mock(Binary.class);
         Mockito.when(binary.getStream()).thenReturn(in);
-        long count = Exif.pageCount(binary, "application/pdf");
+        long count = new ExifProcessImpl().pageCount(binary, "application/pdf");
         assertEquals(0, count);
     }
 
@@ -54,7 +45,7 @@ public class ExifTest {
 
         Map<List<String>, Long> results = new HashMap<>();
         for (Map.Entry<List<String>, Long> fixture : fixtures.entrySet()) {
-            results.put(fixture.getKey(), Exif.extractPageCount(fixture.getKey()));
+            results.put(fixture.getKey(), ExifProcessImpl.extractPageCount(fixture.getKey()));
         }
         assertEquals(fixtures, results);
     }

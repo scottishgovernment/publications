@@ -3,6 +3,7 @@ package scot.gov.publications.hippo;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.ApsZipImporterException;
+import scot.gov.publications.imageprocessing.ImageProcessing;
 
 
 import javax.jcr.Node;
@@ -24,7 +25,7 @@ public class ImageUploaderTest {
     public void repoExceptionRethrownAsApsZipImporterException() throws Exception {
         // ARRANGE
         Session session = mock(Session.class);
-        ImageUploader sut = new ImageUploader(session);
+        ImageUploader sut = new ImageUploader(session, mock(ImageProcessing.class));
 
         sut.hippoUtils = mock(HippoUtils.class);
         when(sut.hippoUtils.pathFromNode(any())).thenThrow(new RepositoryException("arg"));
@@ -40,7 +41,7 @@ public class ImageUploaderTest {
 
         ZipFile zipFile = ZipFixtures.exampleZip();
         Session session = mock(Session.class);
-        ImageUploader sut = new ImageUploader(session);
+        ImageUploader sut = new ImageUploader(session, mock(ImageProcessing.class));
         Node node = mock(Node.class);
         Node pubFolder = Mockito.mock(Node.class);
         Node imgSetNode = Mockito.mock(Node.class);
