@@ -3,8 +3,10 @@ package scot.gov.publications;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,6 +17,10 @@ import scot.gov.jcr.TestRepository;
 import scot.gov.publications.hippo.*;
 import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.imageprocessing.ImageProcessingException;
+import scot.gov.publications.manifest.Manifest;
+import scot.gov.publications.manifest.ManifestEntry;
+import scot.gov.publications.manifest.ManifestParser;
+import scot.gov.publications.manifest.ManifestParserException;
 import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
 
@@ -28,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.zip.ZipFile;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -194,36 +201,157 @@ public class ApsZipImporterTest {
         assertPublicationFields(path3, false);
     }
 
-
-    void assertPublicationFields(String path, boolean shoudlBePublished) throws Exception {
-        Node folder = session.getNode(path);
-        Node handle = folder.getNode("index");
-        Node pub = handle.getNodes().nextNode();
-        if (shoudlBePublished) {
-            assertFalse(handle.hasNode("hippo:request/hipposched:triggers/default"));
-            assertEquals(pub.getProperty("hippostd:state").getString(), "published");
-        } else {
-            assertTrue(handle.hasNode("hippo:request/hipposched:triggers/default"));
-            assertEquals(pub.getProperty("hippostd:state").getString(), "unpublished");
-        }
-    }
-
      // import a publication and make sure that links are rewritten correctly
 
      // can upload no html version then a version with html
 
      // publication with the same title as an existing one gets a disambiguated slug
 
-     // rejects zip with no manifest
+    /**
+     * Rejects invalid manifest
+     */
+    @Test(expected = ApsZipImporterException.class)
+    public void rejectsInvalidManifest() throws Exception {
+        // ARRANGE - write over the manifest with invalid values
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsInvalidManifest", "fixtures/exampleZipContents");
+        FileUtils.write(fixturePath.resolve("manifest.txt").toFile(), "££££\nrrrr", "UTF-8");
 
-     // rejects zip with invalid manifest
+        // ACT
+        sut.importApsZip(ZipFixtures.zipDirectory(fixturePath), new Publication());
 
-     // rejects zip if manifest mentions file not peresent in zip
+        // ASSERT - expected exception
+    }
 
-     // rejects missing metadata
+    /**
+     * We accept an empty manifest - this indicates that there are no entries to be uploaded.
+     */
+    @Test
+    public void acceptsEmptyManifest() throws Exception {
+        // ARRANGE - remove the metatdata
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsEmptyManifest", "fixtures/exampleZipContents");
+        FileUtils.write(fixturePath.resolve("manifest.txt").toFile(), "", "UTF-8");
 
-     // rejects invalid metadata
+        // ACT
+        sut.importApsZip(ZipFixtures.zipDirectory(fixturePath), new Publication());
 
+        // ASSERT - no exception should have been thrown
+    }
+
+    /**
+     * Rejects missing manifest
+     */
+    @Test(expected = ApsZipImporterException.class)
+    public void rejectsMissingManifest() throws Exception {
+        // ARRANGE - remove the metatdata
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsMissingManifest", "fixtures/exampleZipContents");
+        fixturePath.resolve("manifest.txt").toFile().delete();
+
+        // ACT
+        sut.importApsZip(ZipFixtures.zipDirectory(fixturePath), new Publication());
+
+        // ASSERT - expect an exception
+    }
+
+    /**
+     * Rejects missing metadata
+     */
+    @Test
+    public void rejectsMissingMetadata() throws Exception {
+        // ARRANGE - remove the metatdata
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsMissingMetadata", "fixtures/exampleZipContents");
+        Path metadataPath = findMetadata(fixturePath);
+        metadataPath.toFile().delete();
+
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+        try {
+            // ACT
+            sut.importApsZip(zip, new Publication());
+            Assert.fail("An exception should have been thrown");
+        } catch (ApsZipImporterException e) {
+            // ASSERT
+            assertEquals(e.getMessage(), "No metadata file in zip");
+        }
+    }
+
+    /**
+     * Rejects truncated metadata
+     */
+    @Test
+    public void rejectsTruncatedMetadata() throws Exception {
+        // ARRANGE - save half of the contents of the metadata
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsTruncatedMetadata", "fixtures/exampleZipContents");
+        Path metadataPath = findMetadata(fixturePath);
+        String metaDataString = FileUtils.readFileToString(metadataPath.toFile(), "UTF-8");
+        String truncatedMetadata = StringUtils.truncate(metaDataString, 10);
+        FileUtils.write(metadataPath.toFile(), truncatedMetadata, "UTF-8");
+
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+        try {
+            // ACT
+            sut.importApsZip(zip, new Publication());
+            Assert.fail("An exception should have been thrown");
+        } catch (ApsZipImporterException e) {
+            // ASSERT
+            assertEquals(e.getMessage(), "Failed to parse metadata");
+        }
+    }
+
+    /**
+     * Rejects zip if manifest mentions file not in zip
+     *
+     * If the manifest file mentions a file that is not present in the zip then an exception should be thrown.
+     */
+    @Test
+    public void rejectsZipIfManifestMentionsFileNotInZip() throws Exception {
+        // ARRANGE - radd a non existant entry to the manifest and save it
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsZipIfManifestMentionsFileNotInZip", "fixtures/exampleZipContents");
+        Manifest manifest = loadManifest(fixturePath);
+        manifest.getEntries().add(new ManifestEntry("nosuchfile.pdf", "No such file"));
+        saveManifest(manifest, fixturePath);
+
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+        try {
+            // ACT
+            sut.importApsZip(zip, new Publication());
+            Assert.fail("An exception should have been thrown");
+        } catch (ApsZipImporterException e) {
+            // ASSERT
+            assertEquals(e.getMessage(), "Manifest specifies document not present in zip: nosuchfile.pdf");
+        }
+    }
+
+    /**
+     * Rejects unrecognised file types
+     *
+     * We only want to allow files wil recognised extensions.  For example if the zip contain an .exe or a .zip
+     * file then it should be rejected.
+     */
+    @Test
+    public void rejectsZipContainingUnrecognisedFileTypes() throws Exception {
+        // ARRANGE - rename one of the files to have a zip extension and update the manifest to match
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsZipContainingUnrecognisedFileTypes", "fixtures/exampleZipContents");
+        Manifest manifest = loadManifest(fixturePath);
+        ManifestEntry firstManifestEntry = manifest.getEntries().get(0);
+        Path oldpath = fixturePath.resolve(firstManifestEntry.getFilename());
+        Path newPath = fixturePath.resolve(firstManifestEntry.getFilename().split("\\.")[0] + ".zip");
+        firstManifestEntry.setFilename(newPath.getFileName().toString());
+        saveManifest(manifest, fixturePath);
+        FileUtils.moveFile(oldpath.toFile(), newPath.toFile());
+
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+        try {
+            // ACT
+            sut.importApsZip(zip, new Publication());
+            Assert.fail("An exception should have been thrown");
+        } catch (ApsZipImporterException e) {
+            // ASSERT
+            assertTrue(startsWith(e.getMessage(), "File has an unsupported file extension"));
+        }
+    }
+
+    /**
+     * Import a sample zip and assert some properties
+     */
     @Test
     public void canImportExampleZip() throws Exception {
         // ARRANGE
@@ -252,7 +380,7 @@ public class ApsZipImporterTest {
 
         // has document nodes as expected
         Node documentsFolder = publicationFolder.getNode("documents");
-        Assert.assertEquals(1, documentsFolder.getNodes().getSize());
+        assertEquals(1, documentsFolder.getNodes().getSize());
     }
 
     @Test
@@ -273,6 +401,19 @@ public class ApsZipImporterTest {
         Node index = publicationFolder.getNode("index/index");
         assertEquals("title", "This is an example publication", index.getProperty("govscot:title").getString());
         assertEquals("name", "This is an example publication", index.getProperty("hippo:name").getString());
+    }
+
+    void assertPublicationFields(String path, boolean shoudlBePublished) throws Exception {
+        Node folder = session.getNode(path);
+        Node handle = folder.getNode("index");
+        Node pub = handle.getNodes().nextNode();
+        if (shoudlBePublished) {
+            assertFalse(handle.hasNode("hippo:request/hipposched:triggers/default"));
+            assertEquals(pub.getProperty("hippostd:state").getString(), "published");
+        } else {
+            assertTrue(handle.hasNode("hippo:request/hipposched:triggers/default"));
+            assertEquals(pub.getProperty("hippostd:state").getString(), "unpublished");
+        }
     }
 
     Path findMetadata(Path path) {
@@ -300,11 +441,6 @@ public class ApsZipImporterTest {
         node.setProperty(property, newvalue, PropertyType.STRING);
     }
 
-
-    Node findNodeByIsbn(String isbn) throws RepositoryException {
-        return hippoUtils.findOne(session, "SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s' and hippostd:state = 'published'", isbn);
-    }
-
     void saveMetadata(Metadata metadata, Path path) throws IOException {
         Path metadataPath = findMetadata(path);
         LOG.info("Saving metedata to {}", metadataPath);
@@ -315,8 +451,22 @@ public class ApsZipImporterTest {
 
     Metadata loadMetadata(Path path) throws MetadataParserException, IOException {
         Path metadataPath = findMetadata(path);
-        return new MetadataParser()
-                .parse(new FileInputStream(metadataPath.toFile()));
+        return new MetadataParser().parse(new FileInputStream(metadataPath.toFile()));
+    }
+
+    void saveManifest(Manifest manifest, Path path) throws IOException {
+        Path manifestPath = path.resolve("manifest.txt");
+        PrintWriter writer = new PrintWriter(new FileOutputStream(manifestPath.toFile()));
+        for (ManifestEntry entry : manifest.getEntries()) {
+            String line = String.format("%s : %s", entry.getFilename(), entry.getTitle());
+            writer.println(line);
+        }
+        writer.close();
+    }
+
+    Manifest loadManifest(Path path) throws ManifestParserException, IOException {
+        Path manifestPath = path.resolve("manifest.txt");
+        return new ManifestParser().parse(new FileInputStream(manifestPath.toFile()));
     }
 
     /**

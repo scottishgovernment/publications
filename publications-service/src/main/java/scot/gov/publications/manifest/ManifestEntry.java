@@ -7,9 +7,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class ManifestEntry {
 
-    private final String filename;
+    private String filename;
 
-    private final String title;
+    private String title;
 
     private String friendlyFilename;
 
@@ -36,5 +36,13 @@ public class ManifestEntry {
 
     public void setFriendlyFilename(String friendlyFilename) {
         this.friendlyFilename = friendlyFilename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
