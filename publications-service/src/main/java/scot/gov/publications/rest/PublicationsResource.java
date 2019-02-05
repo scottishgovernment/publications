@@ -165,9 +165,8 @@ public class PublicationsResource {
             importPublication(publication);
             return Response.accepted(UploadResponse.accepted(publication)).build();
         } catch (ApsZipImporterException e) {
-            String msg = "Failed to extract metadata from zip";
-            LOG.error(msg,  e);
-            return Response.status(400).entity(UploadResponse.error(msg)).build();
+            LOG.error("Failed to extract metadata from zip",  e);
+            return Response.status(400).entity(UploadResponse.error(e.getMessage())).build();
         } catch (PublicationStorageException e) {
             String msg = "Failed to upload zip file to s3";
             LOG.error(msg,  e);

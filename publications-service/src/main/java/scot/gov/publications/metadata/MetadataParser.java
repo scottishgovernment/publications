@@ -7,8 +7,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TimeZone;
 
+import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -37,25 +40,32 @@ public class MetadataParser {
     }
 
     private void assertRequiredFields(Metadata metadata) throws MetadataParserException {
-        // assert that we have required fields
+
+        List<String> missingFields = new ArrayList<>();
+
         if (isBlank(metadata.getId())) {
-            throw new MetadataParserException("Missing required field: id");
+            missingFields.add("id");
         }
 
         if (isBlank(metadata.getIsbn())) {
-            throw new MetadataParserException("Missing required field: isbn");
+            missingFields.add("isbn");
         }
 
         if (isBlank(metadata.getPublicationType())) {
-            throw new MetadataParserException("Missing required field: publicationType");
+            missingFields.add("publicationType");
         }
 
         if (isBlank(metadata.getTitle())) {
-            throw new MetadataParserException("Missing required field: title");
+            missingFields.add("title");
         }
 
         if (metadata.getPublicationDate() == null) {
-            throw new MetadataParserException("Missing required field: publicationDate");
+            missingFields.add("publicationDate");
+        }
+
+        if (!missingFields.isEmpty()) {
+            String missignFieldsString = missingFields.stream().collect(joining(", "));
+            throw new MetadataParserException("Metadata missing required field(s): " + missignFieldsString);
         }
     }
 

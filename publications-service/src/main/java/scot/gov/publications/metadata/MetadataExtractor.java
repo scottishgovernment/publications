@@ -56,7 +56,7 @@ public class MetadataExtractor {
             Metadata metadata = metadataParser.parse(zipFile.getInputStream(jsonEntries.get(0)));
             return sanitizeData(metadata);
         } catch (MetadataParserException e) {
-            throw new ApsZipImporterException("Unable to parse metadata file", e);
+            throw new ApsZipImporterException(e.getMessage(), e);
         } catch (IOException e) {
             throw new ApsZipImporterException("Unable to read metadata file", e);
         }

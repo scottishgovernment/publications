@@ -35,7 +35,7 @@ public class ManifestExtractor {
             manifest.assignFriendlyFilenames();
             return manifest;
         } catch (ManifestParserException e) {
-            throw new ApsZipImporterException("Invalid manifest file", e);
+            throw new ApsZipImporterException(e.getMessage(), e);
         } catch (IOException e) {
             throw new ApsZipImporterException("Failed to read manifest file", e);
         }
