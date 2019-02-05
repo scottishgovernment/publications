@@ -25,19 +25,27 @@ class LinkRewriter {
      * @param from The href to be rewritten
      * @param to The node to link to
      */
-    void rewriteLink(Node pageNode, String from, Node to) throws RepositoryException {
-        // determine of we already link to this
+    void rewriteLinkToFacet(Node pageNode, String from, Node to) throws RepositoryException {
+        // determine if we already link to this
         Node contentNode = pageNode.getNode("govscot:content");
         Node facet = ensueFacetSelect(contentNode, to);
         String fromhtml = contentNode.getProperty(CONTENT_ATTRIB).getString();
         String toHtml = fromhtml.replaceAll(from, facet.getName());
         contentNode.setProperty(CONTENT_ATTRIB, toHtml);
 
-        LOG.debug("Rewriting {} -> {} in page {}, created new facet for {}",
+        LOG.info("Rewriting {} -> {} in page {}, created new facet for {}",
                 from,
                 facet.getName(),
                 pageNode.getPath(),
                 to.getPath());
+    }
+
+    void rewriteWithoutFacet(Node pageNode, String from, String to) throws RepositoryException  {
+        Node contentNode = pageNode.getNode("govscot:content");
+        String fromhtml = contentNode.getProperty(CONTENT_ATTRIB).getString();
+        String toHtml = fromhtml.replaceAll(from, to);
+        contentNode.setProperty(CONTENT_ATTRIB, toHtml);
+        LOG.info("Rewriting {} -> {} in page (no facet)", from, to, pageNode.getPath());
     }
 
     Node ensueFacetSelect(Node contentNode, Node to) throws RepositoryException {

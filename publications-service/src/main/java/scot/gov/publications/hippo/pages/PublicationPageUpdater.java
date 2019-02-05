@@ -89,7 +89,7 @@ public class PublicationPageUpdater {
                     filenameToImageId,
                     publishDateTime);
             nodesByEntryname.putAll(docnameToNode);
-            PublicationLinkRewriter linkRewriter = new PublicationLinkRewriter(nodesByEntryname);
+            PublicationLinkRewriter linkRewriter = new PublicationLinkRewriter(publicationFolder.getName(), nodesByEntryname);
             linkRewriter.rewrite(publicationFolder);
         } catch (IOException | RepositoryException e) {
             throw new ApsZipImporterException("Failed too upload pages", e);

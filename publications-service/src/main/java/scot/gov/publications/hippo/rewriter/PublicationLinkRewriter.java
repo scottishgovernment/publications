@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang.StringUtils.substringAfter;
 import static scot.gov.publications.hippo.rewriter.LinkRewriter.CONTENT_ATTRIB;
 
 /**
@@ -21,15 +22,18 @@ import static scot.gov.publications.hippo.rewriter.LinkRewriter.CONTENT_ATTRIB;
  * Links that this rewrites look like this:
  * <a href="SCT01188871401-00.pdf">pdf format</a>
  *
- * The map passed into this class contains a map of filenamed to the publicaiton nodes for those attachments.
+ * The map passed into this class contains a map of filenames to the publication nodes for those attachments.
  */
 public class PublicationLinkRewriter {
 
     LinkRewriter linkRewriter = new LinkRewriter();
 
+    String publicationSlug;
+
     Map<String, Node> pageNodesByEntryname;
 
-    public PublicationLinkRewriter(Map<String, Node> pageNodesByEntryname) {
+    public PublicationLinkRewriter(String publicationSlug, Map<String, Node> pageNodesByEntryname) {
+        this.publicationSlug = publicationSlug;
         this.pageNodesByEntryname = pageNodesByEntryname;
     }
 
@@ -55,12 +59,26 @@ public class PublicationLinkRewriter {
     }
 
     private void rewriteLink(String href, Node pageNode) throws RepositoryException {
-        if (!pageNodesByEntryname.containsKey(href)) {
+
+        // if the href is one of the pages then rewrite it as a facet link
+        if (pageNodesByEntryname.containsKey(href)) {
+            Node pagenode = pageNodesByEntryname.get(href);
+            linkRewriter.rewriteLinkToFacet(pageNode, href, pagenode);
             return;
         }
 
-        Node pagenode = pageNodesByEntryname.get(href);
-        linkRewriter.rewriteLink(pageNode, href, pagenode);
+        // see if this is a link to a page with an anchor
+        String hrefWithoutAnchor = StringUtils.substringBefore(href, "#");
+        if (pageNodesByEntryname.containsKey(hrefWithoutAnchor)) {
+            String pageSlug = pageNodesByEntryname.get(hrefWithoutAnchor).getName();
+            String anchor = substringAfter(href, "#");
+            String newLink = String.format("/publications/%s/pages/%s#%s",
+                    publicationSlug,
+                    pageSlug,
+                    anchor);
+            linkRewriter.rewriteWithoutFacet(pageNode, href, newLink);
+            return;
+        }
     }
 
     private boolean isLocalLink(Element link) {

@@ -49,7 +49,7 @@ public class LinkRewriterTest {
         when(toNode.getIdentifier()).thenReturn("to-node-id");
 
         // ACT
-        sut.rewriteLink(pageNode, "from", toNode);
+        sut.rewriteLinkToFacet(pageNode, "from", toNode);
 
         // ARRANGE
         verify(contentNode, never()).addNode(eq("hippo:facetselect"), any());
@@ -95,7 +95,7 @@ public class LinkRewriterTest {
         when(toNode.getIdentifier()).thenReturn("to-node-id");
 
         // ACT
-        sut.rewriteLink(pageNode, "from", toNode);
+        sut.rewriteLinkToFacet(pageNode, "from", toNode);
 
         // ARRANGE
         verify(contentNode).addNode("to-node-id", "hippo:facetselect");
