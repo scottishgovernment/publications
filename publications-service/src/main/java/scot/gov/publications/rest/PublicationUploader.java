@@ -84,7 +84,8 @@ public class PublicationUploader  {
             LOG.error("{} Failed to import contents of zip: {}", publication.getId(), e.getMessage(), e);
             populateErrorInformation(publication, e.getMessage());
         } catch (RuntimeException e) {
-            // ensure that we mark the publicaiton as failed if we get an unchecked exception
+            // ensure that we mark the publication as failed if we get an unchecked exception
+            populateErrorInformation(publication, e.getMessage());
             LOG.error("{} Failed to import contents of zip", publication.getId(), e);
         } finally {
             FileUtils.deleteQuietly(downloadedFile);

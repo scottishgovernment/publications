@@ -74,7 +74,7 @@ public class HippoNodeFactoryTest {
         when(parent.addNode("govscot:document", "hippo:resource")).thenReturn(resourceNode);
 
         // ACT
-        sut.newResourceNode(parent, "govscot:document", "SCT04185156361.pdf", zipFile, zipEntry);
+        sut.newResourceNode(parent, "govscot:document", "SCT04185156361.pdf", "application/pdf", zipFile, zipEntry);
 
         // ASSERT
         verify(resourceNode).setProperty(JCR_MIMETYPE, "application/pdf");

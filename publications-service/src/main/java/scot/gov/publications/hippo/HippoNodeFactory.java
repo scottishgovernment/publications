@@ -1,7 +1,6 @@
 package scot.gov.publications.hippo;
 
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.util.MimeTypeUtils;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -112,13 +111,15 @@ public class HippoNodeFactory {
         defaultNode.setProperty("hipposched:startTime", publishTime);
     }
 
-    public Node newResourceNode(Node parent, String property, String filename, ZipFile zipFile, ZipEntry zipEntry)
+    public Node newResourceNode(
+            Node parent,
+            String property,
+            String filename,
+            String contentType,
+            ZipFile zipFile, ZipEntry zipEntry)
             throws RepositoryException {
 
         try {
-            String contentType = MimeTypeUtils.detectContentType(filename);
-
-
             Node resourceNode = parent.addNode(property, "hippo:resource");
             Binary binary = session.getValueFactory().createBinary(zipFile.getInputStream(zipEntry));
 

@@ -14,6 +14,6 @@ public class MimeTypeUtils {
             return fromFileType.getMimeType();
         }
 
-        throw new IllegalArgumentException(String.format("Unrecognised file type {}", filename));
+        throw new IllegalArgumentException(String.format("Unrecognised file type %s", filename));
     }
 }

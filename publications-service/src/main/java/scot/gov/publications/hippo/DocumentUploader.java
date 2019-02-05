@@ -13,6 +13,7 @@ import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.util.Exif;
 import scot.gov.publications.util.ExifProcessImpl;
 import scot.gov.publications.util.FileType;
+import scot.gov.publications.util.MimeTypeUtils;
 
 import javax.jcr.*;
 import java.io.File;
@@ -120,18 +121,27 @@ public class DocumentUploader {
         documentInfoNode.setProperty("govscot:highlighted", false);
         documentInfoNode.setProperty("govscot:size", zipEntry.getSize());
 
+        String mimeType = detectContentType(manifestEntry.getFriendlyFilename());
         Node resourceNode = nodeFactory.newResourceNode(
                 documentInfoNode,
                 "govscot:document",
                 manifestEntry.getFriendlyFilename(),
+                mimeType,
                 zipFile,
                 zipEntry);
 
-        String mimeType = resourceNode.getProperty(JCR_MIMETYPE).getString();
         long pageCount = exif.pageCount(resourceNode.getProperty(JCR_DATA).getBinary(), mimeType);
         documentInfoNode.setProperty(GOVSCOT_PAGE_COUNT, pageCount);
         createThumbnails(resourceNode);
         return resourceNode;
+    }
+
+    private String detectContentType(String filename) throws ApsZipImporterException {
+        try {
+            return MimeTypeUtils.detectContentType(filename);
+        } catch (IllegalArgumentException e) {
+            throw new ApsZipImporterException(String.format("File has an unsupported file extension: '%s'", filename));
+        }
     }
 
     private SortedMap<String, String> existingDocumentTitles(Node documentsFolder) throws RepositoryException {
