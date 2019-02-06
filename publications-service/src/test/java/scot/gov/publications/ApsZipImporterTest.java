@@ -24,13 +24,12 @@ import scot.gov.publications.manifest.ManifestParserException;
 import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
 
-import javax.jcr.Node;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import static junit.framework.TestCase.assertFalse;
@@ -38,6 +37,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * These tests run against an embedded JCR repository: see TestRepository.
@@ -50,8 +50,6 @@ public class ApsZipImporterTest {
 
     ObjectMapper objectMapper;
     ApsZipImporter sut;
-
-    HippoUtils hippoUtils = new HippoUtils();
 
     @Before
     public void setUp() throws Exception {
@@ -201,11 +199,68 @@ public class ApsZipImporterTest {
         assertPublicationFields(path3, false);
     }
 
-     // import a publication and make sure that links are rewritten correctly
+    /**
+     * Can upload no html version then a version with html
+     */
+    @Test
+    public void canUploadZipWithNoHtmlThenOneWithTheHtml() throws Exception {
 
-     // can upload no html version then a version with html
+        // Create 2 zips, one without html and with html
+        Path fixturePathNoHtml = ZipFixtures.copyFixtureToTmpDirectory("canUploadZipWithNoHtml", "fixtures/exampleZipContents");
+        File [] htmlFiles = fixturePathNoHtml.toFile().listFiles(file -> endsWith(file.getName(), ".htm"));
+        for (File htmlFile : htmlFiles) {
+            htmlFile.delete();
+        }
+        ZipFile zipWithoutHtml = ZipFixtures.zipDirectory(fixturePathNoHtml);
 
-     // publication with the same title as an existing one gets a disambiguated slug
+        Path fixturePathHtml = ZipFixtures.copyFixtureToTmpDirectory("canUploadZipWithHtml", "fixtures/exampleZipContents");
+        ZipFile zipWithHtml = ZipFixtures.zipDirectory(fixturePathHtml);
+
+        // ACT -- import without html
+        String pathWithPages = sut.importApsZip(zipWithoutHtml, new Publication());
+        Node pagesNode1 = session.getNode(pathWithPages + "/pages");
+        assertEquals(0, pagesNode1.getNodes().getSize());
+        String pathWithoutPages = sut.importApsZip(zipWithHtml, new Publication());
+
+        // ASSERT
+        // they should have been imported to the same path
+        assertEquals(pathWithPages, pathWithoutPages);
+
+        // the pages node should not have pages in it
+        Node pagesNode = session.getNode(pathWithoutPages + "/pages");
+        assertEquals(pagesNode.getNodes().getSize(), htmlFiles.length);
+    }
+
+    /**
+     * Publication slug is disambiguated if slug already used.
+     */
+    @Test
+    public void slugDisambiguatedIfAlreadyTaken() throws Exception {
+
+        // ARRANGE - create 2 zips with the same title but different isbn's
+        Path fixturePath1 = ZipFixtures.copyFixtureToTmpDirectory("slugDisambiguatedIfAlreadyTaken1", "fixtures/exampleZipContents");
+        Metadata metadata1 = loadMetadata(fixturePath1);
+        metadata1.setIsbn("111");
+        metadata1.setTitle("publication title");
+        saveMetadata(metadata1, fixturePath1);
+        fixturePath1.toFile().list();
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
+
+        Path fixturePath2 = ZipFixtures.copyFixtureToTmpDirectory("slugDisambiguatedIfAlreadyTaken1", "fixtures/exampleZipContents");
+        Metadata metadata2 = loadMetadata(fixturePath1);
+        metadata2.setIsbn("222");
+        metadata2.setTitle("publication title");
+        saveMetadata(metadata2, fixturePath2);
+        ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath2);
+
+        // ACT -- import them both
+        String path1 = sut.importApsZip(zip1, new Publication());
+        String path2 = sut.importApsZip(zip2, new Publication());
+
+        // ASSERT - the second path should have been disambiguated
+        assertEquals(path1, "/content/documents/govscot/publications/statistics-publication/2018/10/publication-title");
+        assertEquals(path2, "/content/documents/govscot/publications/statistics-publication/2018/10/publication-title-2");
+    }
 
     /**
      * Rejects invalid manifest
@@ -266,7 +321,7 @@ public class ApsZipImporterTest {
         try {
             // ACT
             sut.importApsZip(zip, new Publication());
-            Assert.fail("An exception should have been thrown");
+            fail("An exception should have been thrown");
         } catch (ApsZipImporterException e) {
             // ASSERT
             assertEquals(e.getMessage(), "No metadata file in zip");
@@ -289,7 +344,7 @@ public class ApsZipImporterTest {
         try {
             // ACT
             sut.importApsZip(zip, new Publication());
-            Assert.fail("An exception should have been thrown");
+            fail("An exception should have been thrown");
         } catch (ApsZipImporterException e) {
             // ASSERT
             assertEquals(e.getMessage(), "Failed to parse metadata");
@@ -313,7 +368,7 @@ public class ApsZipImporterTest {
         try {
             // ACT
             sut.importApsZip(zip, new Publication());
-            Assert.fail("An exception should have been thrown");
+            fail("An exception should have been thrown");
         } catch (ApsZipImporterException e) {
             // ASSERT
             assertEquals(e.getMessage(), "Manifest specifies document not present in zip: nosuchfile.pdf");
@@ -342,11 +397,70 @@ public class ApsZipImporterTest {
         try {
             // ACT
             sut.importApsZip(zip, new Publication());
-            Assert.fail("An exception should have been thrown");
+            fail("An exception should have been thrown");
         } catch (ApsZipImporterException e) {
             // ASSERT
             assertTrue(startsWith(e.getMessage(), "File has an unsupported file extension"));
         }
+    }
+
+    /**
+     * Test that the link rewriting we do to the imported HTML is done correctly.
+     *
+     * The types of rewrites we perform are:
+     * - direct links to documents that are part of this publication
+     * - links to other pages within this publication
+     * - anchor links within the page
+     * - anchor links to other pages in this publications
+     */
+    @Test
+    public void linkRewriting() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("linkRewriting", "fixtures/exampleZipContents");
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+
+        // ACT
+        String path = sut.importApsZip(zip, new Publication());
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node pagesNode = publicationFolder.getNode("pages");
+
+        Node page0 = pagesNode.getNode("0").getNode("0");
+        Node page1 = pagesNode.getNode("1").getNode("1");
+        Node page2 = pagesNode.getNode("2").getNode("2");
+
+        // the contents page links to the other pages - make sure they are linked correctly
+        // to check this we need to ensure that a facet exists for each of the linked to pages and that the html has
+        // been changed to link to these factes by name
+        Node page0Content = page0.getNode("govscot:content");
+        String html = page0Content.getProperty("hippostd:content").getString();
+        Map<String, Node> docbaseToFacet = new HashMap<>();
+        NodeIterator it = page0Content.getNodes();
+        while (it.hasNext()) {
+            Node next = it.nextNode();
+
+            // skip the ones to images....
+            if (next.getName().endsWith(".gif")) {
+                continue;
+            }
+            docbaseToFacet.put(next.getProperty("hippo:docbase").getString(), next);
+        }
+        // page 0 has a fact for page1 and the link has been rewritten
+        assertTrue(docbaseToFacet.containsKey(page1.getIdentifier()));
+        assertTrue(html.contains(String.format("<a href=\"%s\">", page1.getIdentifier())));
+
+        // page 0 has a fact for page1 and the link has been rewritten
+        assertTrue(docbaseToFacet.containsKey(page2.getIdentifier()));
+        assertTrue(html.contains(String.format("<a href=\"%s\">", page2.getIdentifier())));
+
+        // page one has a link to a local anchor in page2
+        String expectedLinkToLocalAnchor = String.format("<a href=\"%s\">", "/publications/example-publication/pages/2#inPageAnchor");
+        assertTrue(page1.getNode("govscot:content").getProperty("hippostd:content").getString().contains(expectedLinkToLocalAnchor));
+
+        // page two has a link to an anchor within itself
+        assertTrue(page2.getNode("govscot:content").getProperty("hippostd:content").getString().contains(expectedLinkToLocalAnchor));
     }
 
     /**
@@ -381,26 +495,6 @@ public class ApsZipImporterTest {
         // has document nodes as expected
         Node documentsFolder = publicationFolder.getNode("documents");
         assertEquals(1, documentsFolder.getNodes().getSize());
-    }
-
-    @Test
-    public void canImportExampleZipFromResources() throws Exception {
-        // ARRANGE
-        ZipFile zip = ZipFixtures.zipResourceDirectory("fixtures/exampleZipContents");
-        Publication publication = new Publication();
-        publication.setId("exampleid");
-
-        // ACT
-        sut.importApsZip(zip, publication);
-
-        // ASSERT
-        String expectedPath = "/content/documents/govscot/publications/statistics-publication/2018/10/example-publication";
-
-        // some basic fields
-        Node publicationFolder = session.getNode(expectedPath);
-        Node index = publicationFolder.getNode("index/index");
-        assertEquals("title", "This is an example publication", index.getProperty("govscot:title").getString());
-        assertEquals("name", "This is an example publication", index.getProperty("hippo:name").getString());
     }
 
     void assertPublicationFields(String path, boolean shoudlBePublished) throws Exception {
