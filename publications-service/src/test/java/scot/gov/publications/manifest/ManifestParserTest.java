@@ -140,7 +140,7 @@ public class ManifestParserTest {
         // ACT
         sut.parse(in);
 
-        //ASSERT -- see expected exception
+        // ASSERT -- see expected exception
     }
 
     InputStream exceptionThowingInputStream() throws IOException {
