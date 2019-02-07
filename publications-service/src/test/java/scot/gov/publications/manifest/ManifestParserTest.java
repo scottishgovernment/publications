@@ -126,6 +126,23 @@ public class ManifestParserTest {
         //ASSERT -- see expected exception
     }
 
+    @Test(expected = ManifestParserException.class)
+    public void rejectsUnrecognisedFileExtensions() throws Exception {
+        // ARRANGE
+        ManifestParser sut = new ManifestParser();
+        InputStream in = new ByteArrayInputStream(
+                (
+                        "filename.pdf : tis is the filename\n" +
+                        "filename2.zip : unsupported zip"
+                ).getBytes());
+
+
+        // ACT
+        sut.parse(in);
+
+        //ASSERT -- see expected exception
+    }
+
     InputStream exceptionThowingInputStream() throws IOException {
         InputStream in = mock(InputStream.class);
         when(in.read(any(byte[].class))).thenThrow(new IOException("arg"));

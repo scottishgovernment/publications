@@ -6,6 +6,11 @@ public class MimeTypeUtils {
         // prevent instantiation
     }
 
+    public static boolean isSupportedMimeType(String filename) {
+        FileType fromFileType = FileType.forFilename(filename);
+        return fromFileType == null;
+    }
+
     public static String detectContentType(String filename) {
 
         // first determine from the extension

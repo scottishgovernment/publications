@@ -400,7 +400,7 @@ public class ApsZipImporterTest {
             fail("An exception should have been thrown");
         } catch (ApsZipImporterException e) {
             // ASSERT
-            assertTrue(startsWith(e.getMessage(), "File has an unsupported file extension"));
+            assertTrue(startsWith(e.getMessage(), "Unsupported file types in the manifest:"));
         }
     }
 

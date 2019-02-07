@@ -40,4 +40,5 @@ public class ManifestExtractor {
             throw new ApsZipImporterException("Failed to read manifest file", e);
         }
     }
+
 }

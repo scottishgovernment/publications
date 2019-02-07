@@ -2,6 +2,7 @@ package scot.gov.publications.manifest;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import scot.gov.publications.util.MimeTypeUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,10 +64,21 @@ public class ManifestParser {
                 .map(ManifestEntry::getFilename)
                 .collect(toSet());
         if (filenames.size() != manifest.getEntries().size()) {
-            throw new ManifestParserException("Filenames in the manifest must be unique: "
-                    + manifest.getEntries().stream().map(ManifestEntry::getFilename).collect(joining(", ")));
+            throw new ManifestParserException(
+                    "Filenames in the manifest must be unique: "
+                            + manifest.getEntries().stream().map(ManifestEntry::getFilename).collect(joining(", ")));
+        }
+
+        // all entries in the manifest should be supported types
+        Set<String> unsupported = filenames.stream().filter(MimeTypeUtils::isSupportedMimeType).collect(toSet());
+        if (!unsupported.isEmpty()) {
+            throw new ManifestParserException(
+                    "Unsupported file types in the manifest: "
+                            + unsupported.stream().collect(joining(", ")));
+
         }
     }
+
 
     private ManifestEntry entry(String line) {
         String filename = StringUtils.substringBefore(line, ":").trim();
