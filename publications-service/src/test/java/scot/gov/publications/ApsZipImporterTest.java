@@ -28,6 +28,12 @@ import javax.jcr.*;
 import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.ZipFile;
@@ -35,6 +41,7 @@ import java.util.zip.ZipFile;
 import static junit.framework.TestCase.assertFalse;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -495,6 +502,180 @@ public class ApsZipImporterTest {
         // has document nodes as expected
         Node documentsFolder = publicationFolder.getNode("documents");
         assertEquals(1, documentsFolder.getNodes().getSize());
+    }
+
+    /**
+     * Create a publication with a time in the past with a GMT timezone and ensure that the publication date has the
+     * right timezone
+     */
+    @Test
+    public void publishDateInPastWithGMTTimezoneAHandledcorrectly() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInPastWithGMTTimezoneAHandledcorrectly", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("publishDateInPastWithGMTTimezoneAHandledcorrectly");
+        metadata.setPublicationDate(publishDateTimeInPastGMT());
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node index = publicationFolder.getNode("index/index");
+        Calendar pulicatonDate = index.getProperty("govscot:publicationDate").getDate();
+
+        // explicitly assert the timezone
+        assertEquals("GMT", pulicatonDate.getTimeZone().getID());
+
+        // compare the publications date set on the node with what we think it should be
+        Calendar expectedPubDate = GregorianCalendar.from(metadata.getPublicationDate().atZone(ZoneId.of("GMT")));
+        assertEquals(0, pulicatonDate.compareTo(expectedPubDate));
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in GMT
+     *  - is in the past
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInPastGMT() {
+        return LocalDateTime.of(2018, 01, 01, 01, 01);
+    }
+
+    /**
+     * Create a publication with a time in the fiture with a GMT timezone and ensure that the publication date is set
+     * as expected
+     */
+    @Test
+    public void publishDateInPastWithBSTTimezoneAHandledcorrectly() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInPastWithBSTTimezoneAHandledcorrectly", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("publishDateInPastWithBSTTimezoneAHandledcorrectly");
+        metadata.setPublicationDate(publishDateTimeInPastBST());
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node index = publicationFolder.getNode("index/index");
+        Calendar pulicatonDate = index.getProperty("govscot:publicationDate").getDate();
+
+        // explicitly assert the timezone
+        assertEquals("GMT+01:00", pulicatonDate.getTimeZone().getID());
+
+        // compare the publications date set on the node with what we think it should be
+        Calendar expectedPubDate = GregorianCalendar.from(metadata.getPublicationDate().atZone(ZoneId.of("GMT+01:00")));
+        assertEquals(0, pulicatonDate.compareTo(expectedPubDate));
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in BST
+     *  - is in the past
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInPastBST() {
+        return LocalDateTime.of(2018, 8, 01, 01, 01);
+    }
+
+    /**
+     * Create a publication with a time in GMT and ensure that the publication date is set as expected
+     */
+    @Test
+    public void publishDateInFutureWithGMTTimezoneHandledCorrectly() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInFutureWithGMTTimezoneHandledCorrectly", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("publishDateInFutureWithGMTTimezoneHandledCorrectly");
+        metadata.setPublicationDate(publishDateTimeInFutureGMT());
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+        Node trigger = handle.getNode("hippo:request/hipposched:triggers/default");
+        Calendar publicatonDate = index.getProperty("govscot:publicationDate").getDate();
+        Calendar triggerDate = trigger.getProperty("hipposched:nextFireTime").getDate();
+
+        // explicitly assert the timezone
+        assertEquals("GMT", publicatonDate.getTimeZone().getID());
+        assertEquals("GMT", triggerDate.getTimeZone().getID());
+
+        // compare the publications date set on the node with what we think it should be
+        Calendar expectedPubDate = GregorianCalendar.from(metadata.getPublicationDate().atZone(ZoneId.of("GMT")));
+        assertEquals(0, publicatonDate.compareTo(expectedPubDate));
+        assertEquals(0, triggerDate.compareTo(expectedPubDate));
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in GMT
+     *  - is in the future
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInFutureGMT() {
+        return LocalDateTime.of(2030, 1, 1, 1, 1, 1);
+    }
+
+    /**
+     * Create a publication with a time in BST and ensure that the publication date is set as expected
+     */
+    @Test
+    public void publishDateInFutureWithBSTTimezoneHandledCorrectly() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInFutureWithBSTTimezoneHandledCorrectly", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("publishDateInFutureWithBSTTimezoneHandledCorrectly");
+        metadata.setPublicationDate(publishDateTimeInFutureBST());
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+        Node trigger = handle.getNode("hippo:request/hipposched:triggers/default");
+        Calendar pulicatonDate = index.getProperty("govscot:publicationDate").getDate();
+        Calendar triggerDate = trigger.getProperty("hipposched:nextFireTime").getDate();
+
+        // explicitly assert the timezone
+        assertEquals("GMT+01:00", pulicatonDate.getTimeZone().getID());
+        assertEquals("GMT+01:00", triggerDate.getTimeZone().getID());
+        // compare the publications date set on the node with what we think it should be
+        Calendar expectedPubDate = GregorianCalendar.from(metadata.getPublicationDate().atZone(ZoneId.of("GMT+01:00")));
+        assertEquals(expectedPubDate.getTimeInMillis(), pulicatonDate.getTimeInMillis());
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in BST
+     *  - is in the future
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInFutureBST() {
+        return LocalDateTime.of(2030, 8, 1, 1, 1, 1);
     }
 
     void assertPublicationFields(String path, boolean shoudlBePublished) throws Exception {
