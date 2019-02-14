@@ -23,7 +23,7 @@ public class Publications {
     @Inject
     PublicationsApplication application;
 
-    public static final void main(String[] args) throws Exception {
+    public static final void main(String[] args) {
         ObjectGraph graph = ObjectGraph.create(new PublicationsModule());
         try {
             Publications publications = graph.get(Publications.class);
