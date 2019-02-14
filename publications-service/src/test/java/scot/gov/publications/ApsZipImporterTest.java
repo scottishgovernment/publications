@@ -29,9 +29,6 @@ import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -41,7 +38,6 @@ import java.util.zip.ZipFile;
 import static junit.framework.TestCase.assertFalse;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -60,6 +56,8 @@ public class ApsZipImporterTest {
 
     @Before
     public void setUp() throws Exception {
+        System.setProperty("java.awt.headless", "true");
+
         objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         sut = new ApsZipImporter();
