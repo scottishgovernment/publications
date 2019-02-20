@@ -54,7 +54,8 @@ public class MetadataExtractor {
 
         try {
             Metadata metadata = metadataParser.parse(zipFile.getInputStream(jsonEntries.get(0)));
-            return sanitizeData(metadata);
+            sanitizeData(metadata);
+            return metadata;
         } catch (MetadataParserException e) {
             throw new ApsZipImporterException(e.getMessage(), e);
         } catch (IOException e) {
@@ -62,8 +63,7 @@ public class MetadataExtractor {
         }
     }
 
-    private Metadata sanitizeData(Metadata metadata) {
+    private void sanitizeData(Metadata metadata) {
         metadata.setTitle(TitleSanitiser.sanitise(metadata.getTitle()));
-        return metadata;
     }
 }

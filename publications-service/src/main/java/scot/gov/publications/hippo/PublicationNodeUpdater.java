@@ -85,7 +85,7 @@ public class PublicationNodeUpdater {
             // we set the publication type to the slugified version of the publication type but want to ensure that
             // we do not remove stopwords when we do this.
             node.setProperty("govscot:publicationType",
-                    hippoPaths.slugify(metadata.getPublicationType(), false));
+                    hippoPaths.slugify(metadata.mappedPublicationType(), false));
             node.setProperty("govscot:isbn", metadata.normalisedIsbn());
             populateUrls(node, metadata);
             node.setProperty("govscot:publicationDate",
