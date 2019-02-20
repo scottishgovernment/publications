@@ -68,7 +68,7 @@ public class PublicationPathStrategy {
         List<String> path = new ArrayList<>();
         Collections.addAll(path,
                 "Publications",
-                defaultIfBlank(metadata.getPublicationType(), "Publication"),
+                defaultIfBlank(metadata.mappedPublicationType(), "Publication"),
                 yearString,
                 monthString);
         return path;

@@ -24,6 +24,8 @@ public class Metadata {
 
     ZonedDateTime publicationDateWithTimezone;
 
+    PublicationTypeMapper typeMapper = new PublicationTypeMapper();
+
     String url;
 
     String alternateUrl;
@@ -188,5 +190,9 @@ public class Metadata {
         return StringUtils.isEmpty(isbn)
                 ? ""
                 : isbn.replaceAll("\\s", "").replaceAll("-", "");
+    }
+
+    public String mappedPublicationType() {
+        return typeMapper.map(publicationType);
     }
 }

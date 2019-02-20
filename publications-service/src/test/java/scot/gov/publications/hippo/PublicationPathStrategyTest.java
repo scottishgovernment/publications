@@ -37,7 +37,7 @@ public class PublicationPathStrategyTest {
         input.setPublicationType("Report");
         input.setTitle("Publication title");
         List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "Publications", "Report", "2010", "01", "slug");
+        Collections.addAll(expected, "Publications", "Publication", "2010", "01", "slug");
 
         // ACT
         List<String> actual = sut.path(input);
@@ -59,11 +59,9 @@ public class PublicationPathStrategyTest {
         input.setPublicationDate(LocalDateTime.of(2010, 01, 02, 12, 30));
         input.setPublicationType("Report");
         input.setTitle("Publication title");
-        List<String> expected = new ArrayList<>();
-        Collections.addAll(expected, "Publications", "Report", "2010", "01", "slug");
 
         // ACT
-        List<String> actual = sut.path(input);
+        sut.path(input);
 
 
         // ASSERT - expected exception
