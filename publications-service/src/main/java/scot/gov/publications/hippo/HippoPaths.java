@@ -34,7 +34,6 @@ public class HippoPaths {
         replacements.put("'", "");
         replacements.put("&", "");
         slugify.withCustomReplacements(replacements);
-
     }
 
     static {

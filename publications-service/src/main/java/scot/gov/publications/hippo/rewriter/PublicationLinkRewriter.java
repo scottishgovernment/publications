@@ -4,6 +4,8 @@ import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -25,6 +27,8 @@ import static scot.gov.publications.hippo.rewriter.LinkRewriter.CONTENT_ATTRIB;
  * The map passed into this class contains a map of filenames to the publication nodes for those attachments.
  */
 public class PublicationLinkRewriter {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationLinkRewriter.class);
 
     LinkRewriter linkRewriter = new LinkRewriter();
 
@@ -60,10 +64,12 @@ public class PublicationLinkRewriter {
 
     private void rewriteLink(String href, Node pageNode) throws RepositoryException {
 
+        LOG.debug("rewriteLink {} -> {}", href, pageNode.getPath());
+
         // if the href is one of the pages then rewrite it as a facet link
         if (pageNodesByEntryname.containsKey(href)) {
             Node pagenode = pageNodesByEntryname.get(href);
-            linkRewriter.rewriteLinkToFacet(pageNode, href, pagenode);
+            linkRewriter.rewriteLinkToFacet(pageNode, href, pagenode.getParent());
             return;
         }
 

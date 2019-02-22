@@ -453,12 +453,12 @@ public class ApsZipImporterTest {
             docbaseToFacet.put(next.getProperty("hippo:docbase").getString(), next);
         }
         // page 0 has a fact for page1 and the link has been rewritten
-        assertTrue(docbaseToFacet.containsKey(page1.getIdentifier()));
-        assertTrue(html.contains(String.format("<a href=\"%s\">", page1.getIdentifier())));
+        assertTrue(docbaseToFacet.containsKey(page1.getParent().getIdentifier()));
+        assertTrue(html.contains(String.format("<a href=\"%s\">", page1.getParent().getIdentifier())));
 
         // page 0 has a fact for page1 and the link has been rewritten
-        assertTrue(docbaseToFacet.containsKey(page2.getIdentifier()));
-        assertTrue(html.contains(String.format("<a href=\"%s\">", page2.getIdentifier())));
+        assertTrue(docbaseToFacet.containsKey(page2.getParent().getIdentifier()));
+        assertTrue(html.contains(String.format("<a href=\"%s\">", page2.getParent().getIdentifier())));
 
         // page one has a link to a local anchor in page2
         String expectedLinkToLocalAnchor = String.format("<a href=\"%s\">", "/publications/example-publication/pages/2#inPageAnchor");
