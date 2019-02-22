@@ -49,8 +49,8 @@ public class PublicationLinkRewriterTest {
         sut.rewrite(publicationFolderNode);
 
         // ASSERT
-        Mockito.verify(sut.linkRewriter).rewriteLinkToFacet(page1, "page2", page2);
-        Mockito.verify(sut.linkRewriter).rewriteLinkToFacet(page2, "page1", page1);
+        Mockito.verify(sut.linkRewriter).rewriteLinkToFacet(page1, "page2", page2.getParent());
+        Mockito.verify(sut.linkRewriter).rewriteLinkToFacet(page2, "page1", page1.getParent());
         Mockito.verify(sut.linkRewriter).rewriteWithoutFacet(page6, "page2#localanchor", "/publications/publication-slug/pages/page2#localanchor");
     }
 
