@@ -84,17 +84,20 @@ public class PublicationNodeUpdater {
 
             // we set the publication type to the slugified version of the publication type but want to ensure that
             // we do not remove stopwords when we do this.
-            node.setProperty("govscot:publicationType",
-                    hippoPaths.slugify(metadata.getPublicationType(), false));
+            node.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.getPublicationType(), false));
             node.setProperty("govscot:isbn", metadata.normalisedIsbn());
             populateUrls(node, metadata);
-            node.setProperty("govscot:publicationDate",
-                    GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
+            node.setProperty("govscot:publicationDate", GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
+            hippoUtils.ensureHtmlNode(node, "govscot:contact", mailToLink(publication.getContact()));
             return node.getParent().getParent();
 
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to create or update publication node", e);
         }
+    }
+
+    private String mailToLink(String email) {
+        return String.format("<p>Email: <a href=\"mailto:%s\">Claire McHarrie</a></p>", email);
     }
 
     /**
