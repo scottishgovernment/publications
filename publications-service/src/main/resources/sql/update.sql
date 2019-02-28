@@ -7,5 +7,6 @@ UPDATE publication SET
   state = ?,
   statedetails = ?,
   checksum = ?,
-  lastmodifieddate = ?
+  lastmodifieddate = ?,
+  contact = ?
   WHERE id = ?

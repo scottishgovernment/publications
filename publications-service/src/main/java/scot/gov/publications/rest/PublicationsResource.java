@@ -212,6 +212,8 @@ public class PublicationsResource {
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());
         publication.setEmbargodate(Timestamp.from(metadata.getPublicationDateWithTimezone().toInstant()));
+        publication.setContact(contactEmail(metadata));
+
         try {
             publication.setChecksum(fileUtil.hash(zip));
         } catch (IOException e) {
@@ -220,4 +222,13 @@ public class PublicationsResource {
         return publication;
     }
 
+    /**
+     * The contact email has not always been present in the JSON and so we guard against it being null.
+     */
+    private String contactEmail(Metadata metadata) {
+        if (metadata.getContact() != null) {
+            return metadata.getContact().getEmail().trim();
+        }
+        return "";
+    }
 }

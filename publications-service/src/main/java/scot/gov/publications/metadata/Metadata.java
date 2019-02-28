@@ -46,6 +46,8 @@ public class Metadata {
 
     EqualityInfo equalityInfo;
 
+    Contact contact;
+
     public String getId() {
         return id;
     }
@@ -172,6 +174,14 @@ public class Metadata {
 
     public void setEqualityInfo(EqualityInfo equalityInfo) {
         this.equalityInfo = equalityInfo;
+    }
+
+    public Contact getContact() {
+        return contact;
+    }
+
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 
     public String normalisedIsbn() {

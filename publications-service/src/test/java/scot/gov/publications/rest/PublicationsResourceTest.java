@@ -127,6 +127,7 @@ public class PublicationsResourceTest {
         // ASSERT
         assertEquals(202, actual.getStatus());
         verify(sut.repository).create(argThat(pub -> pub.getState().equals("PENDING")));
+        verify(sut.repository).create(argThat(pub -> pub.getContact().equals("")));
         verify(sut.storage).save(any(), any());
     }
 

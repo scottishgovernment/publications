@@ -198,7 +198,8 @@ public class PublicationRepository {
                 publication.getStatedetails(),
                 publication.getChecksum(),
                 now,
-                now
+                now,
+                publication.getContact()
         };
     }
 
@@ -214,6 +215,7 @@ public class PublicationRepository {
                 publication.getStatedetails(),
                 publication.getChecksum(),
                 now,
+                publication.getContact(),
                 publication.getId()
         };
     }

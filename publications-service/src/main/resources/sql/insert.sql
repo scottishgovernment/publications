@@ -9,5 +9,6 @@ INSERT INTO publication (
   statedetails,
   checksum,
   createddate,
-  lastmodifieddate)
-  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  lastmodifieddate,
+  contact)
+  values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

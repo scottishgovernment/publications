@@ -28,6 +28,8 @@ public class Publication {
 
     private Timestamp lastmodifieddate;
 
+    private String contact;
+
     @JsonIgnore
     private int fullcount;
 
@@ -127,4 +129,11 @@ public class Publication {
         this.fullcount = fullcount;
     }
 
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
 }
