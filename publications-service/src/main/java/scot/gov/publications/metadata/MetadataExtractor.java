@@ -1,5 +1,8 @@
 package scot.gov.publications.metadata;
 
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.hippo.TitleSanitiser;
 import scot.gov.publications.util.ZipEntryUtil;
@@ -14,16 +17,24 @@ import java.util.zip.ZipFile;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Extracts and parser the metadata file from a zipfile.
+ * Extracts and parses the metadata file from a zipfile.
  *
  * The extractor works by expecting a single json file in the zip and then parsing it.  It will throw and exception
  * if there is not exactly one json file in the zip.
+ *
+ * This class will also do the following processing while extracting the metatdata:
+ * - the title is sanitised
+ * - the executive summary is processed as markdown
  */
 public class MetadataExtractor {
 
     private MetadataParser metadataParser = new MetadataParser();
 
     private ZipUtil zipUtil = new ZipUtil();
+
+    private Parser markdownParser = Parser.builder().build();
+
+    private HtmlRenderer markdownToHtmlRenderer = HtmlRenderer.builder().build();
 
     public Metadata extract(File file) throws ApsZipImporterException {
 
@@ -64,6 +75,14 @@ public class MetadataExtractor {
 
     private Metadata sanitizeData(Metadata metadata) {
         metadata.setTitle(TitleSanitiser.sanitise(metadata.getTitle()));
+        processExecSummaryAsMarkdown(metadata);
         return metadata;
     }
+
+    private void processExecSummaryAsMarkdown(Metadata metadata) {
+        Node node = markdownParser.parse(metadata.getExecutiveSummary());
+        String execSummaryHtml = markdownToHtmlRenderer.render(node);
+        metadata.setExecutiveSummary(execSummaryHtml);
+    }
+
 }
