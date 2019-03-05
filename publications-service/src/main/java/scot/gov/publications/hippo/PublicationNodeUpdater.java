@@ -97,7 +97,7 @@ public class PublicationNodeUpdater {
     }
 
     private String mailToLink(String email) {
-        return String.format("<p>Email: <a href=\"mailto:%s\">Claire McHarrie</a></p>", email);
+        return String.format("<p>Email: <a href=\"mailto:%s\">%s</a></p>", email, email);
     }
 
     /**
