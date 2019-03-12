@@ -13,7 +13,7 @@ public class ZipEntryUtil {
 
     static {
         imgTypes = new HashSet<>();
-        Collections.addAll(imgTypes, "jpg", "jpeg", "gif");
+        Collections.addAll(imgTypes, "jpg", "jpeg", "gif", "png");
     }
 
     private ZipEntryUtil() {
