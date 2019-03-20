@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Metadata {
@@ -38,9 +40,13 @@ public class Metadata {
 
     String topic;
 
+    List<String> topics = new ArrayList<>();
+
     String publicationType;
 
     String keywords;
+
+    List<String> tags = new ArrayList<>();
 
     String researchCategory;
 
@@ -49,6 +55,14 @@ public class Metadata {
     EqualityInfo equalityInfo;
 
     Contact contact;
+
+    String primaryResponsibeDirectorate;
+
+    List<String> secondaryResponsibleDirectorate = new ArrayList<>();
+
+    String primaryResponsibeRole;
+
+    List<String> secondaryResponsibleRole = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -138,6 +152,14 @@ public class Metadata {
         this.topic = topic;
     }
 
+    public List<String> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<String> topics) {
+        this.topics = topics;
+    }
+
     public String getPublicationType() {
         return publicationType;
     }
@@ -152,6 +174,14 @@ public class Metadata {
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public String getResearchCategory() {
@@ -184,6 +214,38 @@ public class Metadata {
 
     public void setContact(Contact contact) {
         this.contact = contact;
+    }
+
+    public String getPrimaryResponsibeDirectorate() {
+        return primaryResponsibeDirectorate;
+    }
+
+    public void setPrimaryResponsibeDirectorate(String primaryResponsibeDirectorate) {
+        this.primaryResponsibeDirectorate = primaryResponsibeDirectorate;
+    }
+
+    public List<String> getSecondaryResponsibleDirectorate() {
+        return secondaryResponsibleDirectorate;
+    }
+
+    public void setSecondaryResponsibleDirectorate(List<String> secondaryResponsibleDirectorate) {
+        this.secondaryResponsibleDirectorate = secondaryResponsibleDirectorate;
+    }
+
+    public String getPrimaryResponsibeRole() {
+        return primaryResponsibeRole;
+    }
+
+    public void setPrimaryResponsibeRole(String primaryResponsibeRole) {
+        this.primaryResponsibeRole = primaryResponsibeRole;
+    }
+
+    public List<String> getSecondaryResponsibleRole() {
+        return secondaryResponsibleRole;
+    }
+
+    public void setSecondaryResponsibleRole(List<String> secondaryResponsibleRole) {
+        this.secondaryResponsibleRole = secondaryResponsibleRole;
     }
 
     public String normalisedIsbn() {
