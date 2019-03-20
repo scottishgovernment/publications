@@ -19,6 +19,39 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 public class HippoUtils {
 
+    @FunctionalInterface
+    public interface ThrowingPredicate {
+        boolean test(Node t) throws RepositoryException;
+    }
+
+    @FunctionalInterface
+    public interface ThrowingConsumer {
+        void accept(Node t) throws RepositoryException;
+    }
+
+    public void apply(NodeIterator it, ThrowingConsumer consumer) throws RepositoryException {
+        apply(it, node -> true, consumer);
+    }
+
+    public void apply(NodeIterator it, ThrowingPredicate predicate, ThrowingConsumer consumer) throws RepositoryException {
+        while (it.hasNext()) {
+            Node node = it.nextNode();
+            if (predicate.test(node)) {
+                consumer.accept(node);
+            }
+        }
+    }
+
+    public Node find(NodeIterator it, ThrowingPredicate predicate) throws RepositoryException {
+        while (it.hasNext()) {
+            Node node = it.nextNode();
+            if (predicate.test(node)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
     public List<String> pathFromNode(Node node) throws RepositoryException {
         List<String> path = new ArrayList<>();
         String pathFromGovscot = substringAfter(node.getPath(), "/content/documents/govscot/");
@@ -121,6 +154,15 @@ public class HippoUtils {
         return null;
     }
 
+    public Node findOneXPath(Session session, String xpath) throws RepositoryException {
+        Query queryObj = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH);
+        QueryResult result = queryObj.execute();
+        if (result.getNodes().getSize() == 1) {
+            return result.getNodes().nextNode();
+        }
+        return null;
+    }
+
     public Node mostRecentDraft(Node handle) throws RepositoryException {
         NodeIterator it = handle.getNodes();
         Node node = null;
@@ -175,6 +217,11 @@ public class HippoUtils {
 
     public boolean isHippoFolder(Node node) throws RepositoryException {
         return "hippostd:folder".equals(node.getPrimaryNodeType().getName());
+    }
+
+    void createMirror(Node publicationNode, String propertyName, Node handle) throws RepositoryException {
+        Node mirror = createNode(publicationNode, propertyName, "hippo:mirror");
+        mirror.setProperty("hippo:docbase", handle.getIdentifier());
     }
 
 }

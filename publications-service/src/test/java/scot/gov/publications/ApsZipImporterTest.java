@@ -8,7 +8,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -29,18 +28,17 @@ import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipFile;
 
+import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertFalse;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_TAGS;
 
 /**
  * These tests run against an embedded JCR repository: see TestRepository.
@@ -69,6 +67,8 @@ public class ApsZipImporterTest {
         sut.sessionFactory = () -> TestRepository.session();
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getHippo().setUser("testuser");
+
+
     }
 
     @After
@@ -555,16 +555,6 @@ public class ApsZipImporterTest {
     }
 
     /**
-     * We need a publication date that:
-     *  - is in GMT
-     *  - is in the past
-     *  - has the right resolution
-     */
-    LocalDateTime publishDateTimeInPastGMT() {
-        return LocalDateTime.of(2018, 01, 01, 01, 01);
-    }
-
-    /**
      * Create a publication with a time in the fiture with a GMT timezone and ensure that the publication date is set
      * as expected
      */
@@ -594,16 +584,6 @@ public class ApsZipImporterTest {
         // compare the publications date set on the node with what we think it should be
         Calendar expectedPubDate = GregorianCalendar.from(metadata.getPublicationDate().atZone(ZoneId.of("GMT+01:00")));
         assertEquals(0, pulicatonDate.compareTo(expectedPubDate));
-    }
-
-    /**
-     * We need a publication date that:
-     *  - is in BST
-     *  - is in the past
-     *  - has the right resolution
-     */
-    LocalDateTime publishDateTimeInPastBST() {
-        return LocalDateTime.of(2018, 8, 01, 01, 01);
     }
 
     /**
@@ -643,16 +623,6 @@ public class ApsZipImporterTest {
     }
 
     /**
-     * We need a publication date that:
-     *  - is in GMT
-     *  - is in the future
-     *  - has the right resolution
-     */
-    LocalDateTime publishDateTimeInFutureGMT() {
-        return LocalDateTime.of(2030, 1, 1, 1, 1, 1);
-    }
-
-    /**
      * Create a publication with a time in BST and ensure that the publication date is set as expected
      */
     @Test
@@ -686,14 +656,204 @@ public class ApsZipImporterTest {
         assertEquals(expectedPubDate.getTimeInMillis(), pulicatonDate.getTimeInMillis());
     }
 
-    /**
-     * We need a publication date that:
-     *  - is in BST
-     *  - is in the future
-     *  - has the right resolution
-     */
-    LocalDateTime publishDateTimeInFutureBST() {
-        return LocalDateTime.of(2030, 8, 1, 1, 1, 1);
+    @Test
+    public void tagsAddedIfPresent() throws Exception {
+        // import sample publication
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("tagsAddedIfPresent!", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        List<String> tags = new ArrayList<>();
+        Collections.addAll(tags, "one", "two", "three");
+        metadata.setTags(tags);
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        tagSet(path).equals(new HashSet<>(tags));
+    }
+
+    @Test
+    public void directoratesAddedIfPresent() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("directoratesAddedIfPresent", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setResponsibeDirectorate("advanced-learning-and-science");
+        metadata.setSecondaryResponsibleDirectorate(singletonList("advanced-learning-and-science"));
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+        assertTrue(index.hasNode("govscot:responsibleDirectorate"));
+        assertTrue(index.hasNode("govscot:secondaryResponsibleDirectorate"));
+    }
+
+    @Test(expected = ApsZipImporterException.class)
+    public void exceptionThrownIfDirectorateIsNotPresent() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfDirectorateIsNotPresent", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setResponsibeDirectorate("NO SUCH DIRECTORATE");
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT - expect exception
+    }
+
+    @Test
+    public void rolesAddedIfPresentInMetadata() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rolesAddedIfPresentInMetadata", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setResponsibeRole("commissioner-fair-access");
+        metadata.setSecondaryResponsibleRole(singletonList("sheila-rowan"));
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+        assertTrue(index.hasNode("govscot:responsibleRole"));
+        assertTrue(index.hasNode("govscot:secondaryResponsibleRole"));
+    }
+
+    @Test(expected = ApsZipImporterException.class)
+    public void exceptionThrownIfRoleIsNotPublished() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotPublushed", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("exceptionThrownIfRoleIsNotPublushed");
+        metadata.setResponsibeRole("Commissioner for Fair Access");
+        // this role is not published and so the importer should throw and exception
+        metadata.setSecondaryResponsibleRole(singletonList("Chief Veterinary Officer"));
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT - expect exception
+    }
+
+    @Test(expected = ApsZipImporterException.class)
+    public void exceptionThrownIfRoleIsNotFound() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotFounf", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("exceptionThrownIfRoleIsNotFound");
+        metadata.setResponsibeRole("Commissioner for Fair Access");
+        metadata.setSecondaryResponsibleRole(singletonList("NO SUCH ROLE"));
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT - expect exception
+    }
+
+    @Test
+    public void updatesTopicsCorrectly() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("updatesTopicsCorrectly", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("updatesTopicsCorrectly");
+        metadata.setTopic("");
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT - expect exception
+
+    }
+
+    @Test
+    public void addsTagsAsExpected() throws Exception {
+        // add a publiations with some tags
+
+        // change the tags that are in the zip and reimport it - should have added the new ones but left the old ones
+        // in place
+
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotFounf", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("addsTagsAsExpected");
+        Collections.addAll(metadata.getTags(), "all", "good", "boys");
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // now add some more tags
+        metadata.getTags().clear();
+        Collections.addAll(metadata.getTags(), "deserve", "fudge");
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath);
+        sut.importApsZip(zip2, publication);
+
+        // ASSERT
+        //
+        // we shoudl have al of the tags that were added
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+
+        Value [] tagValues = index.getProperty(HIPPOSTD_TAGS).getValues();
+        Set<String> actual = new HashSet<>();
+        for (Value value : tagValues) {
+            actual.add(value.getString());
+        }
+
+        Set<String> expected = new HashSet<>();
+        Collections.addAll(expected, "all", "good", "boys", "deserve", "fudge");
+        assertEquals(expected , actual);
+    }
+
+    Set<String> tagSet(String path) throws RepositoryException {
+        Node publicationFolder = session.getNode(path);
+        Node handle = publicationFolder.getNode("index");
+        Node index = handle.getNode("index");
+        Property property = index.getProperty(HIPPOSTD_TAGS);
+        Value [] tagValues = property.getValues();
+        Set<String> tagSet = new HashSet<>();
+        for (Value tagValue : tagValues) {
+            tagSet.add(tagValue.getString());
+        }
+        return tagSet;
     }
 
     void assertPublicationFields(String path, boolean shoudlBePublished) throws Exception {
@@ -788,6 +948,46 @@ public class ApsZipImporterTest {
                 }
             }
         };
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in BST
+     *  - is in the past
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInPastBST() {
+        return LocalDateTime.of(2018, 8, 01, 01, 01);
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in GMT
+     *  - is in the future
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInFutureGMT() {
+        return LocalDateTime.of(2030, 1, 1, 1, 1, 1);
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in BST
+     *  - is in the future
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInFutureBST() {
+        return LocalDateTime.of(2030, 8, 1, 1, 1, 1);
+    }
+
+    /**
+     * We need a publication date that:
+     *  - is in GMT
+     *  - is in the past
+     *  - has the right resolution
+     */
+    LocalDateTime publishDateTimeInPastGMT() {
+        return LocalDateTime.of(2018, 01, 01, 01, 01);
     }
 
 }

@@ -7,11 +7,7 @@ import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.repo.Publication;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
+import javax.jcr.*;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -31,7 +27,7 @@ public class PublicationNodeUpdaterTest {
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
-        sut.topicMappings = mock(TopicMappings.class);
+        sut.topicMappings = mock(TopicsUpdater.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
         Node publicationFolder = mock(Node.class);
@@ -44,6 +40,11 @@ public class PublicationNodeUpdaterTest {
         when(nodeWithISBN.getProperty(eq("hippostd:state"))).thenReturn(state);
         sut.session = sessionbWithPubs(nodeWithISBN);
         Metadata input = metadata();
+
+        Property tags = mock(Property.class);
+        when(tags.getValues()).thenReturn(new Value[]{});
+        when(nodeWithISBN.getProperty("hippostd:tags")).thenReturn(tags);
+        sut.tagUpdater.hippoUtils = mock(HippoUtils.class);
 
         // ACT
         sut.createOrUpdatePublicationNode(input, new Publication());
@@ -66,7 +67,7 @@ public class PublicationNodeUpdaterTest {
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
-        sut.topicMappings = mock(TopicMappings.class);
+        sut.topicMappings = mock(TopicsUpdater.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
@@ -79,6 +80,11 @@ public class PublicationNodeUpdaterTest {
         when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
 
         Metadata input = metadata();
+
+        Property tags = mock(Property.class);
+        when(tags.getValues()).thenReturn(new Value[]{});
+        when(nodeWithISBN.getProperty("hippostd:tags")).thenReturn(tags);
+        sut.tagUpdater.hippoUtils = mock(HippoUtils.class);
 
         // ACT
         sut.createOrUpdatePublicationNode(input, new Publication());
@@ -93,7 +99,7 @@ public class PublicationNodeUpdaterTest {
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
-        sut.topicMappings = mock(TopicMappings.class);
+        sut.topicMappings = mock(TopicsUpdater.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
         Node publicationFolder = mock(Node.class);
@@ -107,6 +113,10 @@ public class PublicationNodeUpdaterTest {
         sut.session = sessionbWithPubs(nodeWithISBN);
         Metadata input = metadata();
         input.setUrl("");
+        Property tags = mock(Property.class);
+        when(tags.getValues()).thenReturn(new Value[]{});
+        when(nodeWithISBN.getProperty("hippostd:tags")).thenReturn(tags);
+        sut.tagUpdater.hippoUtils = mock(HippoUtils.class);
 
         // ACT
         sut.createOrUpdatePublicationNode(input, new Publication());
@@ -121,7 +131,7 @@ public class PublicationNodeUpdaterTest {
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
-        sut.topicMappings = mock(TopicMappings.class);
+        sut.topicMappings = mock(TopicsUpdater.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
@@ -132,7 +142,11 @@ public class PublicationNodeUpdaterTest {
         when(nodeWithISBN.getParent()).thenReturn(handle);
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
         when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
-
+        Property tags = mock(Property.class);
+        when(tags.getValues()).thenReturn(new Value[]{});
+        when(nodeWithISBN.getProperty("hippostd:tags")).thenReturn(tags);
+        sut.tagUpdater.hippoUtils = mock(HippoUtils.class);
+        //publicationNode.getProperty()
         Metadata input = metadata();
         input.setUrl("INVALID URL");
 
@@ -148,7 +162,7 @@ public class PublicationNodeUpdaterTest {
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
         sut.nodeFactory = mock(HippoNodeFactory.class);
-        sut.topicMappings = mock(TopicMappings.class);
+        sut.topicMappings = mock(TopicsUpdater.class);
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();

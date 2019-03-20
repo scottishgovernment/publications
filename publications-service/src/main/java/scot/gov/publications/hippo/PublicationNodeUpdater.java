@@ -25,10 +25,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
+import static scot.gov.publications.hippo.XpathQueryHelper.directorateHandleQuery;
+import static scot.gov.publications.hippo.XpathQueryHelper.personHandleQuery;
+import static scot.gov.publications.hippo.XpathQueryHelper.roleHandleQuery;
 
 /**
  * Responsible for creating and updating publication nodes in Hippo based on the metedata from an APS  zip file.
@@ -43,17 +46,19 @@ public class PublicationNodeUpdater {
 
     HippoNodeFactory nodeFactory;
 
-    TopicMappings topicMappings;
+    TopicsUpdater topicMappings;
 
     PublicationPathStrategy pathStrategy;
 
     HippoUtils hippoUtils = new HippoUtils();
 
+    TagUpdater tagUpdater = new TagUpdater();
+
     public PublicationNodeUpdater(Session session, PublicationsConfiguration configuration) {
         this.session = session;
         this.hippoPaths = new HippoPaths(session);
         this.nodeFactory = new HippoNodeFactory(session, configuration);
-        this.topicMappings = new TopicMappings(session);
+        this.topicMappings = new TopicsUpdater(session);
         this.pathStrategy = new PublicationPathStrategy(session);
     }
 
@@ -66,39 +71,107 @@ public class PublicationNodeUpdater {
             throws ApsZipImporterException {
 
         try {
-            Node node = doCreateOrUpdate(metadata);
-            setPublicationAuditFields(node, publication);
-            nodeFactory.addBasicFields(node, metadata.getTitle());
+            Node publicationNode = doCreateOrUpdate(metadata);
+            setPublicationAuditFields(publicationNode, publication);
+            nodeFactory.addBasicFields(publicationNode, metadata.getTitle());
 
             // these fields are edited by users, do not overwrite them if they already have a value
-            hippoUtils.setPropertyIfAbsent(node, GOVSCOT_TITLE, metadata.getTitle());
-            hippoUtils.setPropertyIfAbsent(node, "govscot:summary", metadata.getDescription());
-            hippoUtils.setPropertyIfAbsent(node, "govscot:seoTitle", metadata.getTitle());
-            hippoUtils.setPropertyIfAbsent(node, "govscot:metaDescription", metadata.getDescription());
-            hippoUtils.setPropertyIfAbsent(node, "govscot:notes", "");
-            hippoUtils.addHtmlNodeIfAbsent(node, "govscot:content", metadata.getExecutiveSummary());
-            hippoUtils.setPropertyStringsIfAbsent(node, "hippostd:tags", emptyList());
-            topicMappings.updateTopics(node, metadata.getTopic());
+            hippoUtils.setPropertyIfAbsent(publicationNode, GOVSCOT_TITLE, metadata.getTitle());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getDescription());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:seoTitle", metadata.getTitle());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:metaDescription", metadata.getDescription());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:notes", "");
+            hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getExecutiveSummary());
+            topicMappings.ensureTopics(publicationNode, metadata);
+            createDirectoratesIfAbsent(publicationNode, metadata);
+            createRolesIfAbsent(publicationNode, metadata);
+
+            // update the tags - add any that are not already there.
+            tagUpdater.updateTags(publicationNode, metadata.getTags());
 
             // always set these properties
-
             // we set the publication type to the slugified version of the publication type but want to ensure that
             // we do not remove stopwords when we do this.
-            node.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.mappedPublicationType(), false));
-            node.setProperty("govscot:isbn", metadata.normalisedIsbn());
-            populateUrls(node, metadata);
-            node.setProperty("govscot:publicationDate", GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
-            hippoUtils.ensureHtmlNode(node, "govscot:contact", mailToLink(publication.getContact()));
-            return node.getParent().getParent();
+            publicationNode.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.mappedPublicationType(), false));
+            publicationNode.setProperty("govscot:isbn", metadata.normalisedIsbn());
+            populateUrls(publicationNode, metadata);
+            publicationNode.setProperty("govscot:publicationDate", GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
+            hippoUtils.ensureHtmlNode(publicationNode, "govscot:contact", mailToLink(publication.getContact()));
+            return publicationNode.getParent().getParent();
 
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to create or update publication node", e);
         }
     }
 
+    /**
+     * Update the publication node from the directorates in the metadata. If the node already contains information
+     * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits
+     * to be needed.
+     */
+    private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws ApsZipImporterException, RepositoryException {
+
+        // if there is a primary responsible directorate specified and none existing on the node then create it
+        if (!publicationNode.hasNode("govscot:responsibleDirectorate") &&
+                isNotBlank(metadata.getResponsibeDirectorate())) {
+            createDirectorateLink(
+                    publicationNode,
+                    "govscot:responsibleDirectorate",
+                    metadata.getResponsibeDirectorate());
+        }
+
+        if (!publicationNode.hasNode("govscot:secondaryResponsibleDirectorate")) {
+            for (String directorate : metadata.getSecondaryResponsibleDirectorate()) {
+                createDirectorateLink(publicationNode, "govscot:secondaryResponsibleDirectorate", directorate);
+            }
+        }
+    }
+
+    private void createDirectorateLink(
+            Node publicationNode,
+            String propertyName,
+            String directorate) throws RepositoryException, ApsZipImporterException {
+        Node handle = hippoUtils.findOneXPath(session, directorateHandleQuery(directorate));
+        if (handle != null) {
+            hippoUtils.createMirror(publicationNode, propertyName, handle);
+        } else {
+            throw new ApsZipImporterException(String.format("No such directorate: '%s'", directorate));
+        }
+    }
+
+    private void createRolesIfAbsent(Node publicationNode, Metadata metadata)
+            throws RepositoryException, ApsZipImporterException {
+
+        if (!publicationNode.hasNode("govscot:responsibleRole") && isNotBlank(metadata.getResponsibeRole())) {
+            createRoleLink(publicationNode, "govscot:responsibleRole", metadata.getResponsibeRole());
+        }
+
+        if (!publicationNode.hasNode("govscot:secondaryResponsibleRole")) {
+            for (String role : metadata.getSecondaryResponsibleRole()) {
+                createRoleLink(publicationNode, "govscot:secondaryResponsibleRole", role);
+            }
+        }
+    }
+
+    private void createRoleLink(Node publicationNode, String propertyName, String title)
+            throws RepositoryException, ApsZipImporterException {
+        Node handle = findRoleOrPerson(title);
+        if (handle != null) {
+            hippoUtils.createMirror(publicationNode, propertyName, handle);
+        } else {
+            throw new ApsZipImporterException(String.format("No such role: '%s'", title));
+        }
+    }
+
+    private Node findRoleOrPerson(String roleOrPerson) throws RepositoryException {
+        return firstNonNull(
+                hippoUtils.findOneXPath(session, roleHandleQuery(roleOrPerson)),
+                hippoUtils.findOneXPath(session, personHandleQuery(roleOrPerson)));
+    }
+
     private String mailToLink(String email) {
-        return StringUtils.isBlank(email) ? ""
-                : String.format("<p>Email: <a href=\"mailto:%s\">%s</a></p>", email, email);
+        return StringUtils.isBlank(email) ?
+                "" : String.format("<p>Email: <a href=\"mailto:%s\">%s</a></p>", email, email);
     }
 
     /**
@@ -112,7 +185,7 @@ public class PublicationNodeUpdater {
     }
 
     private void populateUrls(Node node, Metadata metadata) throws RepositoryException, ApsZipImporterException {
-        if (StringUtils.isNotBlank(metadata.getUrl())) {
+        if (isNotBlank(metadata.getUrl())) {
             node.setProperty(GOVSCOT_GOVSCOTURL, oldStyleUrl(metadata));
         }
     }
@@ -154,7 +227,7 @@ public class PublicationNodeUpdater {
 
     /**
      * Ensure that this publications folder is in the right place.  The folder is based on its type and publicaiton
-     * date and so if either changed since the last time the publicaiton was uploaded then it might have to be moved.
+     * date and so if either changed since the last time the publication was uploaded then it might have to be moved.
      */
     public void ensureMonthNode(Node publicationFolder, Metadata metadata) throws RepositoryException {
         List<String> monthPath = pathStrategy.monthFolderPath(metadata);
@@ -170,7 +243,7 @@ public class PublicationNodeUpdater {
 
     /**
      * If a publication with this isbn already exists then we want to update it.  To make sire we update the right
-     * node we want to find all of then and then decide which noide to use if there are multiple drafts.  If a
+     * node we want to find all of then and then decide which node to use if there are multiple drafts.  If a
      * published node exists then use that. Then fall back to using the upublished one and then finally to draft.
      */
     private Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
@@ -197,4 +270,5 @@ public class PublicationNodeUpdater {
         ZonedDateTime zdt = dt.atZone(zoneId);
         return GregorianCalendar.from(zdt);
     }
+
 }
