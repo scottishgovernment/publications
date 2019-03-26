@@ -20,16 +20,7 @@ import scot.gov.publications.util.FileUtil;
 import scot.gov.publications.util.ZipUtil;
 
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -115,6 +106,31 @@ public class PublicationsResource {
         } catch (PublicationRepositoryException e) {
             LOG.error("Failed to get publication {}", id, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    /**
+     * Cancel a job by its id
+     */
+    @PUT
+    @Path("{id}/cancel")
+    public Response cancel(@PathParam("id") String id, @HeaderParam("X-User") String username) {
+        Publication publication = null;
+        try {
+            // get the publication details from the zip
+            publication = repository.get(id);
+
+            if (publication == null) {
+                return Response.status(404).entity("Publication not found").build();
+            }
+
+            publication.setState(State.CANCELLED.name());
+            repository.update(publication);
+            return Response.ok().build();
+        } catch (PublicationRepositoryException e) {
+            String msg = "Failed to cancel publication";
+            LOG.error(msg, e);
+            return Response.status(500).entity("Failed to cancel publication").build();
         }
     }
 

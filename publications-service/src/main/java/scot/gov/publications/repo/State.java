@@ -4,5 +4,6 @@ public enum State {
     PENDING,
     PROCESSING,
     DONE,
-    FAILED;
+    FAILED,
+    CANCELLED;
 }
