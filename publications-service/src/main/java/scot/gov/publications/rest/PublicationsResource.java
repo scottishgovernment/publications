@@ -223,7 +223,7 @@ public class PublicationsResource {
         Publication publication = new Publication();
         publication.setId(UUID.randomUUID().toString());
         publication.setUsername(username);
-        publication.setIsbn(metadata.getIsbn());
+        publication.setIsbn(metadata.normalisedIsbn());
         publication.setFilename(filename);
         publication.setTitle(metadata.getTitle());
         publication.setState(State.PENDING.name());

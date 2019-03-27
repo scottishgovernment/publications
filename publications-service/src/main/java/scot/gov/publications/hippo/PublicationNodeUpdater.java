@@ -176,7 +176,7 @@ public class PublicationNodeUpdater {
     private Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
         // Query to see if a publications with this ISBN already exist.  If it does then we will update the existing
         // node rather than create a new one
-        String sql = String.format("SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s'", metadata.getIsbn());
+        String sql = String.format("SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s'", metadata.normalisedIsbn());
         Query query = session.getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
         QueryResult result = query.execute();
         Map<String, Node> byState = new HashMap<>();
