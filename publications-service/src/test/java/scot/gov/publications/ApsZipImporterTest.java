@@ -263,8 +263,8 @@ public class ApsZipImporterTest {
         String path2 = sut.importApsZip(zip2, new Publication());
 
         // ASSERT - the second path should have been disambiguated
-        assertEquals(path1, "/content/documents/govscot/publications/statistics-publication/2018/10/publication-title");
-        assertEquals(path2, "/content/documents/govscot/publications/statistics-publication/2018/10/publication-title-2");
+        assertEquals(path1, "/content/documents/govscot/publications/statistics/2018/10/publication-title");
+        assertEquals(path2, "/content/documents/govscot/publications/statistics/2018/10/publication-title-2");
     }
 
     /**

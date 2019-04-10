@@ -25,28 +25,26 @@ public class PublicationTypeMapper {
 
     static {
         // how to map types that are moving...
-        typeMap.put("Consultation", "Consultation paper");
-        typeMap.put("Consultation responses", "Consultation analysis");
-        typeMap.put("Forms", "Form");
-        typeMap.put("Guidance", "Advice and guidance");
-        typeMap.put("Letter/Circular", CORRESPONDENCE);
-        typeMap.put("Newsletter", CORRESPONDENCE);
-        typeMap.put("Research findings", RESEARCH_AND_ANALYSIS);
-        typeMap.put("Research finding", RESEARCH_AND_ANALYSIS);
-        typeMap.put("Research publications", RESEARCH_AND_ANALYSIS);
-        typeMap.put("Research publication", RESEARCH_AND_ANALYSIS);
-        typeMap.put("Speech", SPEECH_STATEMENT);
-        typeMap.put("Statistics dataset", STATISTICS);
-        typeMap.put("Statistics publication", STATISTICS);
-        typeMap.put("Speech", SPEECH_STATEMENT);
-        typeMap.put("Statistics dataset", STATISTICS);
-        typeMap.put("Statistics publication", STATISTICS);
-        typeMap.put("Info page", PUBLICATION);
-        typeMap.put("Legislation", PUBLICATION);
-        typeMap.put("Report", PUBLICATION);
+        typeMap.put("consultation", "Consultation paper");
+        typeMap.put("consultation responses", "Consultation analysis");
+        typeMap.put("forms", "Form");
+        typeMap.put("guidance", "Advice and guidance");
+        typeMap.put("letter/circular", CORRESPONDENCE);
+        typeMap.put("newsletter", CORRESPONDENCE);
+        typeMap.put("research findings", RESEARCH_AND_ANALYSIS);
+        typeMap.put("research finding", RESEARCH_AND_ANALYSIS);
+        typeMap.put("research publications", RESEARCH_AND_ANALYSIS);
+        typeMap.put("research publication", RESEARCH_AND_ANALYSIS);
+        typeMap.put("speech", SPEECH_STATEMENT);
+        typeMap.put("statistics dataset", STATISTICS);
+        typeMap.put("statistics publication", STATISTICS);
+        typeMap.put("info page", PUBLICATION);
+        typeMap.put("legislation", PUBLICATION);
+        typeMap.put("report", PUBLICATION);
     }
 
     public String map(String publicationType) {
-        return  typeMap.getOrDefault(publicationType, publicationType);
+        String lowerCaseType = publicationType.toLowerCase();
+        return  typeMap.getOrDefault(lowerCaseType, publicationType);
     }
 }
