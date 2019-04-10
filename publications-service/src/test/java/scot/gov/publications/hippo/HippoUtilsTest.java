@@ -9,13 +9,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
+import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertSame;
@@ -213,6 +211,51 @@ public class HippoUtilsTest {
         assertSame(two, actual);
     }
 
+    @Test
+    public void sortChildren() throws Exception {
+        HippoUtils sut = new HippoUtils();
+        Node input = mock(Node.class);
+        List<Node> nodes = new ArrayList<>();
+        Collections.addAll(nodes,
+                folder("zzzz"),
+                folder("aaaa"),
+                nonFolder("ZZZZ"),
+                nonFolder("AAAA"));
+        when(input.getNodes()).thenReturn(iterator(nodes));
+        sut.sortChildren(input);
+    }
+
+    @Test
+    public void sortChildrenReversed() throws Exception {
+        HippoUtils sut = new HippoUtils();
+        Node input = mock(Node.class);
+        List<Node> nodes = new ArrayList<>();
+        Collections.addAll(nodes,
+                folder("zzzz"),
+                folder("aaaa"),
+                nonFolder("ZZZZ"),
+                nonFolder("AAAA"));
+        when(input.getNodes()).thenReturn(iterator(nodes));
+        sut.sortChildren(input, true);
+    }
+
+    Node folder(String name) throws Exception {
+        NodeType type = mock(NodeType.class);
+        when(type.getName()).thenReturn("hippostd:folder");
+        Node n = mock(Node.class);
+        when(n.getName()).thenReturn(name);
+        when(n.getPrimaryNodeType()).thenReturn(type);
+        return n;
+    }
+
+    Node nonFolder(String name) throws Exception {
+        NodeType type = mock(NodeType.class);
+        when(type.getName()).thenReturn("hippostd:something");
+        Node n = mock(Node.class);
+        when(n.getName()).thenReturn(name);
+        when(n.getPrimaryNodeType()).thenReturn(type);
+        return n;
+    }
     public static Session session(List<Node> nodes) throws RepositoryException {
         Session session = mock(Session.class);
         Workspace ws = mock(Workspace.class);

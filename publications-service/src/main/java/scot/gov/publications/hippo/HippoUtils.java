@@ -11,6 +11,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.Session;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
@@ -125,5 +126,51 @@ public class HippoUtils {
         return node;
     }
 
+    public void sortChildren(Node node) throws RepositoryException {
+        sortChildren(node, false);
+    }
+
+    public void reverseSortChildren(Node node) throws RepositoryException {
+        sortChildren(node, true);
+    }
+
+    public void sortChildren(Node node, boolean reverse) throws RepositoryException {
+        List<String> sortedNames = sortedNames(node.getNodes());
+        if (reverse) {
+            Collections.reverse(sortedNames);
+        }
+        for (int i = sortedNames.size() - 1; i >= 0; i--) {
+            String before = sortedNames.get(i);
+            String after = i < sortedNames.size() - 1 ? sortedNames.get(i + 1) : null;
+            node.orderBefore(before, after);
+        }
+    }
+
+    /**
+     * Sort the nodes in an iterator, Folders in alphabetical order first then other documents in alphabetical order.
+     */
+    private List<String> sortedNames(NodeIterator it) throws RepositoryException {
+
+        List<String> folders = new ArrayList<>();
+        List<String> others = new ArrayList<>();
+        while (it.hasNext()) {
+            Node next = it.nextNode();
+            if (isHippoFolder(next)) {
+                folders.add(next.getName());
+            } else {
+                others.add(next.getName());
+            }
+        }
+        folders.sort(String::compareToIgnoreCase);
+        others.sort(String::compareToIgnoreCase);
+        List<String> names = new ArrayList<>();
+        names.addAll(folders);
+        names.addAll(others);
+        return names;
+    }
+
+    public boolean isHippoFolder(Node node) throws RepositoryException {
+        return "hippostd:folder".equals(node.getPrimaryNodeType().getName());
+    }
 
 }

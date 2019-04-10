@@ -64,6 +64,7 @@ public class ApsZipImporter {
                     metadata.getTitle(),
                     metadata.getPublicationDateWithTimezone());
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
+
             LOG.info("publication folder is {}", publicationFolder.getPath());
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
@@ -76,6 +77,10 @@ public class ApsZipImporter {
             ensureFolderActions(publicationFolder);
             publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             session.save();
+
+            // sort the parent folder
+            hippoUtils.sortChildren(publicationFolder.getParent());
+
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
