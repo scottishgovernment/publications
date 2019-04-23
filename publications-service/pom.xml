@@ -153,7 +153,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
-      <version>5.5.0</version>
+      <version>5.5.1</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -278,7 +278,7 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
-      <version>5.4.0</version>
+      <version>5.5.1</version>
       <scope>test</scope>
     </dependency>
 
