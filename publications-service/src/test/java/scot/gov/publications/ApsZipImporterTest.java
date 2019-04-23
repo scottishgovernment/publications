@@ -268,6 +268,26 @@ public class ApsZipImporterTest {
     }
 
     /**
+     * Rejects unrecornised publication type
+     */
+    @Test(expected = ApsZipImporterException.class)
+    public void rejectsInvalidPublicationtype() throws Exception {
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsInvalidPublicationtype", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("rejectsInvalidPublicationtype");
+        metadata.setPublicationType("invalid");
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT -- exect an exception
+    }
+
+    /**
      * Rejects invalid manifest
      */
     @Test(expected = ApsZipImporterException.class)

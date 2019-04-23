@@ -47,6 +47,7 @@ public class TestRepository {
         try {
             setUpRepo();
         } catch (RepositoryException | IOException ex) {
+
             throw new RuntimeException(ex);
         }
         return repository;
@@ -101,6 +102,7 @@ public class TestRepository {
             "/hcm-config/hippotaxonomy.cnd",
             "/hcm-config/resourcebundle.cnd",
             "/hcm-config/hipposched.cnd",
+            "/hcm-config/selectiontypes.cnd",
             "/hcm-config/govscot.cnd");
 
 

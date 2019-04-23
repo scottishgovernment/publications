@@ -10,6 +10,7 @@ import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
+import scot.gov.publications.metadata.PublicationTypeMapper;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.util.Exif;
 
@@ -17,6 +18,7 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -59,6 +61,10 @@ public class ApsZipImporter {
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);
             Metadata metadata = metadataExtractor.extract(zipFile);
+
+            // ensure that the publication type is valid
+            assertValidPublicationType(session, metadata.mappedPublicationType());
+
             LOG.info("Extracted metadata, isbn is {}, title is {}, publication date is {}",
                     metadata.getIsbn(),
                     metadata.getTitle(),
@@ -86,6 +92,23 @@ public class ApsZipImporter {
             throw new ApsZipImporterException("Failed to save session", e);
         } finally {
             session.logout();
+        }
+    }
+
+    private void assertValidPublicationType(Session session, String type) throws ApsZipImporterException {
+        try {
+            HippoPaths paths = new HippoPaths(session);
+            String slugType = paths.slugify(type, false);
+            String xpath = String.format(
+                    "/jcr:root/content/documents/govscot/valuelists" +
+                    "/publicationTypes/publicationTypes/selection:listitem[selection:key = '%s']", slugType);
+            LOG.info("assertValidPublicationType {}", xpath);
+            Node typeNode = hippoUtils.findOneQuery(session, xpath, Query.XPATH);
+            if (typeNode == null) {
+                throw new ApsZipImporterException("Unrecognised publication type:" + type);
+            }
+        } catch (RepositoryException e) {
+            throw new ApsZipImporterException("Unable to fetch publication types", e);
         }
     }
 

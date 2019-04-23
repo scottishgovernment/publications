@@ -256,6 +256,7 @@ public class HippoUtilsTest {
         when(n.getPrimaryNodeType()).thenReturn(type);
         return n;
     }
+
     public static Session session(List<Node> nodes) throws RepositoryException {
         Session session = mock(Session.class);
         Workspace ws = mock(Workspace.class);

@@ -108,8 +108,12 @@ public class HippoUtils {
     }
 
     public Node findOne(Session session, String queryTemplate, Object... args) throws RepositoryException {
+        return findOneQuery(session, queryTemplate, Query.SQL, args);
+    }
+
+    public Node findOneQuery(Session session, String queryTemplate, String type, Object... args) throws RepositoryException {
         String sql = String.format(queryTemplate, args);
-        Query queryObj = session.getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
+        Query queryObj = session.getWorkspace().getQueryManager().createQuery(sql, type);
         QueryResult result = queryObj.execute();
         if (result.getNodes().getSize() == 1) {
             return result.getNodes().nextNode();

@@ -453,7 +453,511 @@
             <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
                 <sv:value>new-mourning-banner</sv:value>
             </sv:property>
+
+            <sv:node sv:name="valuelists">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippostd:folder</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                    <sv:value>mix:versionable</sv:value>
+                    <sv:value>hippo:named</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
+                    <sv:value>mix:lockable</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:uuid" sv:type="String">
+                    <sv:value>fd33ed57-e43b-4fad-ab15-9c69f61fe8e3</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:name" sv:type="String">
+                    <sv:value>valuelists</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                    <sv:value>new-valuelist</sv:value>
+                </sv:property>
+                <sv:node  sv:name="publicationTypes">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>mix:versionable</sv:value>
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>de941bf5-9a2f-4cc6-a5ca-415a8f85d9e6</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>publicationTypes</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="publicationTypes">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>selection:valuelist</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>e4f6f915-50ba-4acf-b3f8-062ccc103955</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>advice-and-guidance</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Advice and guidance!!!</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>agreement</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Agreement</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>consultation-analysis</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Consultation analysis</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>consultation-paper</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Consultation paper</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>corporate-report</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Corporate report</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>correspondence</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Correspondence</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>foi-eir-release</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>FOI/EIR release</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>factsheet</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Factsheet</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>form</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Form</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>impact-assessment</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Impact assessment</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>independent-report</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Independent report</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>map</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Map</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>minutes</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Minutes</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>progress-report</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Progress report</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>publication</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Publication</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>regulation-directive-order</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Regulation/directive/order</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>research-and-analysis</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Research and analysis</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>speech-statement</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Speech/statementasfsdfsdf</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>statistics</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Statistics</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>strategy-plan</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Strategy/plan</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>transparency-data</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>Transparency data</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+                <sv:node sv:name="aps-blocklist">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>66ba99fa-9784-49c6-b3d5-2cbdbbd50561</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>APS blocklist</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="aps-blocklist">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>selection:valuelist</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>hippotranslation:translated</sv:value>
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>1ebf903f-339f-4c94-b215-83d1adf0efc2</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:id" sv:type="String">
+                            <sv:value>2e6f0384-29eb-458f-9cc4-7cd856e3b53c</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+                            <sv:value>inherited - from query</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>329376</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>329376</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>330877</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>330877</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>331319</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>331319</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>341931</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>341931</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>334005</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>334005</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>340399</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>340399</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>347902</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>347902</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>347964</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>347964</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>340303</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>340303</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>348816</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>348816</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>361800</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>361800</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>357175</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>357175</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>362106</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>362106</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>362055</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>362055</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>361736</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>361736</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>361803</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>361803</sv:value>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="selection:listitem">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>selection:listitem</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:key" sv:type="String">
+                                <sv:value>352163</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="selection:label" sv:type="String">
+                                <sv:value>352163</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+            </sv:node>
         </sv:node>
+
     </sv:node>
     <sv:node sv:name="gallery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">

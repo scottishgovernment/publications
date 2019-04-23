@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class MetadataExtractor {
 
-    private MetadataParser metadataParser = new MetadataParser();
+    MetadataParser metadataParser = new MetadataParser();
 
     private ZipUtil zipUtil = new ZipUtil();
 
