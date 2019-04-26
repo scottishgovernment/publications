@@ -10,7 +10,6 @@ import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
-import scot.gov.publications.metadata.PublicationTypeMapper;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.util.Exif;
 
