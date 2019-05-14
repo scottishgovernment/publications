@@ -30,14 +30,20 @@ class LinkRewriter {
         Node contentNode = pageNode.getNode("govscot:content");
         Node facet = ensueFacetSelect(contentNode, to);
         String fromhtml = contentNode.getProperty(CONTENT_ATTRIB).getString();
-        String toHtml = fromhtml.replaceAll(from, facet.getName());
+        String toHtml = fromhtml.replaceAll(
+                quoted(from),
+                quoted(facet.getName()));
         contentNode.setProperty(CONTENT_ATTRIB, toHtml);
 
-        LOG.debug("Rewriting {} -> {} in page {}, created new facet for {}",
+        LOG.info("Rewriting {} -> {} in page {}, created new facet for {}",
                 from,
                 facet.getName(),
                 pageNode.getPath(),
                 to.getPath());
+    }
+
+    String quoted(String str) {
+        return String.format("\"%s\"", str);
     }
 
     void rewriteWithoutFacet(Node pageNode, String from, String to) throws RepositoryException  {
@@ -45,7 +51,7 @@ class LinkRewriter {
         String fromhtml = contentNode.getProperty(CONTENT_ATTRIB).getString();
         String toHtml = fromhtml.replaceAll(from, to);
         contentNode.setProperty(CONTENT_ATTRIB, toHtml);
-        LOG.debug("Rewriting {} -> {} in page (no facet)", from, to, pageNode.getPath());
+        LOG.info("Rewriting {} -> {} in page (no facet)", from, to, pageNode.getPath());
     }
 
     Node ensueFacetSelect(Node contentNode, Node to) throws RepositoryException {

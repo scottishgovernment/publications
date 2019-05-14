@@ -64,7 +64,7 @@ public class PublicationLinkRewriter {
 
     private void rewriteLink(String href, Node pageNode) throws RepositoryException {
 
-        LOG.debug("rewriteLink {} -> {}", href, pageNode.getPath());
+        LOG.info("rewriteLink {} -> {}", href, pageNode.getPath());
 
         // if the href is one of the pages then rewrite it as a facet link
         if (pageNodesByEntryname.containsKey(href)) {
