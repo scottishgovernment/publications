@@ -113,15 +113,12 @@ public class PublicationNodeUpdater {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
         if (!publicationNode.hasNode("govscot:responsibleDirectorate") &&
-                isNotBlank(metadata.getResponsibeDirectorate())) {
-            createDirectorateLink(
-                    publicationNode,
-                    "govscot:responsibleDirectorate",
-                    metadata.getResponsibeDirectorate());
+                isNotBlank(metadata.getPrimaryResponsibleDirectorate())) {
+            createDirectorateLink(publicationNode, "govscot:responsibleDirectorate", metadata.getPrimaryResponsibleDirectorate());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleDirectorate")) {
-            for (String directorate : metadata.getSecondaryResponsibleDirectorate()) {
+            for (String directorate : metadata.getSecondaryResponsibleDirectorates()) {
                 createDirectorateLink(publicationNode, "govscot:secondaryResponsibleDirectorate", directorate);
             }
         }
@@ -142,12 +139,12 @@ public class PublicationNodeUpdater {
     private void createRolesIfAbsent(Node publicationNode, Metadata metadata)
             throws RepositoryException, ApsZipImporterException {
 
-        if (!publicationNode.hasNode("govscot:responsibleRole") && isNotBlank(metadata.getResponsibeRole())) {
-            createRoleLink(publicationNode, "govscot:responsibleRole", metadata.getResponsibeRole());
+        if (!publicationNode.hasNode("govscot:responsibleRole") && isNotBlank(metadata.getPrimaryResponsibleRole())) {
+            createRoleLink(publicationNode, "govscot:responsibleRole", metadata.getPrimaryResponsibleRole());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleRole")) {
-            for (String role : metadata.getSecondaryResponsibleRole()) {
+            for (String role : metadata.getSecondaryResponsibleRoles()) {
                 createRoleLink(publicationNode, "govscot:secondaryResponsibleRole", role);
             }
         }

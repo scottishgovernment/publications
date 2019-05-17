@@ -56,13 +56,13 @@ public class Metadata {
 
     Contact contact;
 
-    String responsibeDirectorate;
+    String primaryResponsibleDirectorate;
 
-    List<String> secondaryResponsibleDirectorate = new ArrayList<>();
+    List<String> secondaryResponsibleDirectorates = new ArrayList<>();
 
-    String responsibeRole;
+    String primaryResponsibleRole;
 
-    List<String> secondaryResponsibleRole = new ArrayList<>();
+    List<String> secondaryResponsibleRoles = new ArrayList<>();
 
     public String getId() {
         return id;
@@ -216,36 +216,36 @@ public class Metadata {
         this.contact = contact;
     }
 
-    public String getResponsibeDirectorate() {
-        return responsibeDirectorate;
+    public String getPrimaryResponsibleDirectorate() {
+        return primaryResponsibleDirectorate;
     }
 
-    public void setResponsibeDirectorate(String responsibeDirectorate) {
-        this.responsibeDirectorate = responsibeDirectorate;
+    public void setPrimaryResponsibleDirectorate(String primaryResponsibleDirectorate) {
+        this.primaryResponsibleDirectorate = primaryResponsibleDirectorate;
     }
 
-    public List<String> getSecondaryResponsibleDirectorate() {
-        return secondaryResponsibleDirectorate;
+    public List<String> getSecondaryResponsibleDirectorates() {
+        return secondaryResponsibleDirectorates;
     }
 
-    public void setSecondaryResponsibleDirectorate(List<String> secondaryResponsibleDirectorate) {
-        this.secondaryResponsibleDirectorate = secondaryResponsibleDirectorate;
+    public void setSecondaryResponsibleDirectorates(List<String> secondaryResponsibleDirectorates) {
+        this.secondaryResponsibleDirectorates = secondaryResponsibleDirectorates;
     }
 
-    public String getResponsibeRole() {
-        return responsibeRole;
+    public String getPrimaryResponsibleRole() {
+        return primaryResponsibleRole;
     }
 
-    public void setResponsibeRole(String responsibeRole) {
-        this.responsibeRole = responsibeRole;
+    public void setPrimaryResponsibleRole(String primaryResponsibleRole) {
+        this.primaryResponsibleRole = primaryResponsibleRole;
     }
 
-    public List<String> getSecondaryResponsibleRole() {
-        return secondaryResponsibleRole;
+    public List<String> getSecondaryResponsibleRoles() {
+        return secondaryResponsibleRoles;
     }
 
-    public void setSecondaryResponsibleRole(List<String> secondaryResponsibleRole) {
-        this.secondaryResponsibleRole = secondaryResponsibleRole;
+    public void setSecondaryResponsibleRoles(List<String> secondaryResponsibleRoles) {
+        this.secondaryResponsibleRoles = secondaryResponsibleRoles;
     }
 
     public String normalisedIsbn() {

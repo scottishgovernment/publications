@@ -681,8 +681,8 @@ public class ApsZipImporterTest {
         // ARRANGE
         Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("directoratesAddedIfPresent", "fixtures/exampleZipContents");
         Metadata metadata = loadMetadata(fixturePath);
-        metadata.setResponsibeDirectorate("advanced-learning-and-science");
-        metadata.setSecondaryResponsibleDirectorate(singletonList("advanced-learning-and-science"));
+        metadata.setPrimaryResponsibleDirectorate("advanced-learning-and-science");
+        metadata.setSecondaryResponsibleDirectorates(singletonList("advanced-learning-and-science"));
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
@@ -704,7 +704,7 @@ public class ApsZipImporterTest {
         // ARRANGE
         Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfDirectorateIsNotPresent", "fixtures/exampleZipContents");
         Metadata metadata = loadMetadata(fixturePath);
-        metadata.setResponsibeDirectorate("NO SUCH DIRECTORATE");
+        metadata.setPrimaryResponsibleDirectorate("NO SUCH DIRECTORATE");
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
@@ -721,8 +721,8 @@ public class ApsZipImporterTest {
         // ARRANGE
         Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rolesAddedIfPresentInMetadata", "fixtures/exampleZipContents");
         Metadata metadata = loadMetadata(fixturePath);
-        metadata.setResponsibeRole("commissioner-fair-access");
-        metadata.setSecondaryResponsibleRole(singletonList("sheila-rowan"));
+        metadata.setPrimaryResponsibleRole("commissioner-fair-access");
+        metadata.setSecondaryResponsibleRoles(singletonList("sheila-rowan"));
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
@@ -745,9 +745,9 @@ public class ApsZipImporterTest {
         Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotPublushed", "fixtures/exampleZipContents");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("exceptionThrownIfRoleIsNotPublushed");
-        metadata.setResponsibeRole("Commissioner for Fair Access");
+        metadata.setPrimaryResponsibleRole("Commissioner for Fair Access");
         // this role is not published and so the importer should throw and exception
-        metadata.setSecondaryResponsibleRole(singletonList("Chief Veterinary Officer"));
+        metadata.setSecondaryResponsibleRoles(singletonList("Chief Veterinary Officer"));
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
@@ -765,8 +765,8 @@ public class ApsZipImporterTest {
         Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotFounf", "fixtures/exampleZipContents");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("exceptionThrownIfRoleIsNotFound");
-        metadata.setResponsibeRole("Commissioner for Fair Access");
-        metadata.setSecondaryResponsibleRole(singletonList("NO SUCH ROLE"));
+        metadata.setPrimaryResponsibleRole("Commissioner for Fair Access");
+        metadata.setSecondaryResponsibleRoles(singletonList("NO SUCH ROLE"));
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
