@@ -1,6 +1,5 @@
 package scot.gov.publications.hippo;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
@@ -26,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
@@ -39,6 +39,10 @@ import static scot.gov.publications.hippo.XpathQueryHelper.roleHandleQuery;
 public class PublicationNodeUpdater {
 
     private static final Logger LOG = LoggerFactory.getLogger(PublicationNodeUpdater.class);
+
+    private static final String RESPONSIBLE_DIRECTORATE = "govscot:responsibleDirectorate";
+
+    private static final String RESPONSIBLE_ROLE = "govscot:responsibleRole";
 
     Session session;
 
@@ -112,9 +116,8 @@ public class PublicationNodeUpdater {
     private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws ApsZipImporterException, RepositoryException {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
-        if (!publicationNode.hasNode("govscot:responsibleDirectorate") &&
-                isNotBlank(metadata.getPrimaryResponsibleDirectorate())) {
-            createDirectorateLink(publicationNode, "govscot:responsibleDirectorate", metadata.getPrimaryResponsibleDirectorate());
+        if (shouldUpdateDirectorate(publicationNode, metadata)) {
+            createDirectorateLink(publicationNode, RESPONSIBLE_DIRECTORATE , metadata.getPrimaryResponsibleDirectorate());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleDirectorate")) {
@@ -122,6 +125,25 @@ public class PublicationNodeUpdater {
                 createDirectorateLink(publicationNode, "govscot:secondaryResponsibleDirectorate", directorate);
             }
         }
+    }
+
+    private boolean shouldUpdateDirectorate(Node publicationNode, Metadata metadata) throws RepositoryException {
+        if (isBlank(metadata.getPrimaryResponsibleDirectorate())) {
+            return false;
+        }
+
+        if (!publicationNode.hasNode(RESPONSIBLE_DIRECTORATE )) {
+            return true;
+        }
+
+        // some nodes have a responsibleDirectorate of / ... treat these as empty
+        Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE );
+        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respDirectorate.getProperty("hippo:docbase").getString())) {
+            respDirectorate.remove();
+            return true;
+        }
+
+        return false;
     }
 
     private void createDirectorateLink(
@@ -138,9 +160,8 @@ public class PublicationNodeUpdater {
 
     private void createRolesIfAbsent(Node publicationNode, Metadata metadata)
             throws RepositoryException, ApsZipImporterException {
-
-        if (!publicationNode.hasNode("govscot:responsibleRole") && isNotBlank(metadata.getPrimaryResponsibleRole())) {
-            createRoleLink(publicationNode, "govscot:responsibleRole", metadata.getPrimaryResponsibleRole());
+        if (shouldUpdateRole(publicationNode, metadata)) {
+            createRoleLink(publicationNode, RESPONSIBLE_ROLE, metadata.getPrimaryResponsibleRole());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleRole")) {
@@ -148,6 +169,25 @@ public class PublicationNodeUpdater {
                 createRoleLink(publicationNode, "govscot:secondaryResponsibleRole", role);
             }
         }
+    }
+
+    private boolean shouldUpdateRole(Node publicationNode, Metadata metadata) throws RepositoryException {
+        if (isBlank(metadata.getPrimaryResponsibleRole())) {
+            return false;
+        }
+
+        if (!publicationNode.hasNode(RESPONSIBLE_ROLE)) {
+            return true;
+        }
+
+        // some nodes have a responsibleDirectorate of / ... treat these as empty
+        Node respRole = publicationNode.getNode(RESPONSIBLE_ROLE);
+        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respRole.getProperty("hippo:docbase").getString())) {
+            respRole.remove();
+            return true;
+        }
+
+        return false;
     }
 
     private void createRoleLink(Node publicationNode, String propertyName, String title)
@@ -167,7 +207,7 @@ public class PublicationNodeUpdater {
     }
 
     private String mailToLink(String email) {
-        return StringUtils.isBlank(email) ?
+        return isBlank(email) ?
                 "" : String.format("<p>Email: <a href=\"mailto:%s\">%s</a></p>", email, email);
     }
 
