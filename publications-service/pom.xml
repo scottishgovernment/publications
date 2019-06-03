@@ -14,6 +14,7 @@
   <name>Publications Service</name>
 
   <properties>
+    <hippo.repository.version>5.6.3</hippo.repository.version>
     <slf4j.version>1.7.25</slf4j.version>
     <postgres.jdbc.version>42.2.5</postgres.jdbc.version>
     <undertow.version>2.0.17.Final</undertow.version>
@@ -153,7 +154,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-connector</artifactId>
-      <version>5.5.1</version>
+      <version>${hippo.repository.version}</version>
       <exclusions>
         <exclusion>
           <groupId>log4j</groupId>
@@ -278,7 +279,7 @@
     <dependency>
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
-      <version>5.5.1</version>
+      <version>${hippo.repository.version}</version>
       <scope>test</scope>
     </dependency>
 
