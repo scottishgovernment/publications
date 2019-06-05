@@ -157,24 +157,24 @@ public class PublicationPageUpdater {
             Map<String, String> filenameToImageId)
                 throws RepositoryException {
 
-        List<String> imageLinks = imageLinks(div, filenameToImageId);
+        Set<String> imageLinks = imageLinks(div, filenameToImageId);
         String rewrittenHtml = rewriteImageLinks(div.html(), imageLinks);
         Node contentNode = hippoUtils.ensureHtmlNode(pageNode, GOVSCOT_CONTENT, rewrittenHtml);
         createImageFacets(contentNode, imageLinks, filenameToImageId);
         pageNode.setProperty("govscot:contentsPage", htmlUtil.isContentsPage(rewrittenHtml));
     }
 
-    private List<String> imageLinks(Element div, Map<String, String> filenameToImageId) {
+    private Set<String> imageLinks(Element div, Map<String, String> filenameToImageId) {
         return div
                 .select("img")
                 .stream()
                 .map(el -> el.attr("src"))
                 .filter(StringUtils::isNotBlank)
                 .filter(src -> filenameToImageId.containsKey(src))
-                .collect(toList());
+                .collect(toSet());
     }
 
-    private String rewriteImageLinks(String html, List<String> imageLinks) {
+    private String rewriteImageLinks(String html, Set<String> imageLinks) {
         String rewrittenContent = html;
         for (String imageLink : imageLinks) {
             String from = imageLink;
@@ -186,7 +186,7 @@ public class PublicationPageUpdater {
 
     private void createImageFacets(
             Node contentNode,
-            List<String> imageLinks,
+            Set<String> imageLinks,
             Map<String, String> filenameToImageId) throws RepositoryException {
 
         // create facets for each of the images we know about
