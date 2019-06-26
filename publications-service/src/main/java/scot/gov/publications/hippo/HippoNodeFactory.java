@@ -69,7 +69,7 @@ public class HippoNodeFactory {
 
 
         if (publishDateTime.isBefore(ZonedDateTime.now())) {
-            // the publicaiton can be p
+            // the publication can be published
             node.setProperty("hippo:availability", new String[]{"live", "preview"});
             node.setProperty("hippostd:state", "published");
             node.setProperty("hippostd:stateSummary", "live");
@@ -77,6 +77,12 @@ public class HippoNodeFactory {
             node.setProperty("hippo:availability", new String[]{"preview"});
             node.setProperty("hippostd:state", "unpublished");
             node.setProperty("hippostd:stateSummary", "new");
+
+            // If the publish date is in the future, we need to create an unpublished,
+            // preview node. These nodes should have the "versionable" mixin. This node
+            // is still present once the live, published node is created. If this mixin
+            // isn't set, it causes exceptions when a page or document is unpublished.
+            node.addMixin("mix:versionable");
             ensureWorkflowJob(node.getParent(), publishDateTime);
         }
     }

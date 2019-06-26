@@ -279,9 +279,9 @@ public class PublicationNodeUpdater {
     }
 
     /**
-     * If a publication with this isbn already exists then we want to update it.  To make sire we update the right
+     * If a publication with this isbn already exists then we want to update it.  To make sure we update the right
      * node we want to find all of then and then decide which node to use if there are multiple drafts.  If a
-     * published node exists then use that. Then fall back to using the upublished one and then finally to draft.
+     * published node exists then use that. Then fall back to using the unpublished one and then finally to draft.
      */
     private Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
         // Query to see if a publications with this ISBN already exist.  If it does then we will update the existing
