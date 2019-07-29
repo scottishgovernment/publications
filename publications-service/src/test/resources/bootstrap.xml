@@ -3828,10 +3828,263 @@
                 </sv:node>
             </sv:node>
 
+            <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="policies">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippostd:folder</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                <sv:value>mix:versionable</sv:value>
+                <sv:value>hippo:named</sv:value>
+                <sv:value>mix:referenceable</sv:value>
+                <sv:value>mix:lockable</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:uuid" sv:type="String">
+                <sv:value>957711a0-3ff6-4e80-9ed3-ed06d600beea</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:name" sv:type="String">
+                <sv:value>Policies</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                <sv:value>new-policy-folder</sv:value>
+            </sv:property>
+
+            <sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="digital">
+                <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                    <sv:value>hippostd:folder</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                    <sv:value>mix:versionable</sv:value>
+                    <sv:value>hippo:named</sv:value>
+                    <sv:value>mix:referenceable</sv:value>
+                    <sv:value>mix:lockable</sv:value>
+                </sv:property>
+                <sv:property sv:name="jcr:uuid" sv:type="String">
+                    <sv:value>7dd450cd-b5c5-4511-9ac5-fd559b45ce90</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippo:name" sv:type="String">
+                    <sv:value>Digital</sv:value>
+                </sv:property>
+                <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
+                    <sv:value>new-policy-detail</sv:value>
+                </sv:property>
+                <sv:node sv:name="latest">
+                    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                        <sv:value>hippo:handle</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                        <sv:value>mix:versionable</sv:value>
+                        <sv:value>hippo:named</sv:value>
+                        <sv:value>mix:referenceable</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="jcr:uuid" sv:type="String">
+                        <sv:value>f9bd6b17-3291-4191-baf9-67e9adc91a1f</sv:value>
+                    </sv:property>
+                    <sv:property sv:name="hippo:name" sv:type="String">
+                        <sv:value>Latest</sv:value>
+                    </sv:property>
+                    <sv:node sv:name="latest">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>govscot:PolicyLatest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>8c0bd1bd-fe3a-47ad-ac70-2b14e4059cf8</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="govscot:metaDescription" sv:type="String">
+                            <sv:value/>
+                        </sv:property>
+                        <sv:property sv:name="govscot:title" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:name" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>digital/latest/latest[2]</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>published</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>reece.cargan@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2016-04-13T13:58:04.000+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2019-03-25T11:54:44.830Z</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>joanna.orourke@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:id" sv:type="String">
+                            <sv:value>23de4d18-f188-4c81-9418-efb921a697fc</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+                            <sv:value>en</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="govscot:content">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippostd:html</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippostd:content" sv:type="String">
+                                <sv:value/>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="govscot:relatedItems">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippo:mirror</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippo:docbase" sv:type="String">
+                                <sv:value>5933cf11-40e6-4a6e-8ab4-ca25946d84ed</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="latest">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>govscot:PolicyLatest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>345e55be-7f32-46df-b939-44e99c3ab9b0</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="govscot:metaDescription" sv:type="String">
+                            <sv:value/>
+                        </sv:property>
+                        <sv:property sv:name="govscot:title" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
+                            <sv:value>preview</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:name" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>digital/latest/latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>unpublished</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>reece.cargan@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2016-04-13T13:58:04.000+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2019-03-25T11:54:44.830Z</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>joanna.orourke@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:id" sv:type="String">
+                            <sv:value>bbf95702-a764-4a70-93ee-4f7f9deec82f</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+                            <sv:value>en</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="govscot:content">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippostd:html</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippostd:content" sv:type="String">
+                                <sv:value/>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="govscot:relatedItems">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippo:mirror</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippo:docbase" sv:type="String">
+                                <sv:value>5933cf11-40e6-4a6e-8ab4-ca25946d84ed</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                    <sv:node sv:name="latest">
+                        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                            <sv:value>govscot:PolicyLatest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
+                            <sv:value>mix:referenceable</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="jcr:uuid" sv:type="String">
+                            <sv:value>bba7a692-c609-4a86-9aba-c6d3e73350fd</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="govscot:metaDescription" sv:type="String">
+                            <sv:value/>
+                        </sv:property>
+                        <sv:property sv:name="govscot:title" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true"/>
+                        <sv:property sv:name="hippo:name" sv:type="String">
+                            <sv:value>Latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippo:related___pathreference" sv:type="String">
+                            <sv:value>digital/latest/latest[2]</sv:value>
+                            <sv:value>digital/latest/latest</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:state" sv:type="String">
+                            <sv:value>draft</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+                            <sv:value>live</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+                            <sv:value>reece.cargan@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+                            <sv:value>2016-04-13T13:58:04.000+01:00</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+                            <sv:value>2019-03-25T11:49:52.202Z</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+                            <sv:value>joanna.orourke@gov.scot</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:id" sv:type="String">
+                            <sv:value>ee42a9de-14b3-4a53-8200-d0ba16c899fd</sv:value>
+                        </sv:property>
+                        <sv:property sv:name="hippotranslation:locale" sv:type="String">
+                            <sv:value>en</sv:value>
+                        </sv:property>
+                        <sv:node sv:name="govscot:content">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippostd:html</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippostd:content" sv:type="String">
+                                <sv:value/>
+                            </sv:property>
+                        </sv:node>
+                        <sv:node sv:name="govscot:relatedItems">
+                            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                                <sv:value>hippo:mirror</sv:value>
+                            </sv:property>
+                            <sv:property sv:name="hippo:docbase" sv:type="String">
+                                <sv:value>5933cf11-40e6-4a6e-8ab4-ca25946d84ed</sv:value>
+                            </sv:property>
+                        </sv:node>
+                    </sv:node>
+                </sv:node>
+        </sv:node>
+
+            </sv:node>
 
 
-
->>>>>>> MGS-5089 Support for new metadata fields
         </sv:node>
 
     </sv:node>

@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -697,6 +698,44 @@ public class ApsZipImporterTest {
         Node index = handle.getNode("index");
         assertTrue(index.hasNode("govscot:responsibleDirectorate"));
         assertTrue(index.hasNode("govscot:secondaryResponsibleDirectorate"));
+    }
+
+
+    @Test
+    public void policiesAddedCorrectly() throws Exception {
+        // ARRANGE - create two zips.  The first is related to digital and a non existant policy.  the second is related to biodiversity
+        Path fixturePath1= ZipFixtures.copyFixtureToTmpDirectory("policiesAddedCorrectly1", "fixtures/exampleZipContents");
+        Metadata metadata = loadMetadata(fixturePath1);
+        metadata.getPolicies().add("digital");
+        metadata.getPolicies().add("no-such-policy");
+        saveMetadata(metadata, fixturePath1);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
+
+        Path fixturePath2= ZipFixtures.copyFixtureToTmpDirectory("policiesAddedCorrectly2", "fixtures/exampleZipContents");
+        //metadata.getPolicies().add("biodiversity");
+        saveMetadata(metadata, fixturePath2);
+        ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath2);
+
+
+        // ACT
+
+        // import both of the zips.  We should end up with the publication related to both digital and biodiversity
+        String path;
+        path = sut.importApsZip(zip1, new Publication());
+        path = sut.importApsZip(zip2, new Publication());
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        assertIsRelatedTo(publicationFolder, "digital");
+        //assertIsRelatedTo(publicationFolder, "biodiversity");
+    }
+
+    void assertIsRelatedTo(Node publicationFolder, String policyName) throws RepositoryException {
+        String publicationHandleId = publicationFolder.getNode("index").getIdentifier();
+        Node latestNode = session.getNode("/content/documents/govscot/policies/" + policyName + "/latest/latest");
+        Node relatedItem = new HippoUtils().find(latestNode.getNodes("govscot:relatedItems"),
+                item -> item.getProperty("hippo:docbase").getString().equals(publicationHandleId));
+        Assert.assertNotNull(relatedItem);
     }
 
     @Test(expected = ApsZipImporterException.class)

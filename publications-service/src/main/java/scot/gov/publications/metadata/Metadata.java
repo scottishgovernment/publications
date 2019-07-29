@@ -42,6 +42,8 @@ public class Metadata {
 
     List<String> topics = new ArrayList<>();
 
+    List<String> policies = new ArrayList<>();
+
     String publicationType;
 
     String keywords;
@@ -158,6 +160,14 @@ public class Metadata {
 
     public void setTopics(List<String> topics) {
         this.topics = topics;
+    }
+
+    public List<String> getPolicies() {
+        return policies;
+    }
+
+    public void setPolicies(List<String> policies) {
+        this.policies = policies;
     }
 
     public String getPublicationType() {
