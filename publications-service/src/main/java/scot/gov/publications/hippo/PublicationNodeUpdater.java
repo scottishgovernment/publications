@@ -52,6 +52,8 @@ public class PublicationNodeUpdater {
 
     TopicsUpdater topicMappings;
 
+    PoliciesUpdater policiesUpdater;
+
     PublicationPathStrategy pathStrategy;
 
     HippoUtils hippoUtils = new HippoUtils();
@@ -64,6 +66,7 @@ public class PublicationNodeUpdater {
         this.nodeFactory = new HippoNodeFactory(session, configuration);
         this.topicMappings = new TopicsUpdater(session);
         this.pathStrategy = new PublicationPathStrategy(session);
+        this.policiesUpdater = new PoliciesUpdater(session);
     }
 
     /**
@@ -73,7 +76,7 @@ public class PublicationNodeUpdater {
      */
     public Node createOrUpdatePublicationNode(Metadata metadata, Publication publication)
             throws ApsZipImporterException {
-
+LOG.info("HERE");
         try {
             Node publicationNode = doCreateOrUpdate(metadata);
             setPublicationAuditFields(publicationNode, publication);
@@ -87,6 +90,7 @@ public class PublicationNodeUpdater {
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:notes", "");
             hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getExecutiveSummary());
             topicMappings.ensureTopics(publicationNode, metadata);
+            policiesUpdater.ensurePolicies(publicationNode, metadata);
             createDirectoratesIfAbsent(publicationNode, metadata);
             createRolesIfAbsent(publicationNode, metadata);
 
