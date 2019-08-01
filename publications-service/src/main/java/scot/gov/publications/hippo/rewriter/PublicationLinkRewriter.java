@@ -69,7 +69,8 @@ public class PublicationLinkRewriter {
         // if the href is one of the pages then rewrite it as a facet link
         if (pageNodesByEntryname.containsKey(href)) {
             Node pagenode = pageNodesByEntryname.get(href);
-            linkRewriter.rewriteLinkToFacet(pageNode, href, pagenode.getParent());
+            Node toNode = pagenode.isNodeType("hippo:resource") ? pagenode : pagenode.getParent();
+            linkRewriter.rewriteLinkToFacet(pageNode, href, toNode);
             return;
         }
 
