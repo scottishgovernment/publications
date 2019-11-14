@@ -62,7 +62,7 @@ public class PublicationUploader  {
             // download the file from s3
             InputStream storageStream = storage.get(publication);
             downloadedFile = fileUtil.createTempFile("downloadedPublicationFromS3", "zip", storageStream);
-            File extractedZip = zipUtil.extractNestedZipFile(downloadedFile);
+            File extractedZip = zipUtil.getZipToProcess(downloadedFile);
             ZipFile zipFile = new ZipFile(extractedZip);
 
             // try to import it

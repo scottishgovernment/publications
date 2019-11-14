@@ -17,15 +17,21 @@ public class ZipUtil {
         return firstEntry.getName();
     }
 
-    public File extractNestedZipFile(File file) throws IOException {
+    /**
+     * Determine the zip file to process.  If the ZIP contains a nested zip (as they are when downloade from Simplyasset)
+     * then extract the nested zip.  If the file is not nested then just return the original file.
+     */
+    public File getZipToProcess(File file) throws IOException {
         ZipFile zipFile = new ZipFile(file);
         List<ZipEntry> zipEntries = zipFile.stream()
                 .filter(ZipEntryUtil::isZip)
                 .filter(entry -> !entry.getName().startsWith("__MACOSX/"))
                 .collect(toList());
+
         if (zipEntries.isEmpty()) {
-            throw new IllegalArgumentException("No zip in the zip!");
+            return file;
         }
+
         if (zipEntries.size() > 1) {
             throw new IllegalArgumentException("More than one zip in the zip!");
         }

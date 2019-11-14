@@ -157,7 +157,8 @@ public class PublicationsResource {
             zipFile = fileUtil.createTempFile("zipUpload", "zip", new ByteArrayInputStream(fileUpload.getFileData()));
 
             // the up-loaded zip file contains a zip - extract it
-            extractedZipFile = zipUtil.extractNestedZipFile(zipFile);
+            extractedZipFile = zipUtil.getZipToProcess(zipFile);
+
         } catch (IllegalArgumentException | IOException e) {
             // return a client error since we were not able to extract the zip file.  ensure that any temp files are deleted.
             LOG.error("Failed to extract zip", e);
