@@ -76,7 +76,6 @@ public class PublicationNodeUpdater {
      */
     public Node createOrUpdatePublicationNode(Metadata metadata, Publication publication)
             throws ApsZipImporterException {
-LOG.info("HERE");
         try {
             Node publicationNode = doCreateOrUpdate(metadata);
             setPublicationAuditFields(publicationNode, publication);
