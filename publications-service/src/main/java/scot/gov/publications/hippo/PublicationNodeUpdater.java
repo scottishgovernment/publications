@@ -81,13 +81,15 @@ public class PublicationNodeUpdater {
             setPublicationAuditFields(publicationNode, publication);
             nodeFactory.addBasicFields(publicationNode, metadata.getTitle());
 
-            // these fields are edited by users, do not overwrite them if they already have a value
+            LOG.info("", metadata.toString());
+
+            // these fieldsare edited by users, do not overwrite them if they already have a value
             hippoUtils.setPropertyIfAbsent(publicationNode, GOVSCOT_TITLE, metadata.getTitle());
-            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getDescription());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getExecutiveSummary());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:seoTitle", metadata.getTitle());
-            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:metaDescription", metadata.getDescription());
+            hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:metaDescription", metadata.getExecutiveSummary());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:notes", "");
-            hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getExecutiveSummary());
+            hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getDescription());
             topicMappings.ensureTopics(publicationNode, metadata);
             policiesUpdater.ensurePolicies(publicationNode, metadata);
             createDirectoratesIfAbsent(publicationNode, metadata);
