@@ -76,13 +76,13 @@ public class MetadataExtractor {
 
     private void sanitizeData(Metadata metadata) {
         metadata.setTitle(TitleSanitiser.sanitise(metadata.getTitle()));
-        processExecSummaryAsMarkdown(metadata);
+        processDescriptionAsMarkdown(metadata);
     }
 
-    private void processExecSummaryAsMarkdown(Metadata metadata) {
-        Node node = markdownParser.parse(metadata.getExecutiveSummary());
-        String execSummaryHtml = markdownToHtmlRenderer.render(node);
-        metadata.setExecutiveSummary(execSummaryHtml);
+    private void processDescriptionAsMarkdown(Metadata metadata) {
+        Node node = markdownParser.parse(metadata.getDescription());
+        String html = markdownToHtmlRenderer.render(node);
+        metadata.setDescription(html);
     }
 
 }
