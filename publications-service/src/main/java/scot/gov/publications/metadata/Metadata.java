@@ -267,4 +267,10 @@ public class Metadata {
     public String mappedPublicationType() {
         return typeMapper.map(publicationType);
     }
+
+    public boolean shoudlEmbargo() {
+        // should be embargoed if the publication date is in the future and it is a statistics publications
+        return typeMapper.isEmbargoType(publicationType)
+                && publicationDate.isAfter(LocalDateTime.now());
+    }
 }

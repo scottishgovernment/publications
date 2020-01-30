@@ -1,0 +1,20 @@
+<'embargo'='http://www.onehippo.org/embargo/nt/1.0'>
+<'hipposched'='http://www.hippoecm.org/hipposched/nt/1.3'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<'mix'='http://www.jcp.org/jcr/mix/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[embargo:job] > hippo:request, mix:versionable
+  - * (string)
+  - * (binary)
+  + * (hipposched:triggers) = hipposched:triggers
+  - hipposched:attributeNames (string) multiple
+  - hipposched:attributeValues (string) multiple
+
+[embargo:handle]
+  mixin
+  - embargo:groups (string) mandatory multiple
+  + embargo:request (embargo:job) multiple ignore
+
+[embargo:document]
+  mixin

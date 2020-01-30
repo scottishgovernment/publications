@@ -11,7 +11,6 @@ import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestEntry;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.util.Exif;
-import scot.gov.publications.util.ExifProcessImpl;
 import scot.gov.publications.util.FileType;
 import scot.gov.publications.util.MimeTypeUtils;
 
@@ -23,7 +22,6 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static java.util.stream.Collectors.groupingBy;
 import static scot.gov.publications.hippo.Constants.*;
 
 /**
@@ -115,7 +113,8 @@ public class DocumentUploader {
                 slug,
                 title,
                 "govscot:DocumentInformation",
-                metadata.getPublicationDateWithTimezone());
+                metadata.getPublicationDateWithTimezone(),
+                metadata.shoudlEmbargo());
         documentInfoNode.setProperty(GOVSCOT_TITLE, title);
         documentInfoNode.setProperty("govscot:accessible", false);
         documentInfoNode.setProperty("govscot:highlighted", false);

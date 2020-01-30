@@ -173,7 +173,7 @@ public class ApsZipImporterTest {
      *
      * Steps:
      * - Import a publication with a future publication date - it should have a workflow job and not be published
-     * - Reimoort it with a publication date in the past - it should be published with no workflow job
+     * - Reimport it with a publication date in the past - it should be published with no workflow job
      * - Reimport it again with a publication date in the future - the workflow job should be back and the publication
      *   should not be published
      */

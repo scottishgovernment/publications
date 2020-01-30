@@ -50,7 +50,7 @@ public class PublicationNodeUpdaterTest {
         sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - should not have created any new document nodes
-        Mockito.verify(sut.nodeFactory, never()).newDocumentNode(any(), any(), any(), any(), any());
+        Mockito.verify(sut.nodeFactory, never()).newDocumentNode(any(), any(), any(), any(), any(), anyBoolean());
     }
 
     Property stringProperty(String value) throws RepositoryException {
@@ -77,7 +77,7 @@ public class PublicationNodeUpdaterTest {
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
-        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
+        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(nodeWithISBN);
 
         Metadata input = metadata();
 
@@ -90,7 +90,7 @@ public class PublicationNodeUpdaterTest {
         sut.createOrUpdatePublicationNode(input, new Publication());
 
         // ASSERT - should have created new document node
-        Mockito.verify(sut.nodeFactory).newDocumentNode(any(), any(), any(), any(), any());
+        Mockito.verify(sut.nodeFactory).newDocumentNode(any(), any(), any(), any(), any(), anyBoolean());
     }
 
     @Test
@@ -141,7 +141,7 @@ public class PublicationNodeUpdaterTest {
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
-        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenReturn(nodeWithISBN);
+        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any(), anyBoolean())).thenReturn(nodeWithISBN);
         Property tags = mock(Property.class);
         when(tags.getValues()).thenReturn(new Value[]{});
         when(nodeWithISBN.getProperty("hippostd:tags")).thenReturn(tags);
@@ -173,7 +173,7 @@ public class PublicationNodeUpdaterTest {
         when(nodeWithISBN.getParent()).thenReturn(handle);
 
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
-        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any())).thenThrow(new RepositoryException("arg"));
+        when(sut.nodeFactory.newDocumentNode(any(), any(), any(), any(), any(), anyBoolean())).thenThrow(new RepositoryException("arg"));
 
         Metadata input = metadata();
 

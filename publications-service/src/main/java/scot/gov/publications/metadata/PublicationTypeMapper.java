@@ -47,4 +47,8 @@ public class PublicationTypeMapper {
         String lowerCaseType = publicationType.toLowerCase();
         return  typeMap.getOrDefault(lowerCaseType, publicationType);
     }
+
+    public boolean isEmbargoType(String type) {
+        return STATISTICS.equals(map(type));
+    }
 }
