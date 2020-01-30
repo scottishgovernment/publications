@@ -78,7 +78,8 @@ public class ApsZipImporter {
                     publicationFolder,
                     imgMap,
                     docMap,
-                    metadata.getPublicationDateWithTimezone());
+                    metadata.getPublicationDateWithTimezone(),
+                    metadata.shoudlEmbargo());
             ensureFolderActions(publicationFolder);
             publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             session.save();

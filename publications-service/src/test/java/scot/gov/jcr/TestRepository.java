@@ -103,7 +103,9 @@ public class TestRepository {
             "/hcm-config/resourcebundle.cnd",
             "/hcm-config/hipposched.cnd",
             "/hcm-config/selectiontypes.cnd",
-            "/hcm-config/govscot.cnd");
+            "/hcm-config/govscot.cnd",
+            "/hcm-config/embargo.cnd"
+            );
 
 
         for (String cnd : cnds) {

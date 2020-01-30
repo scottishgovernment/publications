@@ -83,6 +83,16 @@ public class PublicationNodeUpdater {
 
             LOG.info("", metadata.toString());
 
+
+            /**
+             * New update logic:
+             * - type, isbn, contact, title, summary, seotitle, metaDescription, description is always set from zip
+             * - set if absent: notes
+             * -
+             * - topics, policies, directorates, roles, tags: merge topics in zip with existing
+             */
+
+
             // these fieldsare edited by users, do not overwrite them if they already have a value
             hippoUtils.setPropertyIfAbsent(publicationNode, GOVSCOT_TITLE, metadata.getTitle());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getExecutiveSummary());
@@ -254,14 +264,18 @@ public class PublicationNodeUpdater {
                     "index",
                     metadata.getTitle(),
                     "govscot:Publication",
-                    metadata.getPublicationDateWithTimezone());
+                    metadata.getPublicationDateWithTimezone(),
+                    metadata.shoudlEmbargo());
             return pubNode;
         } else {
             // remove any other nodes there are ...
             hippoUtils.removeSiblings(pubNode);
 
             // the node already exists, make sure its publications status matches what is in the zip
-            nodeFactory.ensurePublicationStatus(pubNode, metadata.getPublicationDateWithTimezone());
+            nodeFactory.ensurePublicationStatus(
+                    pubNode,
+                    metadata.getPublicationDateWithTimezone(),
+                    metadata.shoudlEmbargo());
         }
 
         return pubNode;

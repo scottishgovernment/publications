@@ -2,13 +2,9 @@ package scot.gov.publications.hippo;
 
 import org.apache.commons.lang3.StringUtils;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
+import javax.jcr.*;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.Session;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,6 +12,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static scot.gov.publications.hippo.Constants.EMBARGO_HANDLE;
 
 public class HippoUtils {
 
@@ -27,10 +24,6 @@ public class HippoUtils {
     @FunctionalInterface
     public interface ThrowingConsumer {
         void accept(Node t) throws RepositoryException;
-    }
-
-    public void apply(NodeIterator it, ThrowingConsumer consumer) throws RepositoryException {
-        apply(it, node -> true, consumer);
     }
 
     public void apply(NodeIterator it, ThrowingPredicate predicate, ThrowingConsumer consumer) throws RepositoryException {
@@ -66,7 +59,7 @@ public class HippoUtils {
         node.setProperty(property, value);
     }
 
-    public Node addHtmlNodeIfAbsent(Node node, String name, String value) throws  RepositoryException {
+    public Node addHtmlNodeIfAbsent(Node node, String name, String value) throws RepositoryException {
         // if the node already exists then return it
         if (node.hasNode(name)) {
             return node.getNode(name);
@@ -76,7 +69,7 @@ public class HippoUtils {
         return createHtmlNode(node, name, value);
     }
 
-    public Node ensureHtmlNode(Node node, String name, String value) throws  RepositoryException {
+    public Node ensureHtmlNode(Node node, String name, String value) throws RepositoryException {
         // if the node exists already then delete it
         ensureRemoved(node, name);
 
@@ -90,14 +83,14 @@ public class HippoUtils {
         return contentNode;
     }
 
-    public Node ensureNode(Node parent, String name, String primaryType, String ...mixins) throws RepositoryException {
+    public Node ensureNode(Node parent, String name, String primaryType, String... mixins) throws RepositoryException {
         if (parent.hasNode(name)) {
             return parent.getNode(name);
         }
         return createNode(parent, name, primaryType, mixins);
     }
 
-    public Node createNode(Node parent, String name, String primaryType, String ...mixins) throws RepositoryException {
+    public Node createNode(Node parent, String name, String primaryType, String... mixins) throws RepositoryException {
         Node node = parent.addNode(name, primaryType);
         for (String mixin : mixins) {
             node.addMixin(mixin);
@@ -108,6 +101,18 @@ public class HippoUtils {
     public void ensureRemoved(Node node, String name) throws RepositoryException {
         if (node.hasNode(name)) {
             node.getNode(name).remove();
+        }
+    }
+
+    public void ensurePropertyRemoved(Node node, String name) throws RepositoryException {
+        if (node.hasProperty(name)) {
+            node.getProperty(name).remove();
+        }
+    }
+
+    public void ensureMixinRemoved(Node node, String type) throws RepositoryException {
+        if(node.isNodeType(type)) {
+            node.removeMixin(type);
         }
     }
 

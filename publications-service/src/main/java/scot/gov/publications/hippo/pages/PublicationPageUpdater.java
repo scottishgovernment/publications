@@ -79,7 +79,8 @@ public class PublicationPageUpdater {
             Node publicationFolder,
             Map<String, String> filenameToImageId,
             Map<String, Node> docnameToNode,
-            ZonedDateTime publishDateTime) throws ApsZipImporterException {
+            ZonedDateTime publishDateTime,
+            boolean shouldEmbargo) throws ApsZipImporterException {
 
         try {
             // map the names of all pages we have created
@@ -87,7 +88,8 @@ public class PublicationPageUpdater {
                     zipFile,
                     publicationFolder,
                     filenameToImageId,
-                    publishDateTime);
+                    publishDateTime,
+                    shouldEmbargo);
             nodesByEntryname.putAll(docnameToNode);
             PublicationLinkRewriter linkRewriter = new PublicationLinkRewriter(publicationFolder.getName(), nodesByEntryname);
             linkRewriter.rewrite(publicationFolder);
@@ -100,7 +102,8 @@ public class PublicationPageUpdater {
             ZipFile zipFile,
             Node publicationFolder,
             Map<String, String> filenameToImageId,
-            ZonedDateTime publishDateTime)
+            ZonedDateTime publishDateTime,
+            boolean shouldEmbargo)
                 throws IOException, RepositoryException, ApsZipImporterException {
 
         Node pages = ensurePagesNode(publicationFolder);
@@ -113,7 +116,7 @@ public class PublicationPageUpdater {
         for (ZipEntry htmlEntry : htmlEntries) {
             InputStream in = zipFile.getInputStream(htmlEntry);
             String pageContent = IOUtils.toString(in, UTF_8);
-            Node pageNode = addPage(pages, pageContent, i, filenameToImageId, publishDateTime);
+            Node pageNode = addPage(pages, pageContent, i, filenameToImageId, publishDateTime, shouldEmbargo);
 
             Path entryPath = java.nio.file.Paths.get(htmlEntry.getName());
             pageNodesByEntry.put(entryPath.getFileName().toString(), pageNode);
@@ -136,7 +139,8 @@ public class PublicationPageUpdater {
             String page,
             int index,
             Map<String, String> filenameToImageId,
-            ZonedDateTime publishDateTime)
+            ZonedDateTime publishDateTime,
+            boolean shouldEmbaro)
                 throws RepositoryException, ApsZipImporterException {
 
         Document htmlDoc = Jsoup.parse(page);
@@ -144,7 +148,8 @@ public class PublicationPageUpdater {
         String title = TitleSanitiser.sanitise(htmlUtil.getTitle(mainTextDiv, index));
         String slug = Integer.toString(index);
         Node pageHandle = nodeFactory.newHandle(title, pagesNode, slug);
-        Node pageNode = nodeFactory.newDocumentNode(pageHandle, slug, title, "govscot:PublicationPage", publishDateTime);
+        Node pageNode = nodeFactory.newDocumentNode(
+                pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbaro);
         nodeFactory.addBasicFields(pageNode, title);
         pageNode.setProperty(GOVSCOT_TITLE, title);
         createPageContentAndLinkImages(mainTextDiv, pageNode, filenameToImageId);

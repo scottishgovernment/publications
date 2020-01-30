@@ -2,15 +2,10 @@ package scot.gov.publications.hippo;
 
 import scot.gov.publications.PublicationsConfiguration;
 
-import javax.jcr.Binary;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import javax.jcr.*;
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.UUID;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -41,7 +36,8 @@ public class HippoNodeFactory {
             String slug,
             String title,
             String type,
-            ZonedDateTime publishDateTime) throws RepositoryException {
+            ZonedDateTime publishDateTime,
+            boolean embargo) throws RepositoryException {
 
         Node node = hippoUtils.createNode(handle, slug, type, DOCUMENT_MIXINS);
 
@@ -56,45 +52,92 @@ public class HippoNodeFactory {
         node.setProperty("hippostdpubwf:creationDate", now);
         node.setProperty("hippostdpubwf:lastModifiedBy", configuration.getHippo().getUser());
         node.setProperty("hippostdpubwf:lastModificationDate", now);
-        ensurePublicationStatus(node, publishDateTime);
+        ensurePublicationStatus(node, publishDateTime, embargo);
         return node;
     }
 
     /**
-     * Ensure that the publication status and wny required workflow job exists for htis publication
+     * Ensure that the publication status and wny required workflow job exists for this publication
      */
-    public void ensurePublicationStatus(Node node, ZonedDateTime publishDateTime) throws RepositoryException {
-        // remove any workflow job that exists.  If it is needed then we will recreate it
-        ensureWorkflowJobDeleted(node);
-
+    public void ensurePublicationStatus(Node node, ZonedDateTime publishDateTime, boolean embargo) throws RepositoryException {
+        // remove any workflow job that exists.  If it is needed then we will recreate it. Ditto for embargo jobs
+        ensureWorkflowJobsDeleted(node);
+        ensureEmbargoFields(node, publishDateTime, embargo);
 
         if (publishDateTime.isBefore(ZonedDateTime.now())) {
             // the publication can be published
-            node.setProperty("hippo:availability", new String[]{"live", "preview"});
-            node.setProperty("hippostd:state", "published");
-            node.setProperty("hippostd:stateSummary", "live");
+            node.setProperty(HIPPO_AVAILABILITY, new String[]{"live", "preview"});
+            node.setProperty(HIPPOSTD_STATE, "published");
+            node.setProperty(HIPPOSTD_STATE_SUMMARY, "live");
         } else {
-            node.setProperty("hippo:availability", new String[]{"preview"});
-            node.setProperty("hippostd:state", "unpublished");
-            node.setProperty("hippostd:stateSummary", "new");
+            node.setProperty(HIPPO_AVAILABILITY, new String[]{"preview"});
+            node.setProperty(HIPPOSTD_STATE, "unpublished");
+            node.setProperty(HIPPOSTD_STATE_SUMMARY, "new");
 
             // If the publish date is in the future, we need to create an unpublished,
             // preview node. These nodes should have the "versionable" mixin. This node
             // is still present once the live, published node is created. If this mixin
             // isn't set, it causes exceptions when a page or document is unpublished.
-            node.addMixin("mix:versionable");
+            node.addMixin(MIX_VERSIONABLE);
             ensureWorkflowJob(node.getParent(), publishDateTime);
         }
     }
 
     /**
+     * Ensure the right values used by the embargo plugin are used for this node.
+     *
+     * If the node is supposed to be embargoed then:
+     * - the handle needs a mixin
+     * - the handle needs a roperty indicating the embargo group.
+     * - the node needs a mixin
+     * - we also need a workflow job that will remove the embargo fields at the publish date and tiem
+     * In the case wher
+     */
+    void ensureEmbargoFields(Node node, ZonedDateTime publishDateTime, boolean embargo) throws RepositoryException {
+        Node handle = node.getParent();
+        if (embargo) {
+            node.addMixin(EMBARGO_DOCUMENT);
+            handle.addMixin(EMBARGO_HANDLE);
+            handle.setProperty(EMBARGO_GROUPS, new String[]{"General Embargo"});
+            createRemoveEmbargoJob(node, publishDateTime);
+        } else {
+            hippoUtils.ensureMixinRemoved(node, EMBARGO_DOCUMENT);
+            hippoUtils.ensureMixinRemoved(handle, EMBARGO_HANDLE);
+            hippoUtils.ensurePropertyRemoved(handle, EMBARGO_GROUPS);
+        }
+    }
+
+    public void createRemoveEmbargoJob(Node node, ZonedDateTime publishDateTime) throws RepositoryException {
+        Node handle = node.getParent();
+        // create the job needed to publish this node
+        Node job = handle.addNode(EMBARGO_REQUEST, "embargo:job");
+        job.addMixin(MIX_REFERENCEABLE);
+        job.addMixin(MIX_SIMPLE_VERSIONABLE);
+        job.addMixin(MIX_VERSIONABLE);
+        job.setProperty("hipposched:attributeNames", new String[] { "hipposched:subjectId", "hipposched:methodName"});
+        job.setProperty("hipposched:attributeValues", new String[] { node.getIdentifier(), "removeEmbargo"});
+
+        job.setProperty("hipposched:repositoryJobClass",
+                "org.onehippo.forge.embargo.repository.workflow.EmbargoWorkflowImpl$WorkflowJob");
+        Node triggers = job.addNode(HIPPOSCHED_TRIGGERS, HIPPOSCHED_TRIGGERS);
+        Node defaultNode = triggers.addNode("embargo", HIPPOSCHED_SIMPLE_TRIGGER);
+        defaultNode.addMixin(MIX_LOCKABLE);
+        defaultNode.addMixin(MIX_REFERENCEABLE);
+
+        Calendar publishTime = GregorianCalendar.from(publishDateTime);
+        defaultNode.setProperty(HIPPOSCHED_NEXT_FIRE_TIME, publishTime);
+        defaultNode.setProperty(HIPPOSCHED_START_TIME, publishTime);
+    }
+
+    /**
      * If this publication node has a workflow job attached to its handle then remove it
      */
-    public void ensureWorkflowJobDeleted(Node node) throws RepositoryException {
+    public void ensureWorkflowJobsDeleted(Node node) throws RepositoryException {
         Node handle = node.getParent();
-        if (handle.hasNode(HIPPO_REQUEST)) {
-            String requestPath = handle.getNode(HIPPO_REQUEST).getPath();
-            session.removeItem(requestPath);
+        NodeIterator it = handle.getNodes(HIPPO_REQUEST);
+        while (it.hasNext()) {
+            Node request = (Node) it.nextNode();
+            request.remove();
         }
     }
 
@@ -108,13 +151,13 @@ public class HippoNodeFactory {
         job.setProperty("hipposched:attributeValues", new String[] { handle.getIdentifier(), "publish"});
         job.setProperty("hipposched:repositoryJobClass",
                 "org.onehippo.repository.documentworkflow.task.ScheduleWorkflowTask$WorkflowJob");
-        Node triggers = job.addNode("hipposched:triggers", "hipposched:triggers");
-        Node defaultNode = triggers.addNode("default", "hipposched:simpletrigger");
-        defaultNode.addMixin("mix:lockable");
-        defaultNode.addMixin("mix:referenceable");
+        Node triggers = job.addNode(HIPPOSCHED_TRIGGERS, HIPPOSCHED_TRIGGERS);
+        Node defaultNode = triggers.addNode("default", HIPPOSCHED_SIMPLE_TRIGGER);
+        defaultNode.addMixin(MIX_LOCKABLE);
+        defaultNode.addMixin(MIX_REFERENCEABLE);
         Calendar publishTime = GregorianCalendar.from(publishDateTime);
-        defaultNode.setProperty("hipposched:nextFireTime", publishTime);
-        defaultNode.setProperty("hipposched:startTime", publishTime);
+        defaultNode.setProperty(HIPPOSCHED_NEXT_FIRE_TIME, publishTime);
+        defaultNode.setProperty(HIPPOSCHED_START_TIME, publishTime);
     }
 
     public Node newResourceNode(
