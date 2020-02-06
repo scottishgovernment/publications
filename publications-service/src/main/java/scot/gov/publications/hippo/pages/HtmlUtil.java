@@ -22,14 +22,31 @@ class HtmlUtil {
     /**
      * Determine the title of a publication page.  If the page contains any h3 elements then the first one will be used
      * as its title. Otherwise the index will be used to format a generic title e.g. "Page 1"
+     *
+     * In older publications an h3 was used as the page heading.  However we have requested that they start to use
+     * h2.  For this reason this code has to be able to handle either.
      */
     String getTitle(Element div, int index) {
-        List<Element> headings = div.select("h3");
-        if (headings.isEmpty()) {
-            LOG.warn("Page does not contain an h3, will use page number to format page title {}", index);
-            return String.format("Page %d", index);
+
+        String title = getTitle(div, "h2");
+
+        if (title != null) {
+            return title;
         }
-        return headings.get(0).text();
+
+        title = getTitle(div, "h3");
+
+        if (title != null) {
+            return title;
+        }
+
+        LOG.warn("Page does not contain an h2 or h3, will use page number to format page title {}", index);
+        return String.format("Page %d", index);
+    }
+
+    String getTitle(Element div, String tag) {
+        List<Element> headings = div.select(tag);
+        return headings.isEmpty() ? null : headings.get(0).text();
     }
 
     /**
@@ -55,18 +72,9 @@ class HtmlUtil {
         }
 
         Document htmlDoc = Jsoup.parse(html);
-        Element heading = htmlDoc.select("h3").first();
-        if (heading == null) {
-            return false;
-        }
-        String txt = heading.childNodes()
-                .stream()
-                .map(org.jsoup.nodes.Node::toString)
-                .map(String::toLowerCase)
-                .collect(joining(""))
-                .trim()
-                .toLowerCase();
-        return "contents".equals(txt) || "table of contents".equals(txt);
+        String title = getTitle(htmlDoc, 0).toLowerCase();
+        return StringUtils.equalsAny(title, "contents", "table of contents");
+
     }
 
 }

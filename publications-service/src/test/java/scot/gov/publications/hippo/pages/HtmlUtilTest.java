@@ -19,12 +19,13 @@ public class HtmlUtilTest {
     HtmlUtil sut = new HtmlUtil();
 
     @Test
-    public void getTitleUsesIndexIfNoH3() throws Exception {
+    public void getTitleUsesIndexIfNoH2OrH3() throws Exception {
         // ARRANGE
         Element div = mock(Element.class);
         Elements emptyElements = mock(Elements.class);
         when(emptyElements.isEmpty()).thenReturn(true);
         when(div.select("h3")).thenReturn(emptyElements);
+        when(div.select("h2")).thenReturn(emptyElements);
 
         // ACT
         String actual = sut.getTitle(div, 2);
@@ -34,7 +35,7 @@ public class HtmlUtilTest {
     }
 
     @Test
-    public void getTitleUsesH3IfPresent() throws Exception {
+    public void getTitleUsesH2IfPresent() throws Exception {
         // ARRANGE
         Element div = mock(Element.class);
         Elements elements = mock(Elements.class);
@@ -42,7 +43,7 @@ public class HtmlUtilTest {
         when(elements.isEmpty()).thenReturn(false);
         when(heading.text()).thenReturn("heading");
         when(elements.get(0)).thenReturn(heading);
-        when(div.select("h3")).thenReturn(elements);
+        when(div.select("h2")).thenReturn(elements);
 
         // ACT
         String actual = sut.getTitle(div, 2);
@@ -51,6 +52,26 @@ public class HtmlUtilTest {
         assertEquals("heading", actual);
     }
 
+    @Test
+    public void getTitleUsesH3IfNoH2Present() throws Exception {
+        // ARRANGE
+        Element div = mock(Element.class);
+        Elements emptyElements = mock(Elements.class);
+        when(emptyElements.isEmpty()).thenReturn(true);
+        Elements elements = mock(Elements.class);
+        Element heading = mock(Element.class);
+        when(elements.isEmpty()).thenReturn(false);
+        when(heading.text()).thenReturn("heading");
+        when(elements.get(0)).thenReturn(heading);
+        when(div.select("h2")).thenReturn(emptyElements);
+        when(div.select("h3")).thenReturn(elements);
+
+        // ACT
+        String actual = sut.getTitle(div, 2);
+
+        // ASSERT
+        assertEquals("heading", actual);
+    }
     @Test(expected = ApsZipImporterException.class)
     public void getMainTextThrowsExceptionIfDivNotPresent() throws Exception {
         // ARRANGE
