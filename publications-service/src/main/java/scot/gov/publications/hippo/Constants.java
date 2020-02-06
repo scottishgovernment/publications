@@ -14,11 +14,6 @@ public final class Constants {
     public static final String HIPPO_NAME = "hippo:name";
     public static final String HIPPO_REQUEST = "hippo:request";
 
-
-//    hippo:availability", new String[]{"live", "preview"});
-//    node.setProperty("hippostd:state", "published");
-//    node.setProperty("hippostd:stateSummary", "live");
-//
     public static final String HIPPOSTD_CONTAINER = "hippostd:container";
     public static final String HIPPOSTD_PUBLISHABLE = "hippostd:publishable";
     public static final String HIPPOSTD_PUBLISHABLESUMMARY = "hippostd:publishableSummary";
