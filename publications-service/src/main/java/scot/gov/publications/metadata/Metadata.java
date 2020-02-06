@@ -66,6 +66,8 @@ public class Metadata {
 
     List<String> secondaryResponsibleRoles = new ArrayList<>();
 
+    boolean sensitive = false;
+
     public String getId() {
         return id;
     }
@@ -258,6 +260,14 @@ public class Metadata {
         this.secondaryResponsibleRoles = secondaryResponsibleRoles;
     }
 
+    public boolean isSensitive() {
+        return sensitive;
+    }
+
+    public void setSensitive(boolean sensitive) {
+        this.sensitive = sensitive;
+    }
+
     public String normalisedIsbn() {
         return StringUtils.isEmpty(isbn)
                 ? ""
@@ -269,8 +279,13 @@ public class Metadata {
     }
 
     public boolean shoudlEmbargo() {
-        // should be embargoed if the publication date is in the future and it is a statistics publications
-        return typeMapper.isEmbargoType(publicationType)
-                && publicationDate.isAfter(LocalDateTime.now());
+
+        // we never need to embargo a publications whose publication date is in the past
+        if (publicationDate.isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        // if the sensitive flag is set or if this is an embargo type then we should embargo it.
+        return isSensitive() || typeMapper.isEmbargoType(publicationType);
     }
 }
