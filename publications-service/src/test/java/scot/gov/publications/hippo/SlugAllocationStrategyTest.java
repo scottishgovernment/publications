@@ -23,7 +23,7 @@ public class SlugAllocationStrategyTest {
         // ARRANGE
         SlugAllocationStrategy sut = new SlugAllocationStrategy(null);
         sut.hippoUtils = mock(HippoUtils.class);
-        when(sut.hippoUtils.findOne(any(), any(), any())).thenReturn(null);
+        when(sut.hippoUtils.findFirst(any(), any(), any())).thenReturn(null);
 
         // ACT
         String actual = sut.allocate("MY Publication title");
@@ -67,7 +67,7 @@ public class SlugAllocationStrategyTest {
         // ARRANGE
         SlugAllocationStrategy sut = new SlugAllocationStrategy(null);
         sut.hippoUtils = mock(HippoUtils.class);
-        when(sut.hippoUtils.findOne(any(), any(), any())).thenThrow(new RepositoryException());
+        when(sut.hippoUtils.findFirst(any(), any(), any())).thenThrow(new RepositoryException());
 
         // ACT
         String actual = sut.allocate("MY Publication title");

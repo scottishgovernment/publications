@@ -12,7 +12,6 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
-import static scot.gov.publications.hippo.Constants.EMBARGO_HANDLE;
 
 public class HippoUtils {
 
@@ -147,6 +146,15 @@ public class HippoUtils {
 
     public Node findOne(Session session, String queryTemplate, Object... args) throws RepositoryException {
         return findOneQuery(session, queryTemplate, Query.SQL, args);
+    }
+
+    public Node findFirst(Session session, String queryTemplate, Object... args) throws RepositoryException {
+        String sql = String.format(queryTemplate, args);
+        Query queryObj = session.getWorkspace().getQueryManager().createQuery(sql, Query.SQL);
+        QueryResult result = queryObj.execute();
+        return result.getNodes().hasNext()
+                ? result.getNodes().nextNode()
+                : null;
     }
 
     public Node findOneQuery(Session session, String queryTemplate, String type, Object... args) throws RepositoryException {

@@ -56,7 +56,7 @@ public class SlugAllocationStrategy {
 
     private boolean slugAlreadyExists(String slug) throws RepositoryException {
         String sql = "SELECT * FROM govscot:SimpleContent WHERE govscot:slug = '%s'";
-        Node node = hippoUtils.findOne(session, sql, slug);
+        Node node = hippoUtils.findFirst(session, sql, slug);
         return node != null;
     }
 }
