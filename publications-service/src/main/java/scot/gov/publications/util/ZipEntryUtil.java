@@ -34,7 +34,12 @@ public class ZipEntryUtil {
     }
 
     public static boolean isHtml(ZipEntry entry) {
-        return entry.getName().endsWith(".htm") && !entry.getName().startsWith("__MACOSX");
+        return hasHtmlExtension(entry.getName()) && !entry.getName().startsWith("__MACOSX");
+    }
+
+    private static boolean hasHtmlExtension(String filename) {
+        String lowercaseFilename = filename.toLowerCase();
+        return lowercaseFilename.endsWith(".htm") || lowercaseFilename.endsWith(".html");
     }
 
     public static boolean isZip(ZipEntry entry) {
