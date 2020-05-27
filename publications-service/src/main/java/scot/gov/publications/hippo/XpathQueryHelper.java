@@ -29,7 +29,7 @@ public class XpathQueryHelper {
 
     public static String topicHandleQuery(String topic) {
         return new StringBuilder("/jcr:root/content/documents/govscot/topics//")
-                .append(element(topic, "govscot:Topic"))
+                .append(topic)
                 .append(publishedPredicate())
                 .append("/..")
                 .toString();

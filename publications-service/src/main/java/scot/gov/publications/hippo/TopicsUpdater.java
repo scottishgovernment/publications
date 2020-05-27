@@ -87,7 +87,8 @@ public class TopicsUpdater {
     }
 
     private void ensureTopic(Node publicationNode, String topic) throws RepositoryException {
-        Node topicNode = hippoUtils.findOneXPath(session, topicHandleQuery(topic));
+        String xpath = topicHandleQuery(topic);
+        Node topicNode = hippoUtils.findOneXPath(session, xpath);
         if (topicNode == null) {
             LOG.warn("No such topic {}", topic);
             return;
