@@ -128,7 +128,7 @@ public class PublicationNodeUpdater {
      * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits
      * to be needed.
      */
-    private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws ApsZipImporterException, RepositoryException {
+    private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws RepositoryException {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
         if (shouldUpdateDirectorate(publicationNode, metadata)) {
@@ -164,12 +164,12 @@ public class PublicationNodeUpdater {
     private void createDirectorateLink(
             Node publicationNode,
             String propertyName,
-            String directorate) throws RepositoryException, ApsZipImporterException {
+            String directorate) throws RepositoryException {
         Node handle = hippoUtils.findOneXPath(session, directorateHandleQuery(directorate));
         if (handle != null) {
             hippoUtils.createMirror(publicationNode, propertyName, handle);
         } else {
-            throw new ApsZipImporterException(String.format("No such directorate: '%s'", directorate));
+            LOG.warn("No such directorate: '{}'", directorate);
         }
     }
 
