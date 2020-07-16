@@ -1,6 +1,7 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.slf4j.Logger;
@@ -23,9 +24,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -84,6 +84,24 @@ public class PublicationsResource {
             return Response.ok(result).build();
         } catch (PublicationRepositoryException e) {
             throw new WebApplicationException(e, Response.status(500).build());
+        }
+    }
+
+    @GET
+    @Produces({ MediaType.APPLICATION_OCTET_STREAM})
+    @Path("{id}/download")
+    @PathParam("id")
+    public Response download(@PathParam("id") String id) {
+        try {
+            Publication publication = repository.get(id);
+            InputStream is = storage.get(publication);
+            StreamingOutput streamingOutput= os -> IOUtils.copy(is, os);
+            return Response.ok(streamingOutput)
+                    .header("Content-Disposition", "attachment; filename=\"" + publication.getFilename() + "\"" )
+                    .build();
+        } catch(PublicationRepositoryException | PublicationStorageException e) {
+            LOG.error("Failed to download document ", e);
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
