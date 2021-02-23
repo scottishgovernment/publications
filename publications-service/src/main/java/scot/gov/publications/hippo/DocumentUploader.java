@@ -131,7 +131,9 @@ public class DocumentUploader {
 
         long pageCount = exif.pageCount(resourceNode.getProperty(JCR_DATA).getBinary(), mimeType);
         documentInfoNode.setProperty(GOVSCOT_PAGE_COUNT, pageCount);
-        createThumbnails(resourceNode);
+        if ("application/pdf".equals(mimeType)) {
+            createThumbnails(resourceNode);
+        }
         return resourceNode;
     }
 
@@ -139,7 +141,7 @@ public class DocumentUploader {
         try {
             return MimeTypeUtils.detectContentType(filename);
         } catch (IllegalArgumentException e) {
-            throw new ApsZipImporterException(String.format("File has an unsupported file extension: '%s'", filename));
+            throw new ApsZipImporterException(String.format("File has an unsupported file extension: '%s'", filename), e);
         }
     }
 
