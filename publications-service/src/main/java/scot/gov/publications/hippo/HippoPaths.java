@@ -140,6 +140,7 @@ public class HippoPaths {
         node.addMixin("hippo:named");
         node.addMixin("mix:referenceable");
         node.setProperty("hippo:name", name);
+        node.setProperty("hippostd:foldertype", new String [] { "new-image-folder"});
         return node;
     }
 
