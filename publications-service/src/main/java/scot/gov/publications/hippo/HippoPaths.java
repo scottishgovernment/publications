@@ -11,6 +11,7 @@ import java.util.Map;
 import com.github.slugify.Slugify;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Creates nodes in the repository for given hippoPaths.
@@ -62,7 +63,7 @@ public class HippoPaths {
         String slug = slugify.slugify(pathElement);
         StringBuilder simplifiedSlug = new StringBuilder();
         for(String word : slug.split("-")) {
-            if(!stopWords.contains(word)) {
+            if(isNotEmpty(word) && !stopWords.contains(word)) {
                 simplifiedSlug.append(word).append('-');
             }
         }
