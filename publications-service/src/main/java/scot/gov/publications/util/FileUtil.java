@@ -9,7 +9,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.SecureRandom;
 
@@ -48,7 +47,7 @@ public class FileUtil {
         }
     }
 
-    public File createTempFile(String prefix, String extension) throws IOException {
+    public File createTempFile(String prefix, String extension) {
         return new File(
                 tempDirectory(),
                 randomFilename(prefix, extension));
