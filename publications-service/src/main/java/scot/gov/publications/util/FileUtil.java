@@ -26,7 +26,7 @@ public class FileUtil {
         }
     }
 
-    public File createTempFile(String prefix, FileType type) throws IOException {
+    public File createTempFile(String prefix, FileType type) {
         return createTempFile(prefix, type.getExtension());
     }
 
