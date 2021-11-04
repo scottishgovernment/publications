@@ -9,25 +9,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
-import java.security.SecureRandom;
 
 public class FileUtil {
 
-    private static final SecureRandom random = new SecureRandom();
-
-    public String hash(File zip) throws IOException {
-        InputStream in = null;
-        try {
-            in = new FileInputStream(zip);
-            return BinaryUtils.toHex(Md5Utils.computeMD5Hash(in));
-        } finally {
-            IOUtils.closeQuietly(in);
-        }
+    public File createTempFile(String prefix, FileType type) throws IOException {
+        return createTempFile(prefix, type.getExtension());
     }
 
-    public File createTempFile(String prefix, FileType type) {
-        return createTempFile(prefix, type.getExtension());
+    public File createTempFile(String prefix, String extension) throws IOException {
+        return File.createTempFile(prefix + "-tmp-", "." + extension);
     }
 
     public File createTempFile(String prefix, FileType type, InputStream content) throws IOException {
@@ -47,21 +37,13 @@ public class FileUtil {
         }
     }
 
-    public File createTempFile(String prefix, String extension) {
-        return new File(
-                tempDirectory(),
-                randomFilename(prefix, extension));
+    public String hash(File zip) throws IOException {
+        InputStream in = null;
+        try {
+            in = new FileInputStream(zip);
+            return BinaryUtils.toHex(Md5Utils.computeMD5Hash(in));
+        } finally {
+            IOUtils.closeQuietly(in);
+        }
     }
-
-    private String randomFilename(String prefix, String extension) {
-        long randomNumber = Math.abs(random.nextLong());
-        return  prefix + Long.toString(randomNumber) + "." + extension;
-    }
-
-    private File tempDirectory() {
-        File dir = Paths.get("target", "tmp", "testfixtures").toFile();
-        dir.mkdirs();
-        return dir;
-    }
-
 }
