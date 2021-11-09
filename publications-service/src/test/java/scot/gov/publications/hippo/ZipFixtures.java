@@ -5,15 +5,21 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scot.gov.publications.util.FileUtil;
+import sun.security.action.GetPropertyAction;
 
 import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.zip.ZipFile;
 
+import static java.security.AccessController.doPrivileged;
+import static org.apache.commons.lang3.StringUtils.startsWith;
+
 public class ZipFixtures {
+
+    private static final SecureRandom random = new SecureRandom();
 
     private static final Logger LOG = LoggerFactory.getLogger(ZipFixtures.class);
 
@@ -38,14 +44,6 @@ public class ZipFixtures {
     }
 
     /**
-     * Create a zip file from a resource directory
-     */
-    public static ZipFile zipResourceDirectory(String resourceDirectory) throws IOException {
-        Path tempDirectory = copyFixtureToTmpDirectory("zipResourceDirectory", resourceDirectory);
-        return zipDirectory(tempDirectory);
-    }
-
-    /**
      * Create a zip from a directory
      */
     public static ZipFile zipDirectory(Path source) throws IOException {
@@ -56,7 +54,7 @@ public class ZipFixtures {
         // now zip up the contents of the temp directory
         FileSystem zipfs = zipFileSystem(zipPath);
 
-        // create a sub directory within the zip since the importer exoected this structure
+        // create a sub directory within the zip since the importer expected this structure
         Path directory = zipfs.getPath("directory");
         Files.createDirectory(directory);
 
@@ -68,6 +66,14 @@ public class ZipFixtures {
 
         // create a zip file from that directory
         return new ZipFile(zipPath.toFile());
+    }
+
+    public static void deleteFixtures() {
+        File tmpdir = new File(doPrivileged(new GetPropertyAction("java.io.tmpdir")));
+        File [] zips = tmpdir.listFiles(file -> startsWith(file.getName(), "zipDirectory"));
+        for (File zip : zips) {
+            zip.delete();
+        }
     }
 
     private static FileSystem zipFileSystem(Path path) throws IOException {
@@ -83,8 +89,7 @@ public class ZipFixtures {
      * scenario being tested and then zipped ready for a test.
      */
     public static Path copyFixtureToTmpDirectory(String prefix, String zipContentPath) throws IOException {
-        // create a temp directory
-        Path tempDirWithPrefix = Files.createTempDirectory(prefix);
+        Path tempDirWithPrefix = createTempDirectory(prefix);
 
         LOG.info("copyFixtureToTmpDirectory path is {}", tempDirWithPrefix);
         InputStream resourceDirStream = ZipFixtures.class.getClassLoader().getResourceAsStream(zipContentPath);
@@ -100,12 +105,38 @@ public class ZipFixtures {
         return tempDirWithPrefix;
     }
 
-
-    public static ZipFile zip(String name) throws IOException {
-        File exampleFile = new FileUtil().createTempFile(name, "zip");
+    static ZipFile zip(String name) throws IOException {
+        File exampleFile = createTempFile(name, "zip");
         InputStream in = ImageUploaderTest.class.getResourceAsStream("/" + name + ".zip");
         OutputStream out = new FileOutputStream(exampleFile);
         IOUtils.copy(in, out);
         return new ZipFile(exampleFile);
     }
+
+    static File createTempFile(String prefix, String extension) throws IOException {
+        Path textFixturesDirPath = textFixturesPath();
+        textFixturesDirPath.toFile().mkdirs();
+        Path path = textFixturesDirPath.resolve(randomFilename(prefix, extension));
+        return Files.createFile(path).toFile();
+    }
+
+    static Path createTempDirectory(String prefix) {
+        String dirname = randomFilename(prefix);
+        Path dir = textFixturesPath().resolve(dirname);
+        dir.toFile().mkdirs();
+        return dir;
+    }
+
+    static String randomFilename(String prefix) {
+        return String.format("%s%d", prefix, Math.abs(random.nextLong()));
+    }
+
+    static String randomFilename(String prefix, String extention) {
+        return String.format("%s.%s", randomFilename(prefix), extention);
+    }
+
+    static Path textFixturesPath() {
+        return Paths.get("target", "tmp", "testfixtures");
+    }
+
 }

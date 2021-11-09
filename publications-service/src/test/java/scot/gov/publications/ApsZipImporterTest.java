@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.io.IOExceptionWithCause;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,15 +25,18 @@ import scot.gov.publications.manifest.ManifestParser;
 import scot.gov.publications.manifest.ManifestParserException;
 import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
+import sun.security.action.GetPropertyAction;
 
 import javax.jcr.*;
 import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.zip.ZipFile;
 
+import static java.security.AccessController.doPrivileged;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertFalse;
 import static org.apache.commons.lang3.StringUtils.*;
@@ -73,8 +78,9 @@ public class ApsZipImporterTest {
     }
 
     @After
-    public void tearDown() throws RepositoryException {
+    public void tearDown() throws RepositoryException, IOException {
         session.logout();
+        ZipFixtures.deleteFixtures();
     }
 
     /**
