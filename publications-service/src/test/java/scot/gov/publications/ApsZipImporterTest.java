@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.PrefixFileFilter;
 import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.io.IOExceptionWithCause;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,12 +23,10 @@ import scot.gov.publications.manifest.ManifestParser;
 import scot.gov.publications.manifest.ManifestParserException;
 import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
-import sun.security.action.GetPropertyAction;
 
 import javax.jcr.*;
 import java.io.*;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -96,7 +92,7 @@ public class ApsZipImporterTest {
     public void expectedFieldsRetainedWhenReimportingPublication() throws Exception {
 
         // import sample publication
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("expectedFieldsRetainedWhenReimportingPublication!", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("expectedFieldsRetainedWhenReimportingPublication!");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("expectedFieldsRetainedWhenReimportingPublication");
         saveMetadata(metadata, fixturePath);
@@ -112,7 +108,7 @@ public class ApsZipImporterTest {
         changeArrayProperty(node, "hippostd:tags");
 
         // now alter the metadata and import the new zip
-        Path fixturePath2 = ZipFixtures.copyFixtureToTmpDirectory("expectedFieldsRetainedWhenReimportingPublication2", "fixtures/exampleZipContents");
+        Path fixturePath2 = ZipFixtures.copyFixture("expectedFieldsRetainedWhenReimportingPublication2");
         metadata.setTitle("new title");
         metadata.setExecutiveSummary("new exec summary");
         metadata.setDescription("new description");
@@ -144,7 +140,7 @@ public class ApsZipImporterTest {
     public void publicationMovedToCorrectFolder() throws Exception {
 
         // import sample publication
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publicationMovedToCorrectFolder!", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("publicationMovedToCorrectFolder!");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setTitle("publicationMovedToCorrectFolder  ");
         metadata.setIsbn("publicationMovedToCorrectFolder");
@@ -158,7 +154,7 @@ public class ApsZipImporterTest {
 
         // now alter the metadata and import the new zip
         LocalDateTime now = LocalDateTime.now();
-        Path fixturePath2 = ZipFixtures.copyFixtureToTmpDirectory("publicationMovedToCorrectFolder2", "fixtures/exampleZipContents");
+        Path fixturePath2 = ZipFixtures.copyFixture("publicationMovedToCorrectFolder2");
         metadata.setIsbn("publicationMovedToCorrectFolder");
         metadata.setPublicationType("Map");
         metadata.setPublicationDate(now);
@@ -186,7 +182,7 @@ public class ApsZipImporterTest {
     @Test
     public void workFlowJobAndPublishStatusSetCorrectly() throws Exception {
         // import sample publication with publication date in fiture then assert that it is not published
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("workFlowJobAndPublishStatusSetCorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("workFlowJobAndPublishStatusSetCorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setTitle("workFlowJobAndPublishStatusSetCorrectly  ");
         metadata.setIsbn("workFlowJobAndPublishStatusSetCorrectly");
@@ -218,14 +214,14 @@ public class ApsZipImporterTest {
     public void canUploadZipWithNoHtmlThenOneWithTheHtml() throws Exception {
 
         // Create 2 zips, one without html and with html
-        Path fixturePathNoHtml = ZipFixtures.copyFixtureToTmpDirectory("canUploadZipWithNoHtml", "fixtures/exampleZipContents");
+        Path fixturePathNoHtml = ZipFixtures.copyFixture("canUploadZipWithNoHtml");
         File [] htmlFiles = fixturePathNoHtml.toFile().listFiles(file -> endsWith(file.getName(), ".htm"));
         for (File htmlFile : htmlFiles) {
             htmlFile.delete();
         }
         ZipFile zipWithoutHtml = ZipFixtures.zipDirectory(fixturePathNoHtml);
 
-        Path fixturePathHtml = ZipFixtures.copyFixtureToTmpDirectory("canUploadZipWithHtml", "fixtures/exampleZipContents");
+        Path fixturePathHtml = ZipFixtures.copyFixture("canUploadZipWithHtml");
         ZipFile zipWithHtml = ZipFixtures.zipDirectory(fixturePathHtml);
 
         // ACT -- import without html
@@ -250,7 +246,7 @@ public class ApsZipImporterTest {
     public void slugDisambiguatedIfAlreadyTaken() throws Exception {
 
         // ARRANGE - create 2 zips with the same title but different isbn's
-        Path fixturePath1 = ZipFixtures.copyFixtureToTmpDirectory("slugDisambiguatedIfAlreadyTaken1", "fixtures/exampleZipContents");
+        Path fixturePath1 = ZipFixtures.copyFixture("slugDisambiguatedIfAlreadyTaken1");
         Metadata metadata1 = loadMetadata(fixturePath1);
         metadata1.setIsbn("111");
         metadata1.setTitle("publication title");
@@ -258,7 +254,7 @@ public class ApsZipImporterTest {
         fixturePath1.toFile().list();
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
 
-        Path fixturePath2 = ZipFixtures.copyFixtureToTmpDirectory("slugDisambiguatedIfAlreadyTaken1", "fixtures/exampleZipContents");
+        Path fixturePath2 = ZipFixtures.copyFixture("slugDisambiguatedIfAlreadyTaken1");
         Metadata metadata2 = loadMetadata(fixturePath1);
         metadata2.setIsbn("222");
         metadata2.setTitle("publication title");
@@ -280,7 +276,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void rejectsInvalidPublicationtype() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsInvalidPublicationtype", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsInvalidPublicationtype");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("rejectsInvalidPublicationtype");
         metadata.setPublicationType("invalid");
@@ -300,7 +296,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void rejectsInvalidManifest() throws Exception {
         // ARRANGE - write over the manifest with invalid values
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsInvalidManifest", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsInvalidManifest");
         FileUtils.write(fixturePath.resolve("manifest.txt").toFile(), "££££\nrrrr", "UTF-8");
 
         // ACT
@@ -315,7 +311,7 @@ public class ApsZipImporterTest {
     @Test
     public void acceptsEmptyManifest() throws Exception {
         // ARRANGE - remove the metatdata
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsEmptyManifest", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsEmptyManifest");
         FileUtils.write(fixturePath.resolve("manifest.txt").toFile(), "", "UTF-8");
 
         // ACT
@@ -330,7 +326,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void rejectsMissingManifest() throws Exception {
         // ARRANGE - remove the metatdata
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsMissingManifest", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsMissingManifest");
         fixturePath.resolve("manifest.txt").toFile().delete();
 
         // ACT
@@ -345,7 +341,7 @@ public class ApsZipImporterTest {
     @Test
     public void rejectsMissingMetadata() throws Exception {
         // ARRANGE - remove the metatdata
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsMissingMetadata", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsMissingMetadata");
         Path metadataPath = findMetadata(fixturePath);
         metadataPath.toFile().delete();
 
@@ -366,7 +362,7 @@ public class ApsZipImporterTest {
     @Test
     public void rejectsTruncatedMetadata() throws Exception {
         // ARRANGE - save half of the contents of the metadata
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsTruncatedMetadata", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsTruncatedMetadata");
         Path metadataPath = findMetadata(fixturePath);
         String metaDataString = FileUtils.readFileToString(metadataPath.toFile(), "UTF-8");
         String truncatedMetadata = StringUtils.truncate(metaDataString, 10);
@@ -391,7 +387,7 @@ public class ApsZipImporterTest {
     @Test
     public void rejectsZipIfManifestMentionsFileNotInZip() throws Exception {
         // ARRANGE - radd a non existant entry to the manifest and save it
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsZipIfManifestMentionsFileNotInZip", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsZipIfManifestMentionsFileNotInZip");
         Manifest manifest = loadManifest(fixturePath);
         manifest.getEntries().add(new ManifestEntry("nosuchfile.pdf", "No such file"));
         saveManifest(manifest, fixturePath);
@@ -416,7 +412,7 @@ public class ApsZipImporterTest {
     @Test
     public void rejectsZipContainingUnrecognisedFileTypes() throws Exception {
         // ARRANGE - rename one of the files to have a zip extension and update the manifest to match
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rejectsZipContainingUnrecognisedFileTypes", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsZipContainingUnrecognisedFileTypes");
         Manifest manifest = loadManifest(fixturePath);
         ManifestEntry firstManifestEntry = manifest.getEntries().get(0);
         Path oldpath = fixturePath.resolve(firstManifestEntry.getFilename());
@@ -449,7 +445,7 @@ public class ApsZipImporterTest {
     public void linkRewriting() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("linkRewriting", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("linkRewriting");
         ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
 
         // ACT
@@ -537,7 +533,7 @@ public class ApsZipImporterTest {
     public void publishDateInPastWithGMTTimezoneAHandledcorrectly() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInPastWithGMTTimezoneAHandledcorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("publishDateInPastWithGMTTimezoneAHandledcorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("publishDateInPastWithGMTTimezoneAHandledcorrectly");
         metadata.setPublicationDate(publishDateTimeInPastGMT());
@@ -569,7 +565,7 @@ public class ApsZipImporterTest {
     public void publishDateInPastWithBSTTimezoneAHandledcorrectly() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInPastWithBSTTimezoneAHandledcorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("publishDateInPastWithBSTTimezoneAHandledcorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("publishDateInPastWithBSTTimezoneAHandledcorrectly");
         metadata.setPublicationDate(publishDateTimeInPastBST());
@@ -600,7 +596,7 @@ public class ApsZipImporterTest {
     public void publishDateInFutureWithGMTTimezoneHandledCorrectly() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInFutureWithGMTTimezoneHandledCorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("publishDateInFutureWithGMTTimezoneHandledCorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("publishDateInFutureWithGMTTimezoneHandledCorrectly");
         metadata.setPublicationDate(publishDateTimeInFutureGMT());
@@ -636,7 +632,7 @@ public class ApsZipImporterTest {
     public void publishDateInFutureWithBSTTimezoneHandledCorrectly() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("publishDateInFutureWithBSTTimezoneHandledCorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("publishDateInFutureWithBSTTimezoneHandledCorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("publishDateInFutureWithBSTTimezoneHandledCorrectly");
         metadata.setPublicationDate(publishDateTimeInFutureBST());
@@ -666,7 +662,7 @@ public class ApsZipImporterTest {
     @Test
     public void tagsAddedIfPresent() throws Exception {
         // import sample publication
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("tagsAddedIfPresent!", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("tagsAddedIfPresent!");
         Metadata metadata = loadMetadata(fixturePath);
         List<String> tags = new ArrayList<>();
         Collections.addAll(tags, "one", "two", "three");
@@ -686,7 +682,7 @@ public class ApsZipImporterTest {
     @Test
     public void directoratesAddedIfPresent() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("directoratesAddedIfPresent", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("directoratesAddedIfPresent");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setPrimaryResponsibleDirectorate("advanced-learning-and-science");
         metadata.setSecondaryResponsibleDirectorates(singletonList("advanced-learning-and-science"));
@@ -710,14 +706,14 @@ public class ApsZipImporterTest {
     @Test
     public void policiesAddedCorrectly() throws Exception {
         // ARRANGE - create two zips.  The first is related to digital and a non existant policy.  the second is related to biodiversity
-        Path fixturePath1= ZipFixtures.copyFixtureToTmpDirectory("policiesAddedCorrectly1", "fixtures/exampleZipContents");
+        Path fixturePath1= ZipFixtures.copyFixture("policiesAddedCorrectly1");
         Metadata metadata = loadMetadata(fixturePath1);
         metadata.getPolicies().add("digital");
         metadata.getPolicies().add("no-such-policy");
         saveMetadata(metadata, fixturePath1);
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
 
-        Path fixturePath2= ZipFixtures.copyFixtureToTmpDirectory("policiesAddedCorrectly2", "fixtures/exampleZipContents");
+        Path fixturePath2= ZipFixtures.copyFixture("policiesAddedCorrectly2");
         //metadata.getPolicies().add("biodiversity");
         saveMetadata(metadata, fixturePath2);
         ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath2);
@@ -747,7 +743,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void exceptionThrownIfDirectorateIsNotPresent() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfDirectorateIsNotPresent", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("exceptionThrownIfDirectorateIsNotPresent");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setPrimaryResponsibleDirectorate("NO SUCH DIRECTORATE");
         saveMetadata(metadata, fixturePath);
@@ -764,7 +760,7 @@ public class ApsZipImporterTest {
     @Test
     public void rolesAddedIfPresentInMetadata() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("rolesAddedIfPresentInMetadata", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("rolesAddedIfPresentInMetadata");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setPrimaryResponsibleRole("commissioner-fair-access");
         metadata.setSecondaryResponsibleRoles(singletonList("sheila-rowan"));
@@ -787,7 +783,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void exceptionThrownIfRoleIsNotPublished() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotPublushed", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("exceptionThrownIfRoleIsNotPublushed");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("exceptionThrownIfRoleIsNotPublushed");
         metadata.setPrimaryResponsibleRole("Commissioner for Fair Access");
@@ -807,7 +803,7 @@ public class ApsZipImporterTest {
     @Test(expected = ApsZipImporterException.class)
     public void exceptionThrownIfRoleIsNotFound() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotFounf", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("exceptionThrownIfRoleIsNotFounf");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("exceptionThrownIfRoleIsNotFound");
         metadata.setPrimaryResponsibleRole("Commissioner for Fair Access");
@@ -827,7 +823,7 @@ public class ApsZipImporterTest {
     public void updatesTopicsCorrectly() throws Exception {
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("updatesTopicsCorrectly", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("updatesTopicsCorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("updatesTopicsCorrectly");
         metadata.setTopic("");
@@ -852,7 +848,7 @@ public class ApsZipImporterTest {
 
 
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixtureToTmpDirectory("exceptionThrownIfRoleIsNotFounf", "fixtures/exampleZipContents");
+        Path fixturePath = ZipFixtures.copyFixture("exceptionThrownIfRoleIsNotFounf");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("addsTagsAsExpected");
         Collections.addAll(metadata.getTags(), "all", "good", "boys");
