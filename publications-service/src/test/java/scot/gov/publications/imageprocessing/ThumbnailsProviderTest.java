@@ -1,5 +1,6 @@
 package scot.gov.publications.imageprocessing;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.util.FileType;
@@ -62,6 +63,7 @@ public class ThumbnailsProviderTest {
         assertTrue(thumbs.containsKey(Integer.valueOf(214)));
         assertTrue(thumbs.containsKey(Integer.valueOf(165)));
         assertTrue(thumbs.containsKey(Integer.valueOf(107)));
+        thumbs.values().stream().forEach(FileUtils::deleteQuietly);
     }
 
     @Test
@@ -74,5 +76,7 @@ public class ThumbnailsProviderTest {
         assertTrue(thumbs.containsKey(Integer.valueOf(214)));
         assertTrue(thumbs.containsKey(Integer.valueOf(165)));
         assertTrue(thumbs.containsKey(Integer.valueOf(107)));
+        thumbs.values().stream().forEach(FileUtils::deleteQuietly);
     }
+
 }

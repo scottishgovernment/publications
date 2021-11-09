@@ -26,6 +26,7 @@ import scot.gov.publications.repo.Publication;
 
 import javax.jcr.*;
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -979,7 +980,11 @@ public class ApsZipImporterTest {
 
             private File tmpFile() throws ImageProcessingException {
                 try {
-                    File imageFile = File.createTempFile("coverImage", ".jpeg");
+                    Path tmpDir = ZipFixtures.fixturesDirectory();
+                    if (!Files.exists(tmpDir)) {
+                        Files.createDirectory(tmpDir);
+                    }
+                    File imageFile = File.createTempFile("coverImageBlah", ".jpeg", tmpDir.toFile());
                     IOUtils.copy(
                             ApsZipImporterTest.class.getResourceAsStream("/exampleImage.jpeg"),
                             new FileOutputStream(imageFile));

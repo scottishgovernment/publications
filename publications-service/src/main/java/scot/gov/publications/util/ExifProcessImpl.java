@@ -28,22 +28,22 @@ public class ExifProcessImpl implements Exif {
         }
 
         // write the pdf as a temporary file
-        File tmp = null;
+        File file = null;
         try {
-            tmp = writeBinaryToTempFile(binary);
+            file = File.createTempFile("exit-tmp-", "tmp");
+            File tmp = writeBinaryToTempFile(binary, file);
             List<String> exifOutput = runExiftool(tmp);
             return extractPageCount(exifOutput);
         } catch (IOException | RepositoryException | InterruptedException e ) {
             LOG.warn("Failed to get page count", e);
         } finally {
-            FileUtils.deleteQuietly(tmp);
+            FileUtils.deleteQuietly(file);
         }
 
         return 0;
     }
 
-    private static File writeBinaryToTempFile(Binary binary) throws IOException, RepositoryException {
-        File file = File.createTempFile("exit-tmp-", "tmp");
+    private static File writeBinaryToTempFile(Binary binary, File file) throws IOException, RepositoryException {
         FileOutputStream out = new FileOutputStream(file);
         IOUtils.copy(binary.getStream(), out);
         IOUtils.closeQuietly(out);

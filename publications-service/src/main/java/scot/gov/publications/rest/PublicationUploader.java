@@ -53,7 +53,7 @@ public class PublicationUploader  {
         MDC.put("filename", publication.getFilename());
 
         LOG.info("Importing publication \"{}\"", publication.getTitle());
-
+        File extractedZip = null;
         try {
             // mark it as processingq
             publication.setState(State.PROCESSING.name());
@@ -62,7 +62,7 @@ public class PublicationUploader  {
             // download the file from s3
             InputStream storageStream = storage.get(publication);
             downloadedFile = fileUtil.createTempFile("downloadedPublicationFromS3", "zip", storageStream);
-            File extractedZip = zipUtil.getZipToProcess(downloadedFile);
+            extractedZip = zipUtil.getZipToProcess(downloadedFile);
             ZipFile zipFile = new ZipFile(extractedZip);
 
             // try to import it
@@ -89,6 +89,7 @@ public class PublicationUploader  {
             LOG.error("{} Failed to import contents of zip", publication.getId(), e);
         } finally {
             FileUtils.deleteQuietly(downloadedFile);
+            FileUtils.deleteQuietly(extractedZip);
         }
 
         try {

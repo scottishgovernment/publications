@@ -89,7 +89,7 @@ public class ZipFixtures {
         });
     }
 
-    private static Path fixturesDirectory() {
+    public static Path fixturesDirectory() {
         URL url = ZipFixtures.class.getProtectionDomain().getCodeSource().getLocation();
         URI uri = toUri(url);
         return Paths.get(uri).getParent().resolve("fixtures");
