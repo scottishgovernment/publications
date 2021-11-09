@@ -5,7 +5,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.security.action.GetPropertyAction;
 
 import java.io.*;
 import java.net.URI;
@@ -14,7 +13,6 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.zip.ZipFile;
 
-import static java.security.AccessController.doPrivileged;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 
 public class ZipFixtures {
@@ -69,9 +67,10 @@ public class ZipFixtures {
     }
 
     public static void deleteFixtures() {
-        File tmpdir = new File(doPrivileged(new GetPropertyAction("java.io.tmpdir")));
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File [] zips = tmpdir.listFiles(file -> startsWith(file.getName(), "zipDirectory"));
         for (File zip : zips) {
+            LOG.info("git tae f {}", zip.getAbsolutePath());
             zip.delete();
         }
     }
