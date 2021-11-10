@@ -1,5 +1,6 @@
 package scot.gov.publications.hippo;
 
+import org.apache.commons.io.FileUtils;
 import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.imageprocessing.ImageProcessingException;
 
@@ -46,12 +47,17 @@ public class HippoImageNodeFactory {
 
         Node imageSet = imageSetNode(folder, type, name);
         ensureImageNode(imageSet, "hippogallery:original", zipFile, zipEntry);
+
+        File thumbnail = null;
+
         try {
-            File thumbnail = imageProcessing.thumbnail(zipFile.getInputStream(zipEntry), 60);
+            thumbnail = imageProcessing.thumbnail(zipFile.getInputStream(zipEntry), 60);
             ensureImageNode(imageSet, "hippogallery:thumbnail", binarySource.get(new FileInputStream(thumbnail)), 60, 60);
             return imageSet;
         } catch (IOException | ImageProcessingException e) {
             throw new RepositoryException("Failed to create images", e);
+        } finally {
+            FileUtils.deleteQuietly(thumbnail);
         }
     }
 

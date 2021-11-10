@@ -19,9 +19,12 @@ public class GraphicsMagickImageProcessingImpl implements ImageProcessing {
 
     public File extractPdfCoverImage(InputStream source) throws ImageProcessingException {
 
+        File sourceFile = null;
+        File targetFile = null;
+
         try {
-            File sourceFile = fileUtil.createTempFile("pdfcoversrc", FileType.PDF, source);
-            File targetFile = fileUtil.createTempFile("pdfcover", FileType.PNG);
+            sourceFile = fileUtil.createTempFile("pdfcoversrc", FileType.PDF, source);
+            targetFile = fileUtil.createTempFile("pdfcover", FileType.PNG);
 
             execute(targetFile,
                     "gm",
@@ -36,16 +39,21 @@ public class GraphicsMagickImageProcessingImpl implements ImageProcessing {
             FileUtils.deleteQuietly(sourceFile);
             return targetFile;
         } catch (IOException e) {
+            FileUtils.deleteQuietly(targetFile);
             throw new ImageProcessingException("Failed to extract pdf cover image", e);
         } finally {
+            FileUtils.deleteQuietly(sourceFile);
             IOUtils.closeQuietly(source);
         }
     }
 
     public File thumbnail(InputStream source, int width) throws ImageProcessingException {
+        File sourceFile = null;
+        File targetFile = null;
+
         try {
-            File sourceFile = fileUtil.createTempFile("source", FileType.PNG, source);
-            File targetFile = fileUtil.createTempFile("thumbnail", FileType.PNG);
+            sourceFile = fileUtil.createTempFile("source", FileType.PNG, source);
+            targetFile = fileUtil.createTempFile("thumbnail", FileType.PNG);
 
             execute(targetFile,
                     "gm",
@@ -54,11 +62,12 @@ public class GraphicsMagickImageProcessingImpl implements ImageProcessing {
                     "-resize",
                     width + "x",
                     targetFile.getAbsolutePath());
-            FileUtils.deleteQuietly(sourceFile);
             return targetFile;
         } catch (IOException e) {
+            FileUtils.deleteQuietly(targetFile);
             throw new ImageProcessingException("Failed to generate thumbnail", e);
         } finally {
+            FileUtils.deleteQuietly(sourceFile);
             IOUtils.closeQuietly(source);
         }
     }
