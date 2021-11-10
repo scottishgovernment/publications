@@ -25,15 +25,6 @@ public class HippoUtils {
         void accept(Node t) throws RepositoryException;
     }
 
-    public void apply(NodeIterator it, ThrowingPredicate predicate, ThrowingConsumer consumer) throws RepositoryException {
-        while (it.hasNext()) {
-            Node node = it.nextNode();
-            if (predicate.test(node)) {
-                consumer.accept(node);
-            }
-        }
-    }
-
     public Node find(NodeIterator it, ThrowingPredicate predicate) throws RepositoryException {
         while (it.hasNext()) {
             Node node = it.nextNode();
@@ -187,10 +178,6 @@ public class HippoUtils {
 
     public void sortChildren(Node node) throws RepositoryException {
         sortChildren(node, false);
-    }
-
-    public void reverseSortChildren(Node node) throws RepositoryException {
-        sortChildren(node, true);
     }
 
     public void sortChildren(Node node, boolean reverse) throws RepositoryException {
