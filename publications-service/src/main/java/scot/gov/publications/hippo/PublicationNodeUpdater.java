@@ -114,7 +114,9 @@ public class PublicationNodeUpdater {
             publicationNode.setProperty("govscot:publicationType", hippoPaths.slugify(metadata.mappedPublicationType(), false));
             publicationNode.setProperty("govscot:isbn", metadata.normalisedIsbn());
             populateUrls(publicationNode, metadata);
-            publicationNode.setProperty("govscot:publicationDate", GregorianCalendar.from(metadata.getPublicationDateWithTimezone()));
+            Calendar publicationDate = GregorianCalendar.from(metadata.getPublicationDateWithTimezone());
+            publicationNode.setProperty("govscot:publicationDate", publicationDate);
+            publicationNode.setProperty("govscot:displayDate", publicationDate);
             hippoUtils.ensureHtmlNode(publicationNode, "govscot:contact", mailToLink(publication.getContact()));
             return publicationNode.getParent().getParent();
 
