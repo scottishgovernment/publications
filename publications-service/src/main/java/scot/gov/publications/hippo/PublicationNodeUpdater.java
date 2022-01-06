@@ -285,7 +285,7 @@ public class PublicationNodeUpdater {
      * Ensure that this publications folder is in the right place.  The folder is based on its type and publicaiton
      * date and so if either changed since the last time the publication was uploaded then it might have to be moved.
      */
-    public void ensureMonthNode(Node publicationFolder, Metadata metadata) throws RepositoryException {
+    public Node ensureMonthNode(Node publicationFolder, Metadata metadata) throws RepositoryException {
         List<String> monthPath = pathStrategy.monthFolderPath(metadata);
         Node monthNode = hippoPaths.ensurePath(monthPath);
         Node existingMonthNode = publicationFolder.getParent();
@@ -294,6 +294,9 @@ public class PublicationNodeUpdater {
             String newPath = monthNode.getPath() + "/" + publicationFolder.getName();
             LOG.info("moving {} to {}", publicationFolder.getPath(), newPath);
             session.move(publicationFolder.getPath(), newPath);
+            return session.getNode(newPath);
+        } else {
+            return publicationFolder;
         }
     }
 

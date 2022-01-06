@@ -80,8 +80,9 @@ public class ApsZipImporter {
                     docMap,
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
+            publicationFolder = publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             ensureFolderActions(publicationFolder);
-            publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
+
             session.save();
 
             // sort the parent folder
