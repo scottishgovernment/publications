@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
@@ -44,7 +45,7 @@ public class ManifestParser {
     }
 
     private Manifest doParse(InputStream inputStream) throws IOException {
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(inputStream));
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         String line;
         Manifest manifest = new Manifest();
         while ((line = reader.readLine()) != null) {
@@ -58,27 +59,32 @@ public class ManifestParser {
     private void validate(Manifest manifest) throws ManifestParserException {
         // the filenames contained in the manifest should be unique - test to see if the set if filenames is
         // the same size as the number of entries in the manifest
-        Set<String> filenames = manifest
-                .getEntries()
-                .stream()
-                .map(ManifestEntry::getFilename)
-                .collect(toSet());
+        Set<String> filenames = manifest.getEntries().stream().map(ManifestEntry::getFilename).collect(toSet());
         if (filenames.size() != manifest.getEntries().size()) {
-            throw new ManifestParserException(
-                    "Filenames in the manifest must be unique: "
-                            + manifest.getEntries().stream().map(ManifestEntry::getFilename).collect(joining(", ")));
+            String filenamesString = manifest.getEntries().stream().map(ManifestEntry::getFilename).collect(joining(", "));
+            throw new ManifestParserException("Filenames in the manifest must be unique: " + filenamesString);
         }
 
         // all entries in the manifest should be supported types
         Set<String> unsupported = filenames.stream().filter(MimeTypeUtils::isSupportedMimeType).collect(toSet());
         if (!unsupported.isEmpty()) {
             throw new ManifestParserException(
-                    "Unsupported file types in the manifest: "
-                            + unsupported.stream().collect(joining(", ")));
+                    "Unsupported file types in the manifest: " + unsupported.stream().collect(joining(", ")));
+        }
 
+        // reject unprintable chars in the parsed filenames
+        Set<String> unprintableTitles =
+                manifest.getEntries().stream().map(ManifestEntry::getTitle).filter(this::unprintable).collect(toSet());
+        if (!unprintableTitles.isEmpty()) {
+            String titlesString = unprintableTitles.stream().collect(joining(", "));
+            throw new ManifestParserException(
+                    "Unprintable character(s) in manifest, check encoding is UTF-8: " + titlesString);
         }
     }
 
+    boolean unprintable(String str) {
+        return str.contains("�");
+    }
 
     private ManifestEntry entry(String line) {
         String filename = StringUtils.substringBefore(line, ":").trim();
