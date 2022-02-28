@@ -29,9 +29,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
-import static scot.gov.publications.hippo.XpathQueryHelper.directorateHandleQuery;
-import static scot.gov.publications.hippo.XpathQueryHelper.personHandleQuery;
-import static scot.gov.publications.hippo.XpathQueryHelper.roleHandleQuery;
+import static scot.gov.publications.hippo.XpathQueryHelper.*;
 
 /**
  * Responsible for creating and updating publication nodes in Hippo based on the metedata from an APS  zip file.
@@ -220,7 +218,8 @@ public class PublicationNodeUpdater {
     private Node findRoleOrPerson(String roleOrPerson) throws RepositoryException {
         return firstNonNull(
                 hippoUtils.findOneXPath(session, roleHandleQuery(roleOrPerson)),
-                hippoUtils.findOneXPath(session, personHandleQuery(roleOrPerson)));
+                hippoUtils.findOneXPath(session, personHandleQuery(roleOrPerson)),
+                hippoUtils.findOneXPath(session, featuredRoleHandleQuery(roleOrPerson)));
     }
 
     private String mailToLink(String email) {
