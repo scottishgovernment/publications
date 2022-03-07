@@ -22,7 +22,9 @@
     <sonar.exclusions>
       src/main/java/scot/gov/publications/imageprocessing/GraphicsMagickImageProcessingImpl.java,
       src/main/java/scot/gov/publications/hippo/DocumentUploader.java,
-      src/main/java/scot/gov/publications/hippo/pages/PublicationPageUpdater.java
+      src/main/java/scot/gov/publications/hippo/pages/PublicationPageUpdater.java,
+      src/main/java/scot/gov/publications/hippo/searchjournal/SearchJournal.java,
+      src/main/java/scot/gov/publications/hippo/searchjournal/FeatureFlag.java
     </sonar.exclusions>
 
   </properties>

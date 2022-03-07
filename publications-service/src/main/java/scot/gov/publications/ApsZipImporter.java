@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.*;
 import scot.gov.publications.hippo.pages.PublicationPageUpdater;
+import scot.gov.publications.hippo.searchjournal.SearchJournal;
 import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
@@ -18,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -87,6 +89,12 @@ public class ApsZipImporter {
 
             // sort the parent folder
             hippoUtils.sortChildren(publicationFolder.getParent());
+
+            // if the publication is published then create journal entries for all pages
+            if (metadata.getPublicationDateWithTimezone().isBefore(ZonedDateTime.now())) {
+                SearchJournal journal = new SearchJournal(session);
+                journal.recordInSearchJournal(session, metadata, publicationFolder);
+            }
 
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
