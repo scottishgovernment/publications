@@ -41,10 +41,10 @@ public class HippoImageNodeFactoryTest {
         ZipFile zipFile = ZipFixtures.exampleZip();
         ZipEntry zipEntry = zipFile.getEntry("SCT04185156361/SCT04185156361_g01.jpg");
         String type = "type";
-        String name ="name";
+        String name ="name.jpg";
 
-        when(sut.hippoUtils.ensureNode(galleryNode, "name", "hippo:handle", "mix:referenceable")).thenReturn(imgSetHandle);
-        when(sut.hippoUtils.ensureNode(imgSetHandle, "name", "type")).thenReturn(imgSetNode);
+        when(sut.hippoUtils.ensureNode(galleryNode, name, "hippo:handle", "mix:referenceable")).thenReturn(imgSetHandle);
+        when(sut.hippoUtils.ensureNode(imgSetHandle, name, "type")).thenReturn(imgSetNode);
         when(sut.hippoUtils.ensureNode(imgSetNode, "hippogallery:original", "hippogallery:image")).thenReturn(imgNodeOrig);
         when(sut.hippoUtils.ensureNode(imgSetNode, "hippogallery:thumbnail", "hippogallery:image")).thenReturn(imgNodeThumb);
 
