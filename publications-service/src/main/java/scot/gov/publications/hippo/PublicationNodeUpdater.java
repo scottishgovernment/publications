@@ -29,6 +29,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 import static scot.gov.publications.hippo.XpathQueryHelper.*;
 
 /**
@@ -58,6 +59,8 @@ public class PublicationNodeUpdater {
 
     TagUpdater tagUpdater = new TagUpdater();
 
+    Sitemap sitemap;
+
     public PublicationNodeUpdater(Session session, PublicationsConfiguration configuration) {
         this.session = session;
         this.hippoPaths = new HippoPaths(session);
@@ -65,6 +68,7 @@ public class PublicationNodeUpdater {
         this.topicMappings = new TopicsUpdater(session);
         this.pathStrategy = new PublicationPathStrategy(session);
         this.policiesUpdater = new PoliciesUpdater(session);
+        this.sitemap = new Sitemap(session);
     }
 
     /**
@@ -78,9 +82,6 @@ public class PublicationNodeUpdater {
             Node publicationNode = doCreateOrUpdate(metadata);
             setPublicationAuditFields(publicationNode, publication);
             nodeFactory.addBasicFields(publicationNode, metadata.getTitle());
-
-            LOG.info("", metadata.toString());
-
 
             /**
              * New update logic:
@@ -267,16 +268,22 @@ public class PublicationNodeUpdater {
                     "govscot:Publication",
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
-            return pubNode;
         } else {
             // remove any other nodes there are ...
             hippoUtils.removeSiblings(pubNode);
+
+            sitemap.removeSitemapEntry(pubNode);
 
             // the node already exists, make sure its publications status matches what is in the zip
             nodeFactory.ensurePublicationStatus(
                     pubNode,
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
+        }
+
+        // if the publication is published then create new sitemap entry
+        if ("published".equals(pubNode.getProperty(HIPPOSTD_STATE).getString())) {
+            sitemap.ensureSitemapEntry(pubNode);
         }
 
         return pubNode;
@@ -323,12 +330,6 @@ public class PublicationNodeUpdater {
                 byState.get("published"),
                 byState.get("unpublished"),
                 byState.get("draft"));
-    }
-
-    public Calendar toCalendar(LocalDateTime dt) {
-        ZoneId zoneId = ZoneId.systemDefault();
-        ZonedDateTime zdt = dt.atZone(zoneId);
-        return GregorianCalendar.from(zdt);
     }
 
 }

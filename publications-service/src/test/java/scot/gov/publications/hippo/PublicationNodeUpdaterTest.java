@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
 import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 
 public class PublicationNodeUpdaterTest {
 
@@ -30,6 +31,7 @@ public class PublicationNodeUpdaterTest {
         sut.topicMappings = mock(TopicsUpdater.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
+        sut.sitemap = mock(Sitemap.class);
         Node publicationFolder = mock(Node.class);
 
         when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
@@ -71,7 +73,11 @@ public class PublicationNodeUpdaterTest {
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
+        sut.sitemap = mock(Sitemap.class);
         Node nodeWithISBN = mock(Node.class);
+        Property state = mock(Property.class);
+        when(state.getString()).thenReturn("published");
+        when(nodeWithISBN.getProperty(HIPPOSTD_STATE)).thenReturn(state);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
@@ -102,6 +108,7 @@ public class PublicationNodeUpdaterTest {
         sut.topicMappings = mock(TopicsUpdater.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
+        sut.sitemap = mock(Sitemap.class);
         Node publicationFolder = mock(Node.class);
 
         when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
@@ -135,7 +142,11 @@ public class PublicationNodeUpdaterTest {
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
+        sut.sitemap = mock(Sitemap.class);
         Node nodeWithISBN = mock(Node.class);
+        Property state = mock(Property.class);
+        when(state.getString()).thenReturn("published");
+        when(nodeWithISBN.getProperty(HIPPOSTD_STATE)).thenReturn(state);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
@@ -166,6 +177,7 @@ public class PublicationNodeUpdaterTest {
         sut.hippoPaths =  mock(HippoPaths.class);
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
+        sut.sitemap = mock(Sitemap.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);

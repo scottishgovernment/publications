@@ -24,6 +24,8 @@ public class HippoPaths {
 
     public static final String IMG_ROOT = "/content/gallery/";
 
+    public static final String SITEMAP_ROOT = "/content/sitemaps/";
+
     Session session;
 
     private static final Slugify slugify = new Slugify();
@@ -144,6 +146,41 @@ public class HippoPaths {
         node.setProperty("hippostd:foldertype", new String [] { "new-image-folder"});
         node.setProperty("hippostd:gallerytype", new String [] {"hippogallery:imageset"});
         return node;
+    }
+
+    public Node ensureSitemapPath(List<String> path) throws RepositoryException {
+        Node root = ensureSitemapRoot();
+        return ensureSitemapPathInternal(root, 0, path);
+    }
+
+    Node ensureSitemapRoot() throws RepositoryException {
+        return session.nodeExists(SITEMAP_ROOT)
+                ? session.getNode(SITEMAP_ROOT)
+                : createSitemapRoot();
+    }
+
+    Node createSitemapRoot() throws RepositoryException {
+        Node documents = session.getNode("/content/");
+        return documents.addNode("sitemaps", "hippostd:folder");
+    }
+
+    private Node ensureSitemapPathInternal(Node parent, int pos, List<String> path) throws RepositoryException {
+        if (pos == path.size()) {
+            return parent;
+        }
+
+        String element = slugify(path.get(pos));
+
+        Node next = parent.hasNode(element)
+                ? parent.getNode(element)
+                : sitemapNode(parent, element);
+        int newPos = pos + 1;
+        return ensureSitemapPathInternal(next, newPos, path);
+    }
+
+
+    private Node sitemapNode(Node parent, String name) throws RepositoryException {
+        return parent.addNode(name, "nt:unstructured");
     }
 
 }
