@@ -1,6 +1,6 @@
 package scot.gov.publications.hippo;
 
-import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang.NotImplementedException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -286,7 +286,7 @@ public class HippoUtilsTest {
             }
 
             public void skip(long skipNum) {
-                throw new NotImplementedException("n/a");
+                throw new NotImplementedException();
             }
 
             public long getSize() {
@@ -294,11 +294,11 @@ public class HippoUtilsTest {
             }
 
             public long getPosition() {
-                throw new NotImplementedException("n/a");
+                throw new NotImplementedException();
             }
 
             public NodeIterator next() {
-                throw new NotImplementedException("n/a");
+                throw new NotImplementedException();
             }
         };
     }

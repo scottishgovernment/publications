@@ -1,6 +1,6 @@
 package scot.gov.publications.hippo.rewriter;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang.StringUtils.substringAfter;
 import static scot.gov.publications.hippo.rewriter.LinkRewriter.CONTENT_ATTRIB;
 
 /**
