@@ -16,7 +16,7 @@
   <properties>
     <hippo.repository.version>14.7.3</hippo.repository.version>
     <slf4j.version>1.7.25</slf4j.version>
-    <postgres.jdbc.version>42.2.5</postgres.jdbc.version>
+    <postgres.jdbc.version>42.4.1</postgres.jdbc.version>
     <undertow.version>2.0.17.Final</undertow.version>
 
     <sonar.exclusions>
