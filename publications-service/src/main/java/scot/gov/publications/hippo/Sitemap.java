@@ -1,6 +1,5 @@
 package scot.gov.publications.hippo;
 
-import org.jboss.resteasy.plugins.providers.ReaderProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
