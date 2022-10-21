@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.*;
 import scot.gov.publications.hippo.pages.PublicationPageUpdater;
-import scot.gov.publications.hippo.searchjournal.SearchJournal;
 import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestExtractor;
@@ -13,6 +12,7 @@ import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.util.Exif;
+import scot.gov.publishing.searchjounal.SearchJournalEntry;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -20,9 +20,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipFile;
 
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
@@ -52,6 +50,8 @@ public class ApsZipImporter {
 
     MetadataExtractor metadataExtractor = new MetadataExtractor();
 
+    PublicationsSearchJournal searchJournal = new PublicationsSearchJournal();
+
     public String importApsZip(ZipFile zipFile, Publication publication) throws ApsZipImporterException {
         Session session = newJCRSession();
         PublicationNodeUpdater publicationNodeUpdater = new PublicationNodeUpdater(session, configuration);
@@ -70,8 +70,18 @@ public class ApsZipImporter {
                     metadata.getIsbn(),
                     metadata.getTitle(),
                     metadata.getPublicationDateWithTimezone());
-            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
 
+            // if there is already a publication then unpublish it in funnelback
+            Node publicationNode = publicationNodeUpdater.findPublicationNodeToUpdate(metadata);
+            List<SearchJournalEntry> searchJournalEntries = new ArrayList<>();
+            if (publicationNode != null && "published".equals(publicationNode.getProperty("hippostd:state"))) {
+                // it is currently published so collect the list of funnelback actions to completely unpublish it
+                // this is because we are about to replace it and some pages may not be there afterwards
+                Node publicationFolder = publicationNode.getParent().getParent();
+                searchJournalEntries.addAll(searchJournal.getJournalEntries("depublish", session, publicationFolder));
+            }
+
+            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
             LOG.info("publication folder is {}", publicationFolder.getPath());
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
@@ -91,17 +101,31 @@ public class ApsZipImporter {
             hippoUtils.sortChildren(publicationFolder.getParent());
 
             // if the publication is published then create journal entries for all pages
-            if (metadata.getPublicationDateWithTimezone().isBefore(ZonedDateTime.now())) {
-                SearchJournal journal = new SearchJournal(session);
-                journal.recordInSearchJournal(session, metadata, publicationFolder);
+            boolean isPublished = metadata.getPublicationDateWithTimezone().isBefore(ZonedDateTime.now());
+            if (isPublished) {
+                searchJournalEntries.addAll(searchJournal.getJournalEntries("publish", session, publicationFolder));
             }
-
+            searchJournal.recordJournalEntries(session, searchJournalEntries);
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
         } finally {
             session.logout();
         }
+    }
+
+    /**
+     * work out if the publication is already published or not.  If it is then thos might change what we need to do to
+     * reconcile with funnelback
+     */
+    boolean isAlreadyPublished(PublicationNodeUpdater publicationNodeUpdater, Metadata metadata) throws RepositoryException {
+        Node publicationNode = publicationNodeUpdater.findPublicationNodeToUpdate(metadata);
+
+        if (publicationNode == null) {
+            return false;
+        }
+
+        return "published".equals(publicationNode.getProperty("hippostd:state").getString());
     }
 
     private void assertValidPublicationType(Session session, String type) throws ApsZipImporterException {
@@ -125,8 +149,26 @@ public class ApsZipImporter {
         // We might have created a new month or year folder ... ensure that they have the right actions
         Node monthFolder = publicationFolder.getParent();
         Node yearFolder = monthFolder.getParent();
+        Node typeFolder = yearFolder.getParent();
+
+        switch (typeFolder.getName()) {
+            case "minutes":
+                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-minutes-folder"));
+                break;
+
+            case "speech-statement":
+                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-speech-or-statement-folder"));
+                break;
+
+            case "foi-eir-release":
+                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-foi-folder"));
+                break;
+
+            default:
+                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
+        }
+
         hippoUtils.setPropertyStrings(publicationFolder, HIPPOSTD_FOLDERTYPE, actions());
-        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
         hippoUtils.setPropertyStrings(yearFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-month-folder"));
     }
 

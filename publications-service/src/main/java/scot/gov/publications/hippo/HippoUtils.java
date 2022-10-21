@@ -5,13 +5,12 @@ import org.apache.commons.lang3.StringUtils;
 import javax.jcr.*;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Arrays.asList;
+import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 
 public class HippoUtils {
 
@@ -224,4 +223,31 @@ public class HippoUtils {
         mirror.setProperty("hippo:docbase", handle.getIdentifier());
     }
 
+    public Node getVariant(Node node) throws RepositoryException {
+        return getVariant(node.getNodes(node.getName()));
+    }
+
+    public Node getVariant(NodeIterator it) throws RepositoryException {
+        Map<String, Node> byState = new HashMap<>();
+        apply(it,
+                this::hasState,
+                node -> byState.put(node.getProperty(HIPPOSTD_STATE).getString(), node));
+        return firstNonNull(
+                byState.get("published"),
+                byState.get("unpublished"),
+                byState.get("draft"));
+    }
+
+    boolean hasState(Node node) throws RepositoryException {
+        return node.hasProperty(HIPPOSTD_STATE);
+    }
+
+    public void apply(NodeIterator it, ThrowingPredicate predicate, ThrowingConsumer consumer) throws RepositoryException {
+        while (it.hasNext()) {
+            Node node = it.nextNode();
+            if (predicate.test(node)) {
+                consumer.accept(node);
+            }
+        }
+    }
 }

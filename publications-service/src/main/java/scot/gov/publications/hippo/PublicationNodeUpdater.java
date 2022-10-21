@@ -310,7 +310,7 @@ public class PublicationNodeUpdater {
      * node we want to find all of then and then decide which node to use if there are multiple drafts.  If a
      * published node exists then use that. Then fall back to using the unpublished one and then finally to draft.
      */
-    private Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
+     public Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {
         // Query to see if a publications with this ISBN already exist.  If it does then we will update the existing
         // node rather than create a new one
         String sql = String.format("SELECT * FROM govscot:Publication WHERE govscot:isbn = '%s'", metadata.normalisedIsbn());
