@@ -6,7 +6,7 @@
   <parent>
     <groupId>scot.gov.publications</groupId>
     <artifactId>publications</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.139</version>
   </parent>
 
   <artifactId>publications-service</artifactId>
@@ -238,7 +238,7 @@
     <dependency>
       <groupId>scot.mygov.config</groupId>
       <artifactId>mygov-config</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.3</version>
     </dependency>
 
     <!-- Test libraries -->
