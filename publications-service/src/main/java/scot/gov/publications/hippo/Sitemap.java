@@ -21,6 +21,8 @@ public class Sitemap {
 
     private static final String LAST_MOD = "govscot:lastMod";
 
+    private static final String LATEST_LAST_MOD = "govscot:latestLastMod";
+
     Session session;
 
     HippoPaths paths;
@@ -49,6 +51,8 @@ public class Sitemap {
     }
 
     void ensureSitemapEntry(Node node) throws RepositoryException {
+        updateSitemapLatestDate();
+
         List<String> path = getPath(node);
         LOG.info("ensureSitemapEntry {}", path);
         Node sitemapNode = paths.ensureSitemapPath(path);
@@ -59,6 +63,11 @@ public class Sitemap {
         record.setProperty("govscot:loc", url);
         record.setProperty(LAST_MOD, lastModified);
         LOG.info("update sitemap node for {}, {}", url,     record.getPath());
+    }
+
+    void updateSitemapLatestDate() throws RepositoryException {
+        Node sitemapNode = session.getNode("/content/sitemaps/govscot");
+        sitemapNode.setProperty(LATEST_LAST_MOD, Calendar.getInstance());
     }
 
     String url(Node node) throws RepositoryException {
