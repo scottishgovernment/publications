@@ -51,11 +51,12 @@ public class Sitemap {
     }
 
     void ensureSitemapEntry(Node node) throws RepositoryException {
-        updateSitemapLatestDate();
+
 
         List<String> path = getPath(node);
         LOG.info("ensureSitemapEntry {}", path);
         Node sitemapNode = paths.ensureSitemapPath(path);
+        updateSitemapLatestDate();
         String handleGuid = node.getParent().getIdentifier();
         Node record = sitemapNode.addNode("uuid-" + handleGuid, "nt:unstructured");
         Calendar lastModified = Calendar.getInstance();
