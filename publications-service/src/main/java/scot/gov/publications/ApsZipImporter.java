@@ -149,23 +149,9 @@ public class ApsZipImporter {
         // We might have created a new month or year folder ... ensure that they have the right actions
         Node monthFolder = publicationFolder.getParent();
         Node yearFolder = monthFolder.getParent();
-        Node typeFolder = yearFolder.getParent();
-        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, typeFolderActions(typeFolder.getName()));
         hippoUtils.setPropertyStrings(publicationFolder, HIPPOSTD_FOLDERTYPE, actions());
+        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
         hippoUtils.setPropertyStrings(yearFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-month-folder"));
-    }
-
-    Collection<String> typeFolderActions(String name) {
-        switch (name) {
-            case "minutes":
-                return actions("new-minutes-folder");
-            case "speech-statement":
-                return actions("new-speech-or-statement-folder");
-            case "foi-eir-release":
-                return actions("new-foi-folder");
-            default:
-                return actions("new-publication-folder", "new-complex-document-folder");
-        }
     }
 
     Collection<String> actions(String ...actions) {

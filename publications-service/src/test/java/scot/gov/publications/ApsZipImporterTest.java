@@ -889,17 +889,6 @@ public class ApsZipImporterTest {
         assertEquals(expected , actual);
     }
 
-    @Test
-    public void enSureFolderActionsSetsExpectedFolderTypes() throws RepositoryException {
-
-        ApsZipImporter sut = new ApsZipImporter();
-        assertEquals(sut.actions("new-minutes-folder"), sut.typeFolderActions("minutes"));
-        assertEquals(sut.actions("new-speech-or-statement-folder"), sut.typeFolderActions("speech-statement"));
-        assertEquals(sut.actions("new-foi-folder"), sut.typeFolderActions("foi-eir-release"));
-        assertEquals(sut.actions("new-publication-folder", "new-complex-document-folder"),
-                sut.typeFolderActions("consultations"));
-    }
-
     Set<String> tagSet(String path) throws RepositoryException {
         Node publicationFolder = session.getNode(path);
         Node handle = publicationFolder.getNode("index");
