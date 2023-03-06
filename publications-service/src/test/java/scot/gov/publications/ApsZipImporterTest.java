@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.jcr.TestRepository;
@@ -41,6 +42,9 @@ import static org.apache.commons.lang3.StringUtils.endsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_TAGS;
 
 /**
@@ -883,6 +887,17 @@ public class ApsZipImporterTest {
         Set<String> expected = new HashSet<>();
         Collections.addAll(expected, "all", "good", "boys", "deserve", "fudge");
         assertEquals(expected , actual);
+    }
+
+    @Test
+    public void enSureFolderActionsSetsExpectedFolderTypes() throws RepositoryException {
+
+        ApsZipImporter sut = new ApsZipImporter();
+        assertEquals(sut.actions("new-minutes-folder"), sut.typeFolderActions("minutes"));
+        assertEquals(sut.actions("new-speech-or-statement-folder"), sut.typeFolderActions("speech-statement"));
+        assertEquals(sut.actions("new-foi-folder"), sut.typeFolderActions("foi-eir-release"));
+        assertEquals(sut.actions("new-publication-folder", "new-complex-document-folder"),
+                sut.typeFolderActions("consultations"));
     }
 
     Set<String> tagSet(String path) throws RepositoryException {

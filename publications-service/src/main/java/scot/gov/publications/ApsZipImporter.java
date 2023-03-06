@@ -150,29 +150,25 @@ public class ApsZipImporter {
         Node monthFolder = publicationFolder.getParent();
         Node yearFolder = monthFolder.getParent();
         Node typeFolder = yearFolder.getParent();
-
-        switch (typeFolder.getName()) {
-            case "minutes":
-                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-minutes-folder"));
-                break;
-
-            case "speech-statement":
-                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-speech-or-statement-folder"));
-                break;
-
-            case "foi-eir-release":
-                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-foi-folder"));
-                break;
-
-            default:
-                hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
-        }
-
+        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, typeFolderActions(typeFolder.getName()));
         hippoUtils.setPropertyStrings(publicationFolder, HIPPOSTD_FOLDERTYPE, actions());
         hippoUtils.setPropertyStrings(yearFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-month-folder"));
     }
 
-    private Collection<String> actions(String ...actions) {
+    Collection<String> typeFolderActions(String name) {
+        switch (name) {
+            case "minutes":
+                return actions("new-minutes-folder");
+            case "speech-statement":
+                return actions("new-speech-or-statement-folder");
+            case "foi-eir-release":
+                return actions("new-foi-folder");
+            default:
+                return actions("new-publication-folder", "new-complex-document-folder");
+        }
+    }
+
+    Collection<String> actions(String ...actions) {
         return Arrays.asList(actions);
     }
 
