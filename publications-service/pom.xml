@@ -6,7 +6,7 @@
   <parent>
     <groupId>scot.gov.publications</groupId>
     <artifactId>publications</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.147</version>
   </parent>
 
   <artifactId>publications-service</artifactId>
@@ -65,7 +65,7 @@
     <dependency>
       <groupId>scot.gov.publishing.hippo</groupId>
       <artifactId>hippo-govscot-funnelback-cms</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.58</version>
     </dependency>
 
     <!-- Apache utils -->
@@ -251,7 +251,7 @@
     <dependency>
       <groupId>scot.mygov.config</groupId>
       <artifactId>mygov-config</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <version>1.0.4</version>
     </dependency>
 
     <!-- Test libraries -->
