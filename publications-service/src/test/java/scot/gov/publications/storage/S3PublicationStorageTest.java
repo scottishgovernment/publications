@@ -13,7 +13,6 @@ import scot.gov.publications.repo.Publication;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +23,6 @@ import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -254,7 +252,7 @@ public class S3PublicationStorageTest {
         assertThat(batches.get(1)).isEqualTo(asList(2, 3));
         assertThat(batches.get(2)).isEqualTo(asList(4));
 
-        assertThat(storage.partition(emptyList(), 5)).hasSize(0);
+        assertThat(storage.partition(emptyList(), 5)).isEmpty();
     }
 
     ObjectListing listing(boolean truncted, S3ObjectSummary...summaries) {

@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Extracts Manifest from a ZipFile and parses it using a ManifestParser

@@ -24,7 +24,8 @@
       src/main/java/scot/gov/publications/imageprocessing/GraphicsMagickImageProcessingImpl.java,
       src/main/java/scot/gov/publications/hippo/DocumentUploader.java,
       src/main/java/scot/gov/publications/hippo/pages/PublicationPageUpdater.java,
-      src/main/java/scot/gov/publications/PublicationsSearchJournal.java
+      src/main/java/scot/gov/publications/PublicationsSearchJournal.java,
+      src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java
     </sonar.exclusions>
 
   </properties>

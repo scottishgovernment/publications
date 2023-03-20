@@ -10,8 +10,6 @@ import scot.gov.publications.ApsZipImporterException;
 
 import java.util.List;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * Utility methods used to update publication pages.
  */
