@@ -143,8 +143,9 @@ public class PublicationPageUpdater {
             boolean shouldEmbaro)
                 throws RepositoryException, ApsZipImporterException {
 
-        Document htmlDoc = Jsoup.parse(page);
-        Element mainTextDiv = htmlUtil.getMainText(htmlDoc);
+        Document doc = Jsoup.parse(page);
+        Element mainTextDiv = htmlUtil.getMainText(doc);
+        mainTextDiv.select("script").remove();
         String title = TitleSanitiser.sanitise(htmlUtil.getTitle(mainTextDiv, index));
         String slug = Integer.toString(index);
         Node pageHandle = nodeFactory.newHandle(title, pagesNode, slug);
