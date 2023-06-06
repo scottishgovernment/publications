@@ -251,8 +251,8 @@
     <!-- Configuration -->
     <dependency>
       <groupId>scot.mygov.config</groupId>
-      <artifactId>mygov-config</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
+      <artifactId>mygov-config-jdk8</artifactId>
+      <version>1.0.4</version>
     </dependency>
 
     <!-- Test libraries -->

@@ -74,15 +74,13 @@ public class ApsZipImporter {
             // if there is already a publication then unpublish it in funnelback
             Node publicationNode = publicationNodeUpdater.findPublicationNodeToUpdate(metadata);
             List<SearchJournalEntry> searchJournalEntries = new ArrayList<>();
-            if (publicationNode != null && "published".equals(publicationNode.getProperty("hippostd:state"))) {
+            if (publicationNode != null && "published".equals(publicationNode.getProperty("hippostd:state").getString())) {
                 // it is currently published so collect the list of funnelback actions to completely unpublish it
                 // this is because we are about to replace it and some pages may not be there afterwards
                 Node publicationFolder = publicationNode.getParent().getParent();
                 searchJournalEntries.addAll(searchJournal.getJournalEntries("depublish", session, publicationFolder));
             }
-
             Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
-            LOG.info("publication folder is {}", publicationFolder.getPath());
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
             publicationPageUpdater.addPages(

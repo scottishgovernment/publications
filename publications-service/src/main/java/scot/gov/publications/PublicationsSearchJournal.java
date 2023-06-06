@@ -1,5 +1,7 @@
 package scot.gov.publications;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.HippoUtils;
 import scot.gov.publishing.searchjounal.FeatureFlag;
 import scot.gov.publishing.searchjounal.FunnelbackCollection;
@@ -10,6 +12,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -25,14 +28,23 @@ import static java.util.stream.Collectors.toSet;
  */
 public class PublicationsSearchJournal {
 
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationsSearchJournal.class);
+
     HippoUtils hippoUtils = new HippoUtils();
 
     void recordJournalEntries(Session session, List<SearchJournalEntry> entries) throws RepositoryException {
         SearchJournal journal = new scot.gov.publishing.searchjounal.SearchJournal(session);
         List<SearchJournalEntry> entriesToRecord = entriesToRecord(entries);
         for (SearchJournalEntry entry : entriesToRecord) {
+            LOG.info("record {} {} {} {}", calString(entry.getTimestamp()), entry.getSequence(), entry.getAction(), entry.getUrl());
             journal.record(entry);
         }
+    }
+
+    public String calString(Calendar calendar) {
+        GregorianCalendar cal = (GregorianCalendar) calendar;
+        ZonedDateTime zdt = cal.toZonedDateTime();
+        return zdt.toString() + " " + calendar;
     }
 
     List<SearchJournalEntry> entriesToRecord(List<SearchJournalEntry> entries) {
@@ -63,22 +75,21 @@ public class PublicationsSearchJournal {
 
     List<SearchJournalEntry> getJournalEntries(String action, Session session, Node publicationFolder)  throws RepositoryException {
         List<SearchJournalEntry> entries = new ArrayList<>();
-
         FeatureFlag featureFlag = new FeatureFlag(session, "SearchJournalEventListener");
         if (!featureFlag.isEnabled()) {
             return entries;
         }
-
         Node publication = publicationFolder.getNode("index").getNode("index");
         FunnelbackCollection collection = funnelbackCollection(publication);
         String publicationUrl = publicationUrl(publication);
-        entries.add(journalEntry(action, publicationUrl, collection));
-
+        long sequence = 1;
+        entries.add(journalEntry(action, publicationUrl, collection, sequence));
         NodeIterator pageIt = publicationFolder.getNode("pages").getNodes();
         if (!pageIt.hasNext()) {
             return entries;
         }
-        entries.add(journalEntry(action, publicationUrl + "documents/", collection));
+
+        entries.add(journalEntry(action, publicationUrl + "documents/", collection, ++sequence));
         boolean seenFirstPage = false;
         while (pageIt.hasNext()) {
             Node pageHandle = pageIt.nextNode();
@@ -88,7 +99,7 @@ public class PublicationsSearchJournal {
                     seenFirstPage = true;
                 } else {
                     String url = pageUrl(publication, pageHandle);
-                    entries.add(journalEntry(action, url, collection));
+                    entries.add(journalEntry(action, url, collection, ++sequence));
                 }
             }
         }
@@ -116,13 +127,14 @@ public class PublicationsSearchJournal {
                 && variant.getProperty("govscot:contentsPage").getBoolean();
     }
 
-    SearchJournalEntry journalEntry(String action, String url, FunnelbackCollection collection) {
+    SearchJournalEntry journalEntry(String action, String url, FunnelbackCollection collection, long sequence) {
         SearchJournalEntry entry = new SearchJournalEntry();
         entry.setAction(action);
         entry.setAttempt(0);
         entry.setTimestamp(Calendar.getInstance());
         entry.setCollection(collection.getCollectionName());
         entry.setUrl(url);
+        entry.setSequence(sequence);
         return entry;
     }
 }
