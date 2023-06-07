@@ -3,10 +3,10 @@ package scot.gov.publications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.HippoUtils;
-import scot.gov.publishing.searchjounal.FeatureFlag;
-import scot.gov.publishing.searchjounal.FunnelbackCollection;
-import scot.gov.publishing.searchjounal.SearchJournal;
-import scot.gov.publishing.searchjounal.SearchJournalEntry;
+import scot.gov.publishing.searchjournal.FeatureFlag;
+import scot.gov.publishing.searchjournal.FunnelbackCollection;
+import scot.gov.publishing.searchjournal.SearchJournal;
+import scot.gov.publishing.searchjournal.SearchJournalEntry;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -33,7 +33,7 @@ public class PublicationsSearchJournal {
     HippoUtils hippoUtils = new HippoUtils();
 
     void recordJournalEntries(Session session, List<SearchJournalEntry> entries) throws RepositoryException {
-        SearchJournal journal = new scot.gov.publishing.searchjounal.SearchJournal(session);
+        SearchJournal journal = new scot.gov.publishing.searchjournal.SearchJournal(session);
         List<SearchJournalEntry> entriesToRecord = entriesToRecord(entries);
         for (SearchJournalEntry entry : entriesToRecord) {
             LOG.info("record {} {} {} {}", calString(entry.getTimestamp()), entry.getSequence(), entry.getAction(), entry.getUrl());

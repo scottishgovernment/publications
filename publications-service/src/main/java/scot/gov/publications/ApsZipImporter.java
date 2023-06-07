@@ -12,7 +12,7 @@ import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.util.Exif;
-import scot.gov.publishing.searchjounal.SearchJournalEntry;
+import scot.gov.publishing.searchjournal.SearchJournalEntry;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
