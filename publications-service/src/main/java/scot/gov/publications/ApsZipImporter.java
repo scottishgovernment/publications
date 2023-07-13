@@ -91,7 +91,7 @@ public class ApsZipImporter {
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
             publicationFolder = publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
-            ensureFolderActions(publicationFolder);
+            ensureFolderActions(publicationFolder, metadata.getPublicationType());
 
             session.save();
 
@@ -143,13 +143,24 @@ public class ApsZipImporter {
         }
     }
 
-    private void ensureFolderActions(Node publicationFolder) throws RepositoryException {
+    private void ensureFolderActions(Node publicationFolder, String type) throws RepositoryException {
         // We might have created a new month or year folder ... ensure that they have the right actions
         Node monthFolder = publicationFolder.getParent();
         Node yearFolder = monthFolder.getParent();
         hippoUtils.setPropertyStrings(publicationFolder, HIPPOSTD_FOLDERTYPE, actions());
-        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-folder", "new-complex-document-folder"));
+        hippoUtils.setPropertyStrings(monthFolder, HIPPOSTD_FOLDERTYPE, publicationActions(type));
         hippoUtils.setPropertyStrings(yearFolder, HIPPOSTD_FOLDERTYPE, actions("new-publication-month-folder"));
+    }
+
+    Collection<String> publicationActions(String type) {
+        switch (type) {
+            case "minutes":
+                return actions("new-minutes-folder");
+            case "foi-eir-release":
+                return actions("new-foi-folder");
+            default:
+                return actions("new-publication-folder", "new-complex-document-folder");
+        }
     }
 
     Collection<String> actions(String ...actions) {
