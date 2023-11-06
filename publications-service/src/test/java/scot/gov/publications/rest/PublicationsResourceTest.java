@@ -1,7 +1,6 @@
 package scot.gov.publications.rest;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Test;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.MetadataExtractor;
@@ -13,8 +12,8 @@ import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
 import scot.gov.publications.util.FileUtil;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.Response;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,5 +1,8 @@
 package scot.gov.publications.rest;
 
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.repo.PublicationRepository;
@@ -8,13 +11,7 @@ import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
 
 import javax.inject.Inject;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;

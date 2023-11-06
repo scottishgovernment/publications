@@ -21,10 +21,12 @@ import scot.gov.publications.util.FileUtil;
 import scot.gov.publications.util.ZipUtil;
 
 import javax.inject.Inject;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
+import jakarta.ws.rs.Path;
+
 import java.io.*;
 import java.sql.Timestamp;
 import java.util.UUID;

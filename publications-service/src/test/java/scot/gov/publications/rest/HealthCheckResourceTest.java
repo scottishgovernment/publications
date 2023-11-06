@@ -15,7 +15,7 @@ import scot.gov.publications.storage.PublicationStorageException;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import java.sql.Timestamp;
 import java.time.Instant;

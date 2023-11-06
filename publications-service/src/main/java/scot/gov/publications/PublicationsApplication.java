@@ -7,7 +7,7 @@ import scot.gov.publications.rest.RequestLogger;
 import scot.gov.publications.rest.TopLevelExceptionHandler;
 
 import javax.inject.Inject;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.Collections;
 
 import java.util.HashSet;

@@ -2,7 +2,7 @@ package scot.gov.publications.rest;
 
 import org.junit.Test;
 
-import javax.ws.rs.WebApplicationException;
+import jakarta.ws.rs.WebApplicationException;
 
 public class MaintenanceStatusTest {
 
