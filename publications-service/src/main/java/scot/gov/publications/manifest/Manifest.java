@@ -11,6 +11,7 @@ import java.util.zip.ZipFile;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.substringAfterLast;
 
 /**
  * Parsed version of the manifest file.
@@ -37,7 +38,7 @@ public class Manifest {
     }
 
     private boolean isManifestEntry(ZipEntry zipEntry, ManifestEntry manifestEntry) {
-        String filename = StringUtils.substringAfterLast(zipEntry.getName(), "/");
+        String filename = substringAfterLast(zipEntry.getName(), "/");
         return manifestEntry.getFilename().equals(filename);
     }
 
@@ -73,6 +74,6 @@ public class Manifest {
     }
 
     private String extension(String filename) {
-        return net.logstash.logback.encoder.org.apache.commons.lang.StringUtils.substringAfterLast(filename, ".");
+        return substringAfterLast(filename, ".");
     }
 }
