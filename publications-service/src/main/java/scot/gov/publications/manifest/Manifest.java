@@ -1,6 +1,5 @@
 package scot.gov.publications.manifest;
 
-import org.apache.commons.lang3.StringUtils;
 import scot.gov.publications.hippo.HippoPaths;
 
 import java.util.ArrayList;
