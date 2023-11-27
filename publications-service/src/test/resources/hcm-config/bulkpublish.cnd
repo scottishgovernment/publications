@@ -1,0 +1,5 @@
+<'bulkpublish'='http://www.gov.scot.com/bulkbublish/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+
+[bulkpublish:bulkpublishdirectory]
+  mixin

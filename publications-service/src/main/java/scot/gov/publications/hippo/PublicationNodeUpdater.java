@@ -288,6 +288,9 @@ public class PublicationNodeUpdater {
         String path = StringUtils.substringAfter(pubNode.getParent().getPath(), "/content/documents/govscot");
         slugLookups.updateLookup(slug, path, "govscot", "publications", "preview", true);
 
+        // make sure the folder node has the mixin used for bulk publish actions
+        pubNode.getParent().getParent().addMixin("bulkpublish:bulkpublishdirectory");
+
         // if the publication is published then create new sitemap entry and live slug lookup
         if ("published".equals(pubNode.getProperty(HIPPOSTD_STATE).getString())) {
             sitemap.ensureSitemapEntry(pubNode);

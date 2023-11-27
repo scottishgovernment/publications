@@ -24,7 +24,7 @@ import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 public class PublicationNodeUpdaterTest {
 
     @Test
-    public void resusesNodeWithISBNIfPresent() throws Exception {
+    public void reusesNodeWithISBNIfPresent() throws Exception {
         // ARRANGE
         PublicationNodeUpdater sut = new PublicationNodeUpdater(null, null);
         sut.hippoUtils = mock(HippoUtils.class);
@@ -42,6 +42,7 @@ public class PublicationNodeUpdaterTest {
         when(slug.toString()).thenReturn("slug");
         when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Node handle = mock(Node.class);
+        when(handle.getParent()).thenReturn(publicationFolder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         Property state =  stringProperty("published");
         when(nodeWithISBN.getProperty(eq("hippostd:state"))).thenReturn(state);
@@ -89,6 +90,7 @@ public class PublicationNodeUpdaterTest {
         when(nodeWithISBN.getProperty(HIPPOSTD_STATE)).thenReturn(state);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
+        when(handle.getParent()).thenReturn(folder);
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
@@ -124,6 +126,8 @@ public class PublicationNodeUpdaterTest {
         when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
+        Node folder = mock(Node.class);
+        when(handle.getParent()).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         Property slug = mock(Property.class);
         when(slug.toString()).thenReturn("slug");
@@ -166,6 +170,7 @@ public class PublicationNodeUpdaterTest {
         when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
+        when(handle.getParent()).thenReturn(folder);
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         when(sut.hippoUtils.findOne(any(), startsWith("SELECT * FROM govscot:Publication WHERE govscot:isbn ="))).thenReturn(null);
