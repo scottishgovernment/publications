@@ -1,11 +1,13 @@
 package scot.gov.publications.hippo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.repo.Publication;
+import scot.gov.publishing.sluglookup.SlugLookups;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -58,6 +60,8 @@ public class PublicationNodeUpdater {
 
     Sitemap sitemap;
 
+    SlugLookups slugLookups;
+
     public PublicationNodeUpdater(Session session, PublicationsConfiguration configuration) {
         this.session = session;
         this.hippoPaths = new HippoPaths(session);
@@ -66,6 +70,7 @@ public class PublicationNodeUpdater {
         this.pathStrategy = new PublicationPathStrategy(session);
         this.policiesUpdater = new PoliciesUpdater(session);
         this.sitemap = new Sitemap(session);
+        this.slugLookups = new SlugLookups(session);
     }
 
     /**
@@ -278,11 +283,16 @@ public class PublicationNodeUpdater {
                     metadata.shoudlEmbargo());
         }
 
-        // if the publication is published then create new sitemap entry
+        // create slug lookup for preview
+        String slug = pubNode.getProperty("govscot:slug").getString();
+        String path = StringUtils.substringAfter(pubNode.getParent().getPath(), "/content/documents/govscot");
+        slugLookups.updateLookup(slug, path, "govscot", "publications", "preview", true);
+
+        // if the publication is published then create new sitemap entry and live slug lookup
         if ("published".equals(pubNode.getProperty(HIPPOSTD_STATE).getString())) {
             sitemap.ensureSitemapEntry(pubNode);
+            slugLookups.updateLookup(slug, path, "govscot", "publications", "live", true);
         }
-
         return pubNode;
     }
 

@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.repo.Publication;
+import scot.gov.publishing.sluglookup.SlugLookups;
 
 import javax.jcr.*;
 import javax.jcr.query.Query;
@@ -32,10 +33,14 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
         sut.sitemap = mock(Sitemap.class);
+        sut.slugLookups = mock(SlugLookups.class);
         Node publicationFolder = mock(Node.class);
 
         when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
         Node nodeWithISBN = mock(Node.class);
+        Property slug = mock(Property.class);
+        when(slug.toString()).thenReturn("slug");
+        when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);
         Property state =  stringProperty("published");
@@ -74,7 +79,11 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
         sut.sitemap = mock(Sitemap.class);
+        sut.slugLookups = mock(SlugLookups.class);
         Node nodeWithISBN = mock(Node.class);
+        Property slug = mock(Property.class);
+        when(slug.toString()).thenReturn("slug");
+        when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Property state = mock(Property.class);
         when(state.getString()).thenReturn("published");
         when(nodeWithISBN.getProperty(HIPPOSTD_STATE)).thenReturn(state);
@@ -109,12 +118,16 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.hippoPaths = mock(HippoPaths.class);
         sut.sitemap = mock(Sitemap.class);
+        sut.slugLookups = mock(SlugLookups.class);
         Node publicationFolder = mock(Node.class);
 
         when(sut.hippoPaths.ensurePath(any())).thenReturn(publicationFolder);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         when(nodeWithISBN.getParent()).thenReturn(handle);
+        Property slug = mock(Property.class);
+        when(slug.toString()).thenReturn("slug");
+        when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Property state =  stringProperty("published");
         when(nodeWithISBN.getProperty(eq("hippostd:state"))).thenReturn(state);
         sut.session = sessionbWithPubs(nodeWithISBN);
@@ -143,10 +156,14 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
         sut.sitemap = mock(Sitemap.class);
+        sut.slugLookups = mock(SlugLookups.class);
         Node nodeWithISBN = mock(Node.class);
         Property state = mock(Property.class);
         when(state.getString()).thenReturn("published");
         when(nodeWithISBN.getProperty(HIPPOSTD_STATE)).thenReturn(state);
+        Property slug = mock(Property.class);
+        when(slug.toString()).thenReturn("slug");
+        when(nodeWithISBN.getProperty("govscot:slug")).thenReturn(slug);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);
         when(sut.hippoPaths.ensurePath(any())).thenReturn(folder);
@@ -178,6 +195,7 @@ public class PublicationNodeUpdaterTest {
         sut.pathStrategy = mock(PublicationPathStrategy.class);
         sut.session = sessionbWithPubs();
         sut.sitemap = mock(Sitemap.class);
+        sut.slugLookups = mock(SlugLookups.class);
         Node nodeWithISBN = mock(Node.class);
         Node handle = mock(Node.class);
         Node folder = mock(Node.class);

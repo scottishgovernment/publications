@@ -105,7 +105,8 @@ public class TestRepository {
             "/hcm-config/selectiontypes.cnd",
             "/hcm-config/govscot.cnd",
             "/hcm-config/embargo.cnd",
-            "/hcm-config/searchjournal.cnd"
+            "/hcm-config/searchjournal.cnd",
+            "/hcm-config/sluglookup.cnd"
             );
 
 

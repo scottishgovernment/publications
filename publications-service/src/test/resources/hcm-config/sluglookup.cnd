@@ -1,0 +1,8 @@
+<'sluglookup'='http://www.gov.scot/sluglookup/nt/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+
+[sluglookup:lookup] > hippostd:folder
+- sluglookup:path (string)
++ * = sluglookup:lookup multiple
