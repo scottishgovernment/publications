@@ -80,8 +80,10 @@ public class PublicationNodeUpdater {
      */
     public Node createOrUpdatePublicationNode(Metadata metadata, Publication publication)
             throws ApsZipImporterException {
+        Node publicationFolder = null;
         try {
             Node publicationNode = doCreateOrUpdate(metadata);
+            publicationFolder = publicationNode.getParent().getParent();
             setPublicationAuditFields(publicationNode, publication);
             nodeFactory.addBasicFields(publicationNode, metadata.getTitle());
 
@@ -122,10 +124,23 @@ public class PublicationNodeUpdater {
             return publicationNode.getParent().getParent();
 
         } catch (RepositoryException e) {
+            removePublicationFolderQuietly(publicationFolder);
             throw new ApsZipImporterException("Failed to create or update publication node", e);
         }
     }
 
+    void removePublicationFolderQuietly(Node publicationFolder) {
+        if (publicationFolder == null) {
+            return;
+        }
+        try {
+            Session session = publicationFolder.getSession();
+            publicationFolder.remove();
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error("Failed to remove publication folder after exception", e);
+        }
+    }
     /**
      * Update the publication node from the directorates in the metadata. If the node already contains information
      * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits

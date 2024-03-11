@@ -79,8 +79,9 @@ public class ApsZipImporterTest {
     }
 
     @After
-    public void tearDown() throws RepositoryException, IOException {
+    public void tearDown() throws IOException {
         session.logout();
+
         ZipFixtures.deleteFixtures();
     }
 
@@ -491,7 +492,6 @@ public class ApsZipImporterTest {
         // page one has a link to a local anchor in page2
         String expectedLinkToLocalAnchor = String.format("<a href=\"%s\">", "/publications/example-publication/pages/2#inPageAnchor");
         assertTrue(page1.getNode("govscot:content").getProperty("hippostd:content").getString().contains(expectedLinkToLocalAnchor));
-
         // page two has a link to an anchor within itself
         assertTrue(page2.getNode("govscot:content").getProperty("hippostd:content").getString().contains(expectedLinkToLocalAnchor));
     }

@@ -59,6 +59,9 @@ public class ApsZipImporter {
         ImageUploader imageUploader = new ImageUploader(session, imageProcessing);
         DocumentUploader documentUploader = new DocumentUploader(session, imageProcessing, exif, configuration);
 
+        Node publicationFolder = null;
+        Node imagesFolder = null;
+
         try {
             Manifest manifest = manifestExtractor.extract(zipFile);
             Metadata metadata = metadataExtractor.extract(zipFile);
@@ -77,12 +80,16 @@ public class ApsZipImporter {
             if (publicationNode != null && "published".equals(publicationNode.getProperty("hippostd:state").getString())) {
                 // it is currently published so collect the list of funnelback actions to completely unpublish it
                 // this is because we are about to replace it and some pages may not be there afterwards
-                Node publicationFolder = publicationNode.getParent().getParent();
-                searchJournalEntries.addAll(searchJournal.getJournalEntries("depublish", session, publicationFolder));
+                searchJournalEntries.addAll(searchJournal.getJournalEntries("depublish", session, publicationNode.getParent().getParent()));
             }
-            Node publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
+            publicationFolder = publicationNodeUpdater.createOrUpdatePublicationNode(metadata, publication);
+
             Map<String, String> imgMap = imageUploader.createImages(zipFile, publicationFolder);
             Map<String, Node> docMap = documentUploader.uploadDocuments(zipFile, publicationFolder, manifest, metadata);
+            if (!imgMap.isEmpty()) {
+                imagesFolder = session.getNodeByIdentifier(imgMap.entrySet().iterator().next().getValue()).getParent();
+            }
+
             publicationPageUpdater.addPages(
                     zipFile,
                     publicationFolder,
@@ -90,6 +97,7 @@ public class ApsZipImporter {
                     docMap,
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
+
             publicationFolder = publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             ensureFolderActions(publicationFolder, metadata.getPublicationType());
 
@@ -107,8 +115,29 @@ public class ApsZipImporter {
             return publicationFolder.getPath();
         } catch (RepositoryException e) {
             throw new ApsZipImporterException("Failed to save session", e);
+        } catch (ApsZipImporterException e) {
+            LOG.error("Throwable thrown", e);
+            removePublicationFolderQuietly(publicationFolder, imagesFolder);
+            throw e;
         } finally {
             session.logout();
+        }
+    }
+
+    void removePublicationFolderQuietly(Node publicationFolder, Node imagesFolder) {
+        if (publicationFolder == null) {
+            return;
+        }
+
+        try {
+            if (imagesFolder != null) {
+                imagesFolder.remove();
+            }
+            Session session = publicationFolder.getSession();
+            publicationFolder.remove();
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error("Failed to remove publication folder after exception", e);
         }
     }
 
