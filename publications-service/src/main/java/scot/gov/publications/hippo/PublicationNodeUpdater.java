@@ -134,7 +134,6 @@ public class PublicationNodeUpdater {
             return;
         }
         try {
-            Session session = publicationFolder.getSession();
             publicationFolder.remove();
             session.save();
         } catch (RepositoryException e) {
