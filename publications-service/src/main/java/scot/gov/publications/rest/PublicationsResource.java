@@ -134,6 +134,7 @@ public class PublicationsResource {
      */
     @PUT
     @Path("{id}/cancel")
+    @Produces({ MediaType.APPLICATION_JSON })
     public Response cancel(@PathParam("id") String id, @HeaderParam("X-User") String username) {
         Publication publication = null;
         try {
