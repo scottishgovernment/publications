@@ -115,6 +115,8 @@ public class DocumentUploader {
                 "govscot:DocumentInformation",
                 metadata.getPublicationDateWithTimezone(),
                 metadata.shoudlEmbargo());
+        // we do not want a slug for document info pages
+        documentInfoNode.getProperty("govscot:slug").remove();
         documentInfoNode.setProperty(GOVSCOT_TITLE, title);
         documentInfoNode.setProperty("govscot:accessible", false);
         documentInfoNode.setProperty("govscot:highlighted", false);

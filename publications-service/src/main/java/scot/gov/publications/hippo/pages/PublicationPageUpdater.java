@@ -151,6 +151,8 @@ public class PublicationPageUpdater {
         Node pageHandle = nodeFactory.newHandle(title, pagesNode, slug);
         Node pageNode = nodeFactory.newDocumentNode(
                 pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbaro);
+        // we do not want a slug for pages
+        pageNode.getProperty("govscot:slug").remove();
         nodeFactory.addBasicFields(pageNode, title);
         pageNode.setProperty(GOVSCOT_TITLE, title);
         createPageContentAndLinkImages(mainTextDiv, pageNode, filenameToImageId);
