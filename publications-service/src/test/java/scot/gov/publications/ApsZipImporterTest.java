@@ -11,40 +11,39 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.jcr.TestRepository;
-import scot.gov.publications.hippo.*;
+import scot.gov.publications.hippo.HippoUtils;
+import scot.gov.publications.hippo.ZipFixtures;
 import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.imageprocessing.ImageProcessingException;
 import scot.gov.publications.manifest.Manifest;
 import scot.gov.publications.manifest.ManifestEntry;
 import scot.gov.publications.manifest.ManifestParser;
 import scot.gov.publications.manifest.ManifestParserException;
-import scot.gov.publications.metadata.*;
+import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.metadata.MetadataParser;
+import scot.gov.publications.metadata.MetadataParserException;
+import scot.gov.publications.metadata.MetadataWrapper;
 import scot.gov.publications.repo.Publication;
 
 import javax.jcr.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.zip.ZipFile;
 
-import static java.security.AccessController.doPrivileged;
 import static java.util.Collections.singletonList;
 import static junit.framework.TestCase.assertFalse;
-import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.endsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
+import static org.apache.commons.lang3.StringUtils.startsWith;
+import static org.junit.Assert.*;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_TAGS;
 
 /**
@@ -130,7 +129,7 @@ public class ApsZipImporterTest {
         Node pubFolder2 = session.getNode(path2);
         Node pub = pubFolder2.getNode("index").getNodes().nextNode();
 
-        // changed properties should be the value set in code rather then the values from the second zip.
+        // changed properties should be the value set in code rather than the values from the second zip.
         assertTrue(endsWith(pub.getProperty("govscot:title").getString(), "changed"));
         assertTrue(endsWith(pub.getProperty("govscot:summary").getString(), "changed"));
         assertTrue(endsWith(pub.getProperty("govscot:seoTitle").getString(), "changed"));
@@ -187,7 +186,7 @@ public class ApsZipImporterTest {
      */
     @Test
     public void workFlowJobAndPublishStatusSetCorrectly() throws Exception {
-        // import sample publication with publication date in fiture then assert that it is not published
+        // import sample publication with publication date in future then assert that it is not published
         Path fixturePath = ZipFixtures.copyFixture("workFlowJobAndPublishStatusSetCorrectly");
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setTitle("workFlowJobAndPublishStatusSetCorrectly  ");
@@ -277,7 +276,7 @@ public class ApsZipImporterTest {
     }
 
     /**
-     * Rejects unrecornised publication type
+     * Rejects unrecognised publication type
      */
     @Test(expected = ApsZipImporterException.class)
     public void rejectsInvalidPublicationtype() throws Exception {
@@ -316,7 +315,7 @@ public class ApsZipImporterTest {
      */
     @Test
     public void acceptsEmptyManifest() throws Exception {
-        // ARRANGE - remove the metatdata
+        // ARRANGE - remove the metadata
         Path fixturePath = ZipFixtures.copyFixture("rejectsEmptyManifest");
         FileUtils.write(fixturePath.resolve("manifest.txt").toFile(), "", "UTF-8");
 
@@ -331,7 +330,7 @@ public class ApsZipImporterTest {
      */
     @Test(expected = ApsZipImporterException.class)
     public void rejectsMissingManifest() throws Exception {
-        // ARRANGE - remove the metatdata
+        // ARRANGE - remove the metadata
         Path fixturePath = ZipFixtures.copyFixture("rejectsMissingManifest");
         fixturePath.resolve("manifest.txt").toFile().delete();
 
@@ -386,13 +385,39 @@ public class ApsZipImporterTest {
     }
 
     /**
+     * Rejects invalid links
+     *
+     * We have seen examples where links contain invalid markup,
+     * and the broken links result in empty pages in the CMS.
+     *
+     */
+    @Test
+    public void rejectsInvalidLinks() throws Exception {
+        // ARRANGE - add HTM with malformed links
+        Path fixturePath = ZipFixtures.copyFixture("rejectsInvalidLinks");
+        Path htmWithInvalidLinks  = Paths.get(ApsZipImporterTest.class.getResource("/htmWithInvalidLinks.htm").getPath());
+        Files.copy(htmWithInvalidLinks, fixturePath.resolve("SCT12181804281-01.htm"), StandardCopyOption.REPLACE_EXISTING);
+
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath);
+        try {
+            // ACT
+            sut.importApsZip(zip, new Publication());
+            fail("An exception should have been thrown");
+
+        } catch (ApsZipImporterException e) {
+            // ASSERT - ApsZipImporterException thrown because invalid links found
+            assertEquals(e.getMessage(), "Invalid Links: http://www.gov.scot/<abbr>ISBN</abbr>/9781836018667");
+        }
+    }
+
+    /**
      * Rejects zip if manifest mentions file not in zip
      *
      * If the manifest file mentions a file that is not present in the zip then an exception should be thrown.
      */
     @Test
     public void rejectsZipIfManifestMentionsFileNotInZip() throws Exception {
-        // ARRANGE - radd a non existant entry to the manifest and save it
+        // ARRANGE - add a non-existent entry to the manifest and save it
         Path fixturePath = ZipFixtures.copyFixture("rejectsZipIfManifestMentionsFileNotInZip");
         Manifest manifest = loadManifest(fixturePath);
         manifest.getEntries().add(new ManifestEntry("nosuchfile.pdf", "No such file"));
@@ -846,7 +871,7 @@ public class ApsZipImporterTest {
 
     @Test
     public void addsTagsAsExpected() throws Exception {
-        // add a publiations with some tags
+        // add a publication with some tags
 
         // change the tags that are in the zip and reimport it - should have added the new ones but left the old ones
         // in place
@@ -873,7 +898,7 @@ public class ApsZipImporterTest {
 
         // ASSERT
         //
-        // we shoudl have al of the tags that were added
+        // we should have all of the tags that were added
         Node publicationFolder = session.getNode(path);
         Node handle = publicationFolder.getNode("index");
         Node index = handle.getNode("index");
@@ -969,7 +994,7 @@ public class ApsZipImporterTest {
     }
 
     /**
-     * since gm is not installed on jenkins we want a fake implementaiton of ImageProcessing that always returns the same image.
+     * since gm is not installed on jenkins we want a fake implementation of ImageProcessing that always returns the same image.
      */
     ImageProcessing fakeImageProcessing() throws Exception {
 

@@ -108,7 +108,7 @@ public class ZipFixtures {
     }
 
         /**
-         * Copy a fixture contained in a resources folder to a temp directory.  This can then be manpulated to create the
+         * Copy a fixture contained in a resources folder to a temp directory.  This can then be manipulated to create the
          * scenario being tested and then zipped ready for a test.
          */
     public static Path copyFixture(String prefix, String zipContentPath) throws IOException {

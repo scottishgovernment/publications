@@ -1,7 +1,7 @@
 package scot.gov.publications;
 
 /**
- * Exception throws by the ApsZipIMporter class.
+ * Exception throws by the ApsZipImporter class.
  */
 public class ApsZipImporterException extends Exception {
 

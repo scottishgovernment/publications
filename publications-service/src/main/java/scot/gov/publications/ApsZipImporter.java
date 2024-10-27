@@ -142,7 +142,7 @@ public class ApsZipImporter {
     }
 
     /**
-     * work out if the publication is already published or not.  If it is then thos might change what we need to do to
+     * Work out if the publication is already published or not.  If it is then this might change what we need to do to
      * reconcile with funnelback
      */
     boolean isAlreadyPublished(PublicationNodeUpdater publicationNodeUpdater, Metadata metadata) throws RepositoryException {

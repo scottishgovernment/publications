@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
@@ -23,23 +24,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static scot.gov.publications.hippo.Constants.GOVSCOT_CONTENT;
-import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
-import static scot.gov.publications.hippo.Constants.HIPPOSTD_FOLDERTYPE;
+import static org.apache.commons.lang3.StringUtils.containsAny;
+import static scot.gov.publications.hippo.Constants.*;
+
+;
 
 /**
- * Contains the logic used to ad page nodes from a zip file to a publicaiton folder.
+ * Contains the logic used to add page nodes from a zip file to a publication folder.
  */
 public class PublicationPageUpdater {
 
@@ -67,9 +65,9 @@ public class PublicationPageUpdater {
      * Ensure that the publication folder contains a pages folder containing a page node for each of the html pages
      * contained in the zip file.
      *
-     * @param zipFile The zip file containing the publicaiton
+     * @param zipFile The zip file containing the publication
      * @param publicationFolder Node of the folder containing the publication in the repo
-     * @param filenameToImageId Map image filenames to the node of tat image in the repo
+     * @param filenameToImageId Map image filenames to the node of that image in the repo
      * @param docnameToNode Map from the document name to the node of that document in the repo
      * @param publishDateTime The embargo date to use when creating page nodes
      * @throws ApsZipImporterException
@@ -94,7 +92,7 @@ public class PublicationPageUpdater {
             PublicationLinkRewriter linkRewriter = new PublicationLinkRewriter(publicationFolder.getName(), nodesByEntryname);
             linkRewriter.rewrite(publicationFolder);
         } catch (IOException | RepositoryException e) {
-            throw new ApsZipImporterException("Failed too upload pages", e);
+            throw new ApsZipImporterException("Failed to upload pages", e);
         }
     }
 
@@ -144,6 +142,8 @@ public class PublicationPageUpdater {
                 throws RepositoryException, ApsZipImporterException {
 
         Document doc = Jsoup.parse(page);
+
+        assertLinksDoNotContainMarkup(doc);
         Element mainTextDiv = htmlUtil.getMainText(doc);
         mainTextDiv.select("script").remove();
         String title = TitleSanitiser.sanitise(htmlUtil.getTitle(mainTextDiv, index));
@@ -168,6 +168,26 @@ public class PublicationPageUpdater {
         Node contentNode = hippoUtils.ensureHtmlNode(pageNode, GOVSCOT_CONTENT, rewrittenHtml);
         createImageFacets(contentNode, imageLinks, filenameToImageId);
         pageNode.setProperty("govscot:contentsPage", htmlUtil.isContentsPage(rewrittenHtml));
+    }
+
+    /**
+     * APS process their html to add <abbr> tags around the text ISBN / isbn, but their
+     * processing is doing this within attribute values leading to links like:
+     * https://www.gov.scot/<abbr>isbn</abbr>/111
+     * This method detects and rejects these.
+     */
+    private void assertLinksDoNotContainMarkup(Document doc) throws ApsZipImporterException {
+        Elements anchors = doc.select("a");
+        List<String> invalidLinks = new ArrayList<>();
+        for (Element anchor : anchors) {
+            String href = anchor.attr("href");
+            if (containsAny(href, '<', '>')) {
+                invalidLinks.add(href);
+            }
+        }
+        if (!invalidLinks.isEmpty()) {
+            throw new ApsZipImporterException("Invalid Links: " + String.join(",", invalidLinks));
+        }
     }
 
     private Set<String> imageLinks(Element div, Map<String, String> filenameToImageId) {

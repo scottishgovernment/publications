@@ -4,12 +4,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.Assert;
 import org.junit.Test;
 import scot.gov.publications.ApsZipImporterException;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import javax.jcr.RepositoryException;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;

@@ -50,7 +50,7 @@ class HtmlUtil {
     /**
      * Extract the contents of the .mainText div.
      *
-     * @throws ApsZipImporterException If the document does not contains exactly one mainText div.
+     * @throws ApsZipImporterException If the document does not contain exactly one mainText div.
      */
     Element getMainText(Document htmlDoc) throws ApsZipImporterException {
         List<Element> elements = htmlDoc.select(".mainText");
@@ -74,5 +74,4 @@ class HtmlUtil {
         return StringUtils.equalsAny(title, "contents", "table of contents");
 
     }
-
 }
