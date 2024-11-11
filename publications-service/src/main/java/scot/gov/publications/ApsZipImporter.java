@@ -117,27 +117,10 @@ public class ApsZipImporter {
             throw new ApsZipImporterException("Failed to save session", e);
         } catch (ApsZipImporterException e) {
             LOG.error("Throwable thrown", e);
-            removePublicationFolderQuietly(publicationFolder, imagesFolder);
+            hippoUtils.removePublicationFolderQuietly(publicationFolder, imagesFolder);
             throw e;
         } finally {
             session.logout();
-        }
-    }
-
-    void removePublicationFolderQuietly(Node publicationFolder, Node imagesFolder) {
-        if (publicationFolder == null) {
-            return;
-        }
-
-        try {
-            if (imagesFolder != null) {
-                imagesFolder.remove();
-            }
-            Session session = publicationFolder.getSession();
-            publicationFolder.remove();
-            session.save();
-        } catch (RepositoryException e) {
-            LOG.error("Failed to remove publication folder after exception", e);
         }
     }
 

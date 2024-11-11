@@ -124,28 +124,20 @@ public class PublicationNodeUpdater {
             return publicationNode.getParent().getParent();
 
         } catch (RepositoryException e) {
-            removePublicationFolderQuietly(publicationFolder);
+            hippoUtils.removePublicationFolderQuietly(publicationFolder, null);
             throw new ApsZipImporterException("Failed to create or update publication node", e);
+        } catch (ApsZipImporterException e) {
+            hippoUtils.removePublicationFolderQuietly(publicationFolder, null);
+            throw e;
         }
     }
 
-    void removePublicationFolderQuietly(Node publicationFolder) {
-        if (publicationFolder == null) {
-            return;
-        }
-        try {
-            publicationFolder.remove();
-            session.save();
-        } catch (RepositoryException e) {
-            LOG.error("Failed to remove publication folder after exception", e);
-        }
-    }
     /**
      * Update the publication node from the directorates in the metadata. If the node already contains information
      * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits
      * to be needed.
      */
-    private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws RepositoryException {
+    private void createDirectoratesIfAbsent(Node publicationNode, Metadata metadata) throws RepositoryException, ApsZipImporterException {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
         if (shouldUpdateDirectorate(publicationNode, metadata)) {
@@ -181,12 +173,12 @@ public class PublicationNodeUpdater {
     private void createDirectorateLink(
             Node publicationNode,
             String propertyName,
-            String directorate) throws RepositoryException {
+            String directorate) throws RepositoryException, ApsZipImporterException {
         Node handle = hippoUtils.findOneXPath(session, directorateHandleQuery(directorate));
         if (handle != null) {
             hippoUtils.createMirror(publicationNode, propertyName, handle);
         } else {
-            LOG.warn("No such directorate: '{}'", directorate);
+            throw new ApsZipImporterException(String.format("No such directorate: '%s'", propertyName));
         }
     }
 

@@ -1,6 +1,8 @@
 package scot.gov.publications.hippo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import javax.jcr.query.Query;
@@ -13,6 +15,8 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 
 public class HippoUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HippoUtils.class);
 
     @FunctionalInterface
     public interface ThrowingPredicate {
@@ -248,6 +252,24 @@ public class HippoUtils {
             if (predicate.test(node)) {
                 consumer.accept(node);
             }
+        }
+    }
+
+    public void removePublicationFolderQuietly(Node publicationFolder, Node imagesFolder) {
+
+        if (publicationFolder == null) {
+            return;
+        }
+
+        try {
+            if (imagesFolder != null) {
+                imagesFolder.remove();
+            }
+            Session session = publicationFolder.getSession();
+            publicationFolder.remove();
+            session.save();
+        } catch (RepositoryException e) {
+            LOG.error("Failed to remove publication folder after exception", e);
         }
     }
 }
