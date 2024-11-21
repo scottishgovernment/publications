@@ -2,6 +2,7 @@ package scot.gov.publications.hippo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.Metadata;
 
 import javax.jcr.Node;
@@ -70,30 +71,33 @@ public class TopicsUpdater {
      * @param metadata
      * @throws RepositoryException
      */
-    public void ensureTopics(Node publicationNode, Metadata metadata) throws RepositoryException {
+    public void ensureTopics(Node publicationNode, Metadata metadata) throws RepositoryException, ApsZipImporterException {
         ensureLegacyTopic(publicationNode, metadata.getTopic());
         for (String topic : metadata.getTopics()) {
             ensureTopic(publicationNode, topic);
+
         }
     }
 
-    private void ensureLegacyTopic(Node publicationNode, String topicName) throws RepositoryException {
+    private void ensureLegacyTopic(Node publicationNode, String topicName) throws RepositoryException, ApsZipImporterException {
         String mappedTopic = topics.get(topicName);
-        if (mappedTopic == null) {
-            LOG.info("No such legacy topic {}", topicName);
-            return;
+        if (mappedTopic != null) {
+            ensureTopic(publicationNode, mappedTopic);
+        } else {
+            throw new ApsZipImporterException(String.format("No such legacy topic: '%s'", topicName));
         }
-        ensureTopic(publicationNode, mappedTopic);
+
     }
 
-    private void ensureTopic(Node publicationNode, String topic) throws RepositoryException {
+    private void ensureTopic(Node publicationNode, String topic) throws RepositoryException, ApsZipImporterException {
         String xpath = topicHandleQuery(topic);
         Node topicNode = hippoUtils.findOneXPath(session, xpath);
-        if (topicNode == null) {
-            LOG.warn("No such topic {}", topic);
-            return;
+
+        if (topicNode != null) {
+            ensureTopic(publicationNode, topicNode);
+        } else {
+            throw new ApsZipImporterException(String.format("No such topic: '%s'", topic));
         }
-        ensureTopic(publicationNode, topicNode);
     }
 
     private void ensureTopic(Node publicationNode, Node topicNode) throws RepositoryException {

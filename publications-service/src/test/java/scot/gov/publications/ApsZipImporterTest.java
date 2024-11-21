@@ -279,11 +279,11 @@ public class ApsZipImporterTest {
      * Rejects unrecognised publication type
      */
     @Test(expected = ApsZipImporterException.class)
-    public void rejectsInvalidPublicationtype() throws Exception {
+    public void rejectsInvalidPublicationType() throws Exception {
         // ARRANGE
-        Path fixturePath = ZipFixtures.copyFixture("rejectsInvalidPublicationtype");
+        Path fixturePath = ZipFixtures.copyFixture("rejectsInvalidPublicationType");
         Metadata metadata = loadMetadata(fixturePath);
-        metadata.setIsbn("rejectsInvalidPublicationtype");
+        metadata.setIsbn("rejectsInvalidPublicationType");
         metadata.setPublicationType("invalid");
         saveMetadata(metadata, fixturePath);
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
@@ -733,9 +733,9 @@ public class ApsZipImporterTest {
     }
 
 
-    @Test
+    @Test(expected = ApsZipImporterException.class)
     public void policiesAddedCorrectly() throws Exception {
-        // ARRANGE - create two zips.  The first is related to digital and a non existant policy.  the second is related to biodiversity
+        // ARRANGE - create two zips.  The first is related to digital and a nonexistent policy.  The second is related to biodiversity.
         Path fixturePath1= ZipFixtures.copyFixture("policiesAddedCorrectly1");
         Metadata metadata = loadMetadata(fixturePath1);
         metadata.getPolicies().add("digital");
@@ -785,6 +785,8 @@ public class ApsZipImporterTest {
         String path = sut.importApsZip(zip1, publication);
 
         // ASSERT - expect exception
+        // Mockito - ensure HippoUtils.removePublicationFolderQuietly() called
+//        Mockito.verify(sut, Mockito.times(1)).hippoUtils.removePublicationFolderQuietly();
     }
 
     @Test

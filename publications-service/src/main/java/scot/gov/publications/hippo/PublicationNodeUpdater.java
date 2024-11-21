@@ -96,7 +96,7 @@ public class PublicationNodeUpdater {
              */
 
 
-            // these fieldsare edited by users, do not overwrite them if they already have a value
+            // these fields are edited by users, do not overwrite them if they already have a value
             hippoUtils.setPropertyIfAbsent(publicationNode, GOVSCOT_TITLE, metadata.getTitle());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getExecutiveSummary());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:seoTitle", metadata.getTitle());
@@ -326,7 +326,7 @@ public class PublicationNodeUpdater {
 
     /**
      * If a publication with this isbn already exists then we want to update it.  To make sure we update the right
-     * node we want to find all of then and then decide which node to use if there are multiple drafts.  If a
+     * node we want to find all of them and then decide which node to use if there are multiple drafts.  If a
      * published node exists then use that. Then fall back to using the unpublished one and then finally to draft.
      */
      public Node findPublicationNodeToUpdate(Metadata metadata) throws RepositoryException {

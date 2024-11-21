@@ -2,6 +2,7 @@ package scot.gov.publications.hippo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.Metadata;
 
 import javax.jcr.Node;
@@ -27,13 +28,13 @@ public class PoliciesUpdater {
     /**
      * Ensure that all policies mentioned in the metadata link to this publication.
      */
-    public void ensurePolicies(Node publicationNode, Metadata metadata) throws RepositoryException {
+    public void ensurePolicies(Node publicationNode, Metadata metadata) throws RepositoryException, ApsZipImporterException {
         for (String policy : metadata.getPolicies()) {
             ensurePolicy(publicationNode, policy);
         }
     }
 
-    private void ensurePolicy(Node publicationNode, String policy) throws RepositoryException {
+    private void ensurePolicy(Node publicationNode, String policy) throws RepositoryException, ApsZipImporterException {
 
         LOG.info("ensurePolicy {} -> {} ", policy, publicationNode.getPath());
 
@@ -41,7 +42,7 @@ public class PoliciesUpdater {
         Node policyLatest = findPolicyLatestNode(policy);
         if (policyLatest == null) {
             LOG.warn("Unable to find policy latest page for policy {}", policy);
-            return;
+            throw new ApsZipImporterException(String.format("Unable to find policy latest page for policy: '%s'", policy));
         }
 
         Node policyLatestHandle = policyLatest.getParent();
@@ -54,7 +55,7 @@ public class PoliciesUpdater {
         }
     }
 
-    private Node    findPolicyLatestNode(String policy) throws RepositoryException {
+    private Node findPolicyLatestNode(String policy) throws RepositoryException {
         String sql = "SELECT * FROM govscot:PolicyLatest WHERE jcr:path LIKE " +
                 "'/content/documents/govscot/policies/%s/latest/%%' AND hippostd:state = 'published'";
         return hippoUtils.findOne(session, sql, policy);

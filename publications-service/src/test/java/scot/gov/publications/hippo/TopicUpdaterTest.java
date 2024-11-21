@@ -2,6 +2,7 @@ package scot.gov.publications.hippo;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.metadata.Metadata;
 
 import javax.jcr.Node;
@@ -61,8 +62,8 @@ public class TopicUpdaterTest {
 
     }
 
-    @Test
-    public void ignoresUrecognisedLegacyTopic() throws RepositoryException {
+    @Test(expected = ApsZipImporterException.class)
+    public void unrecognisedLegacyTopicThrowsException() throws RepositoryException, ApsZipImporterException {
         // ARRANGE
         Metadata input = metadata("NO SUCH TOPIC");
         Node publicationNode = mock(Node.class);
@@ -78,7 +79,7 @@ public class TopicUpdaterTest {
         // ACT
         sut.ensureTopics(publicationNode, input);
 
-        // ASSERT
+        // ASSERT - expect exception
         verify(publicationNode, never()).addNode(eq("govscot:topics"), any());
     }
 
