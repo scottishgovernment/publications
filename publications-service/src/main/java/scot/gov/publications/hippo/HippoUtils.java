@@ -155,6 +155,7 @@ public class HippoUtils {
         String sql = String.format(queryTemplate, args);
         Query queryObj = session.getWorkspace().getQueryManager().createQuery(sql, type);
         QueryResult result = queryObj.execute();
+        LOG.info("findOneQuery: {}", sql);
         if (result.getNodes().getSize() == 1) {
             return result.getNodes().nextNode();
         }

@@ -1,5 +1,6 @@
 package scot.gov.publications.hippo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
@@ -11,6 +12,7 @@ import javax.jcr.Session;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static scot.gov.publications.hippo.XpathQueryHelper.topicHandleQuery;
 
 /**
@@ -80,6 +82,10 @@ public class TopicsUpdater {
     }
 
     private void ensureLegacyTopic(Node publicationNode, String topicName) throws RepositoryException, ApsZipImporterException {
+        if (isBlank(topicName)) {
+            return;
+        }
+
         String mappedTopic = topics.get(topicName);
         if (mappedTopic != null) {
             ensureTopic(publicationNode, mappedTopic);
@@ -90,6 +96,7 @@ public class TopicsUpdater {
     }
 
     private void ensureTopic(Node publicationNode, String topic) throws RepositoryException, ApsZipImporterException {
+
         String xpath = topicHandleQuery(topic);
         Node topicNode = hippoUtils.findOneXPath(session, xpath);
 

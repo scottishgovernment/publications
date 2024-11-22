@@ -9,7 +9,7 @@
     "executiveSummary": "Summary of example publicaition",
     "description": "Description of exmaple publication",
     "isbn": "999999999",
-    "topic": "Statistics",
+    "topic": null,
     "publicationType": "Statistics Publication",
     "keywords": "Homelessness, Temporary Accommodation, Statistics",
     "researchCategory": "",

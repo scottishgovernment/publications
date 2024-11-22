@@ -733,33 +733,38 @@ public class ApsZipImporterTest {
     }
 
 
-    @Test(expected = ApsZipImporterException.class)
-    public void policiesAddedCorrectly() throws Exception {
-        // ARRANGE - create two zips.  The first is related to digital and a nonexistent policy.  The second is related to biodiversity.
+    @Test
+        public void policiesAddedCorrectly() throws Exception {
+        // ARRANGE
         Path fixturePath1= ZipFixtures.copyFixture("policiesAddedCorrectly1");
         Metadata metadata = loadMetadata(fixturePath1);
         metadata.getPolicies().add("digital");
-        metadata.getPolicies().add("no-such-policy");
         saveMetadata(metadata, fixturePath1);
-        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
-
-        Path fixturePath2= ZipFixtures.copyFixture("policiesAddedCorrectly2");
-        //metadata.getPolicies().add("biodiversity");
-        saveMetadata(metadata, fixturePath2);
-        ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath2);
-
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath1);
 
         // ACT
 
         // import both of the zips.  We should end up with the publication related to both digital and biodiversity
-        String path;
-        path = sut.importApsZip(zip1, new Publication());
-        path = sut.importApsZip(zip2, new Publication());
+        String path = sut.importApsZip(zip, new Publication());
 
         // ASSERT
         Node publicationFolder = session.getNode(path);
         assertIsRelatedTo(publicationFolder, "digital");
-        //assertIsRelatedTo(publicationFolder, "biodiversity");
+    }
+
+    @Test(expected = ApsZipImporterException.class)
+    public void rejectsNoSuchPolicy() throws Exception {
+        // ARRANGE - create two zips.  The first is related to digital and a nonexistent policy.  The second is related to biodiversity.
+        Path fixturePath1= ZipFixtures.copyFixture("policiesAddedCorrectly1");
+        Metadata metadata = loadMetadata(fixturePath1);
+        metadata.getPolicies().add("nosuchpolicy");
+        saveMetadata(metadata, fixturePath1);
+        ZipFile zip = ZipFixtures.zipDirectory(fixturePath1);
+
+        // ACT
+        String path = sut.importApsZip(zip, new Publication());
+
+        // ASSERT - expect an exception
     }
 
     void assertIsRelatedTo(Node publicationFolder, String policyName) throws RepositoryException {
@@ -859,6 +864,26 @@ public class ApsZipImporterTest {
         Metadata metadata = loadMetadata(fixturePath);
         metadata.setIsbn("updatesTopicsCorrectly");
         metadata.setTopic("");
+        saveMetadata(metadata, fixturePath);
+
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // ASSERT - expect exception
+
+    }
+
+    @Test(expected = ApsZipImporterException.class)
+    public void rejectsUnrecognisedTopic() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixture("    public void rejectsUnrecognisedTopic() throws Exception {\n");
+        Metadata metadata = loadMetadata(fixturePath);
+        metadata.setIsbn("updatesTopicsCorrectly");
+        metadata.setTopic("nosuchtopic");
         saveMetadata(metadata, fixturePath);
 
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
