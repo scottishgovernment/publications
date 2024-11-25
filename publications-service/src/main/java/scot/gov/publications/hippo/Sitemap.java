@@ -35,20 +35,18 @@ public class Sitemap {
     }
 
     void removeSitemapEntry(Node node) throws RepositoryException {
-        String xpath = "/jcr:root/content/sitemaps/%s//uuid-%s";
-        Node record = hippoUtils.findOneQuery(session, xpath, Query.XPATH, "govscot", node.getParent().getIdentifier());
-        if (record == null) {
-            return;
-        }
-
-        String url = record.getProperty("govscot:loc").getString();
-        LOG.info("removing sitemap node for {}, {}", url, record.getPath());
-
-        // the sitemap that this url belongs to has changed
-        record.getParent().setProperty(LAST_MOD, Calendar.getInstance());
-
-        record.remove();
+        String sitename = "govscot";
+        String handleIdentifier = node.getParent().getIdentifier();
+        String xpath = String.format("/jcr:root/content/sitemaps/%s//uuid-%s", sitename, handleIdentifier);
+        hippoUtils.executeXpathQuery(session, xpath, currentNode -> {
+            if (currentNode != null) {
+                String url = currentNode.getProperty("govscot:loc").getString();
+                LOG.info("removing sitemap node for {}, {}, {}", url, node.getPath(), currentNode.getPath());
+                currentNode.remove();
+            }
+        });
     }
+
 
     void ensureSitemapEntry(Node node) throws RepositoryException {
 

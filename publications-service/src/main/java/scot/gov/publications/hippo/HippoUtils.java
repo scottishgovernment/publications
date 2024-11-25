@@ -1,6 +1,8 @@
 package scot.gov.publications.hippo;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import javax.jcr.query.Query;
@@ -13,6 +15,8 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 
 public class HippoUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(HippoUtils.class);
 
     @FunctionalInterface
     public interface ThrowingPredicate {
@@ -249,5 +253,34 @@ public class HippoUtils {
                 consumer.accept(node);
             }
         }
+    }
+
+    public long executeXpathQuery(
+            Session session,
+            String query,
+            ThrowingConsumer consumer) throws RepositoryException {
+        return executeQuery(session, query, Query.XPATH, node -> true, consumer);
+    }
+
+    public long executeQuery(
+            Session session,
+            String query,
+            String queryType,
+            ThrowingPredicate predicate,
+            ThrowingConsumer consumer) throws RepositoryException {
+        Query queryObj = session
+                .getWorkspace()
+                .getQueryManager()
+                .createQuery(query, queryType);
+        queryObj.setLimit(250000);
+        QueryResult result = queryObj.execute();
+        NodeIterator nodeIt = result.getNodes();
+        while (nodeIt.hasNext()) {
+            Node node = nodeIt.nextNode();
+            if (predicate.test(node)) {
+                consumer.accept(node);
+            }
+        }
+        return nodeIt.getSize();
     }
 }
