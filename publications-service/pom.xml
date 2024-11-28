@@ -30,7 +30,7 @@
       src/main/java/scot/gov/publications/PublicationsSearchJournal.java,
       src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java
       src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java
-      src/main/java/scot/gov/scot/publications/hippo/Sitemap.java
+      src/main/java/scot/gov/publications/hippo/Sitemap.java
     </sonar.exclusions>
     <sonar.coverage.exclusions>
       src/main/java/scot/gov/publications/rest/RequestLogger.java
