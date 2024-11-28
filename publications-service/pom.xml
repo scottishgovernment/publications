@@ -28,8 +28,7 @@
       src/main/java/scot/gov/publications/hippo/DocumentUploader.java,
       src/main/java/scot/gov/publications/hippo/pages/PublicationPageUpdater.java,
       src/main/java/scot/gov/publications/PublicationsSearchJournal.java,
-      src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java
-      src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java
+      src/main/java/scot/gov/publications/hippo/PoliciesUpdater.java,
       src/main/java/scot/gov/publications/hippo/Sitemap.java
     </sonar.exclusions>
     <sonar.coverage.exclusions>
