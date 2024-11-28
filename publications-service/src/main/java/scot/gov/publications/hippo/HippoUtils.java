@@ -1,8 +1,6 @@
 package scot.gov.publications.hippo;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.*;
 import javax.jcr.query.Query;
@@ -15,8 +13,6 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
 
 public class HippoUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HippoUtils.class);
 
     @FunctionalInterface
     public interface ThrowingPredicate {

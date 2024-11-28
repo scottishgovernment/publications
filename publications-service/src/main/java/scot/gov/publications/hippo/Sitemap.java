@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
