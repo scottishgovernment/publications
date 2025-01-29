@@ -165,6 +165,47 @@ public class MetadataParserTest {
         assertEquals(actual.getOffset().getTotalSeconds(), 0);
     }
 
+    @Test
+    public void canParseConsultation() throws Exception {
+
+        // ARRANGE
+        InputStream in = new ByteArrayInputStream(metadata("consultation").getBytes());
+        MetadataParser sut = new MetadataParser();
+
+        // ACT
+        Metadata actual = sut.parse(in);
+
+        // ASSERT
+        assertEquals(actual.getConsultation().getResponseUrl(), "https://consult.gov.scot/environment-forestry/charging-for-single-use-disposable-beverage-cups/");
+        assertEquals(actual.getConsultation().getOpeningDate(), LocalDateTime.of(2024, 9, 1, 9, 0, 0));
+        assertEquals(actual.getConsultation().getClosingDate(), LocalDateTime.of(2024, 9, 30, 9, 0, 0));
+    }
+
+    @Test(expected = MetadataParserException.class)
+    public void exceptionThrownIfOpeningDateIsBlank() throws Exception {
+
+        // ARRANGE
+        String in = metadata("consultation").replaceAll("2024-09-01T09:00:00", "");
+        MetadataParser sut = new MetadataParser();
+
+        // ACT
+        sut.parse(new ByteArrayInputStream(in.getBytes()));
+
+        // ASSERT - see expected exception
+    }
+
+    @Test(expected = MetadataParserException.class)
+    public void exceptionThrownIfResponseUrlIsBlank() throws Exception {
+
+        // ARRANGE
+        String in = metadata("consultation").replaceAll("https://consult.gov.scot/environment-forestry/charging-for-single-use-disposable-beverage-cups/", "");
+        MetadataParser sut = new MetadataParser();
+
+        // ACT
+        sut.parse(new ByteArrayInputStream(in.getBytes()));
+
+        // ASSERT - see expected exception
+    }
 
     InputStream exceptionThowingInputStream() throws IOException {
         InputStream in = mock(InputStream.class);

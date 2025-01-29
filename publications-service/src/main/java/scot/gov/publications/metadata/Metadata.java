@@ -66,6 +66,16 @@ public class Metadata {
 
     List<String> secondaryResponsibleRoles = new ArrayList<>();
 
+    Consultation consultation;
+
+    public Consultation getConsultation() {
+        return consultation;
+    }
+
+    public void setConsultation(Consultation consultation) {
+        this.consultation = consultation;
+    }
+
     boolean sensitive = false;
 
     public String getId() {
@@ -287,5 +297,9 @@ public class Metadata {
 
         // if the sensitive flag is set or if this is an embargo type then we should embargo it.
         return isSensitive() || typeMapper.isEmbargoType(publicationType);
+    }
+
+    public boolean isConsultation() {
+        return "consultation-paper".equals(getPublicationType()) && getConsultation() != null;
     }
 }

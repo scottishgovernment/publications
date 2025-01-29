@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
+import scot.gov.publications.metadata.Consultation;
+import scot.gov.publications.metadata.ConsultationResponseMethod;
 import scot.gov.publications.metadata.Metadata;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publishing.sluglookup.SlugLookups;
@@ -17,6 +19,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -26,9 +30,7 @@ import java.util.Map;
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.apache.commons.lang3.StringUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static scot.gov.publications.hippo.Constants.GOVSCOT_GOVSCOTURL;
-import static scot.gov.publications.hippo.Constants.GOVSCOT_TITLE;
-import static scot.gov.publications.hippo.Constants.HIPPOSTD_STATE;
+import static scot.gov.publications.hippo.Constants.*;
 import static scot.gov.publications.hippo.XpathQueryHelper.*;
 
 /**
@@ -107,7 +109,7 @@ public class PublicationNodeUpdater {
             policiesUpdater.ensurePolicies(publicationNode, metadata);
             createDirectoratesIfAbsent(publicationNode, metadata);
             createRolesIfAbsent(publicationNode, metadata);
-
+            createOrUpdateConsultationFields(publicationNode, metadata);
             // update the tags - add any that are not already there.
             tagUpdater.updateTags(publicationNode, metadata.getTags());
 
@@ -203,6 +205,29 @@ public class PublicationNodeUpdater {
         }
     }
 
+    private void createOrUpdateConsultationFields(Node node, Metadata metadata) throws RepositoryException {
+        if (!metadata.isConsultation()) {
+            return;
+        }
+
+        Consultation consultation = metadata.getConsultation();
+        LocalDateTime now = LocalDateTime.now();
+        boolean open = now.isAfter(consultation.getOpeningDate()) && now.isBefore(consultation.getClosingDate());
+        node.setProperty("govscot:openingDate", GregorianCalendar.from(consultation.getOpeningDate().atZone(ZoneId.systemDefault())));
+        node.setProperty("govscot:closingDate", GregorianCalendar.from(consultation.getClosingDate().atZone(ZoneId.systemDefault())));
+        node.setProperty("govscot:isOpen", open);
+        node.setProperty("govscot:responseUrl", consultation.getResponseUrl());
+        // remove any response methods that exist from a previous upload
+        NodeIterator it = node.getNodes("govscot:consultationResponseMethods");
+        hippoUtils.apply(it, Node::remove);
+        for (ConsultationResponseMethod responseMethod : consultation.getAlternativeWaysToRespond()) {
+            Node respondMethodNode = hippoUtils.createNode(node,"govscot:consultationResponseMethods",
+                    "govscot:ConsultationResponseType", "hippo:container", "hippostd:container", "hippostd:relaxed");
+            respondMethodNode.setProperty("govscot:type", responseMethod.getTitle());
+            hippoUtils.ensureHtmlNode(respondMethodNode, "govscot:content", responseMethod.getText());
+        }
+    }
+
     private boolean shouldUpdateRole(Node publicationNode, Metadata metadata) throws RepositoryException {
         if (isBlank(metadata.getPrimaryResponsibleRole())) {
             return false;
@@ -277,11 +302,12 @@ public class PublicationNodeUpdater {
             Node pubFolder = hippoPaths.ensurePath(newPath);
             pubFolder.setProperty("hippo:name", metadata.getTitle());
             Node handle = nodeFactory.newHandle(metadata.getTitle(), pubFolder, "index");
+            String type = metadata.isConsultation() ? "govscot:Consultation" : "govscot:Publication";
             pubNode = nodeFactory.newDocumentNode(
                     handle,
                     "index",
                     metadata.getTitle(),
-                    "govscot:Publication",
+                    type,
                     metadata.getPublicationDateWithTimezone(),
                     metadata.shoudlEmbargo());
         } else {

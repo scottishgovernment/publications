@@ -96,7 +96,8 @@ public class ApsZipImporter {
                     imgMap,
                     docMap,
                     metadata.getPublicationDateWithTimezone(),
-                    metadata.shoudlEmbargo());
+                    metadata.shoudlEmbargo(),
+                    metadata.isConsultation());
 
             publicationFolder = publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);
             ensureFolderActions(publicationFolder, metadata.getPublicationType());
@@ -187,6 +188,8 @@ public class ApsZipImporter {
                 return actions("new-minutes-folder");
             case "foi-eir-release":
                 return actions("new-foi-folder");
+            case "consultation-paper":
+                return actions("new-consultation-folder");
             default:
                 return actions("new-publication-folder", "new-complex-document-folder");
         }
