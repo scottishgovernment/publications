@@ -3,6 +3,7 @@ package scot.gov.publications.metadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,9 +64,31 @@ public class MetadataParser {
             missingFields.add("publicationDate");
         }
 
+        if (StringUtils.equals(metadata.getPublicationType(), "consultation-paper")) {
+            // if the type is consultation paper, and the JSON contains a 'consultation' element then
+            // assert that there has to be: openingDate, closingDate, responseUrl
+            assertRequiredConsultaitonFields(metadata, missingFields);
+        }
+
         if (!missingFields.isEmpty()) {
             String missignFieldsString = missingFields.stream().collect(joining(", "));
             throw new MetadataParserException("Metadata missing required field(s): " + missignFieldsString);
+        }
+    }
+
+    void assertRequiredConsultaitonFields(Metadata metadata, List<String> missingFields) {
+        if (metadata.getConsultation() == null) {
+            return;
+        }
+        Consultation consultation = metadata.getConsultation();
+        if (consultation.getOpeningDate() == null) {
+            missingFields.add("consultation.openingDate");
+        }
+        if (consultation.getClosingDate() == null) {
+            missingFields.add("consultation.closingDate");
+        }
+        if (isBlank(consultation.getResponseUrl())) {
+            missingFields.add("consultation.reponseUrl");
         }
     }
 

@@ -5,8 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.hippo.HippoNodeFactory;
@@ -36,8 +34,6 @@ import static scot.gov.publications.hippo.Constants.*;
  * Contains the logic used to add page nodes from a zip file to a publication folder.
  */
 public class PublicationPageUpdater {
-
-    private static final Logger LOG = LoggerFactory.getLogger(PublicationPageUpdater.class);
 
     private static final String PAGES = "pages";
 
@@ -74,7 +70,8 @@ public class PublicationPageUpdater {
             Map<String, String> filenameToImageId,
             Map<String, Node> docnameToNode,
             ZonedDateTime publishDateTime,
-            boolean shouldEmbargo) throws ApsZipImporterException {
+            boolean shouldEmbargo,
+            boolean isConsultation) throws ApsZipImporterException {
 
         try {
             // map the names of all pages we have created
@@ -83,7 +80,8 @@ public class PublicationPageUpdater {
                     publicationFolder,
                     filenameToImageId,
                     publishDateTime,
-                    shouldEmbargo);
+                    shouldEmbargo,
+                    isConsultation);
             nodesByEntryname.putAll(docnameToNode);
             PublicationLinkRewriter linkRewriter = new PublicationLinkRewriter(publicationFolder.getName(), nodesByEntryname);
             linkRewriter.rewrite(publicationFolder);
@@ -97,24 +95,38 @@ public class PublicationPageUpdater {
             Node publicationFolder,
             Map<String, String> filenameToImageId,
             ZonedDateTime publishDateTime,
-            boolean shouldEmbargo)
+            boolean shouldEmbargo,
+            boolean isConsultation)
                 throws IOException, RepositoryException, ApsZipImporterException {
 
         Node pages = ensurePagesNode(publicationFolder);
         pages.setProperty(HIPPOSTD_FOLDERTYPE, new String[]{"new-publication-page"});
         List<ZipEntry> htmlEntries = zipFile.stream().filter(ZipEntryUtil::isHtml).sorted(Comparator.comparing(ZipEntry::getName)).collect(toList());
-
-        LOG.info("Adding {} pages", htmlEntries.size());
         Map<String, Node> pageNodesByEntry = new HashMap<>();
+        boolean hasRespondPage = false;
         int i = 0;
         for (ZipEntry htmlEntry : htmlEntries) {
             InputStream in = zipFile.getInputStream(htmlEntry);
             String pageContent = IOUtils.toString(in, UTF_8);
             Node pageNode = addPage(pages, pageContent, i, filenameToImageId, publishDateTime, shouldEmbargo);
-
+            if ("respond".equals(pageNode.getName())) {
+                hasRespondPage = true;
+            }
             Path entryPath = java.nio.file.Paths.get(htmlEntry.getName());
             pageNodesByEntry.put(entryPath.getFileName().toString(), pageNode);
             i++;
+        }
+
+        // ensure that consultaitons have a 'Respond' page if one exists in the zip then use it, otherwise create an empty one
+        if (isConsultation && !hasRespondPage) {
+            String slug = "respond";
+            String title = "How to respond";
+            Node pageHandle = nodeFactory.newHandle(title, pages, slug);
+            Node pageNode = nodeFactory.newDocumentNode(
+                    pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbargo);
+            nodeFactory.addBasicFields(pageNode, title);
+            pageNode.setProperty(GOVSCOT_TITLE, title);
+            hippoUtils.ensureHtmlNode(pageNode, GOVSCOT_CONTENT, "");
         }
         return pageNodesByEntry;
     }

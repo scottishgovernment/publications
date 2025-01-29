@@ -242,6 +242,10 @@ public class HippoUtils {
         return node.hasProperty(HIPPOSTD_STATE);
     }
 
+    public void apply(NodeIterator it, ThrowingConsumer consumer) throws RepositoryException {
+        this.apply(it, n -> true, consumer);
+    }
+
     public void apply(NodeIterator it, ThrowingPredicate predicate, ThrowingConsumer consumer) throws RepositoryException {
         while (it.hasNext()) {
             Node node = it.nextNode();
