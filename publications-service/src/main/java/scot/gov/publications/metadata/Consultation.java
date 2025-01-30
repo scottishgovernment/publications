@@ -24,7 +24,7 @@ public class Consultation {
 
     List<ConsultationResponseMethod> alternativeWaysToRespond = new ArrayList<>();
 
-    String consultationISBN;
+    String consultationUrl;
 
     public LocalDateTime getOpeningDate() {
         return openingDate;
@@ -58,11 +58,11 @@ public class Consultation {
         this.alternativeWaysToRespond = alternativeWaysToRespond;
     }
 
-    public String getConsultationISBN() {
-        return consultationISBN;
+    public String getConsultationUrl() {
+        return consultationUrl;
     }
 
-    public void setConsultationISBN(String consultationISBN) {
-        this.consultationISBN = consultationISBN;
+    public void setConsultationUrl(String consultationUrl) {
+        this.consultationUrl = consultationUrl;
     }
 }

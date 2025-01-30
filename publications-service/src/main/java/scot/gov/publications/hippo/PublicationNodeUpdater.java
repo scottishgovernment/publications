@@ -44,6 +44,8 @@ public class PublicationNodeUpdater {
 
     private static final String RESPONSIBLE_ROLE = "govscot:responsibleRole";
 
+    private static final String FEATURED_LINKS = "govscot:featuredLinks";
+
     Session session;
 
     HippoPaths hippoPaths;
@@ -96,9 +98,7 @@ public class PublicationNodeUpdater {
              * -
              * - topics, policies, directorates, roles, tags: merge topics in zip with existing
              */
-
-
-            // these fieldsare edited by users, do not overwrite them if they already have a value
+            // these fields are edited by users, do not overwrite them if they already have a value
             hippoUtils.setPropertyIfAbsent(publicationNode, GOVSCOT_TITLE, metadata.getTitle());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:summary", metadata.getExecutiveSummary());
             hippoUtils.setPropertyIfAbsent(publicationNode, "govscot:seoTitle", metadata.getTitle());
@@ -110,6 +110,8 @@ public class PublicationNodeUpdater {
             createDirectoratesIfAbsent(publicationNode, metadata);
             createRolesIfAbsent(publicationNode, metadata);
             createOrUpdateConsultationFields(publicationNode, metadata);
+            createOrUpdateConsultationAnalysisFields(publicationNode, metadata);
+
             // update the tags - add any that are not already there.
             tagUpdater.updateTags(publicationNode, metadata.getTags());
 
@@ -172,7 +174,7 @@ public class PublicationNodeUpdater {
 
         // some nodes have a responsibleDirectorate of / ... treat these as empty
         Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE );
-        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respDirectorate.getProperty("hippo:docbase").getString())) {
+        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respDirectorate.getProperty(HIPPO_DOCBASE).getString())) {
             respDirectorate.remove();
             return true;
         }
@@ -205,6 +207,63 @@ public class PublicationNodeUpdater {
         }
     }
 
+    private void createOrUpdateConsultationAnalysisFields(Node node, Metadata metadata)
+            throws RepositoryException, ApsZipImporterException {
+
+        if (!metadata.isConsultationAnalysis()) {
+            LOG.error("createOrUpdateConsultationAnalysisFields not an analysis");
+            return;
+        }
+
+        // remove any existing featured links
+        if (node.hasNode(FEATURED_LINKS)) {
+            node.getNode(FEATURED_LINKS).remove();
+        }
+
+        Consultation consultation = metadata.getConsultation();
+        if (isBlank(consultation.getConsultationUrl())) {
+            LOG.warn("Consultation analysis does not specify a consultation {}", metadata.getIsbn());
+            return;
+        }
+
+        Node consultationHandle = getConsultationNode(consultation.getConsultationUrl());
+        if (consultationHandle != null) {
+            Node featuredLinks = node.addNode(FEATURED_LINKS, "govscot:FeaturedLinks");
+            featuredLinks.setProperty("govscot:label", "Consultation");
+            Node linkNode = featuredLinks.addNode("govscot:link", "govscot:DescribedLink");
+            linkNode.setProperty("govscot:description", "");
+            Node link = linkNode.addNode("govscot:link", HIPPO_MIRROR);
+            link.setProperty(HIPPO_DOCBASE, consultationHandle.getIdentifier());
+        }
+    }
+
+    Node getConsultationNode(String consultationUrl) throws RepositoryException, ApsZipImporterException {
+        String slug = getSlugFromConsultationUrl(consultationUrl);
+        if (slug == null) {
+            throw new ApsZipImporterException("invalid consultation URL");
+        }
+
+        String xpath = String.format("//element(*, govscot:Publication)[hippostd:state = 'published'][govscot:slug = '%s']", slug);
+        Node consultation = hippoUtils.findOneXPath(session, xpath);
+        if (consultation == null) {
+            throw new ApsZipImporterException("Unable to find consultation " + consultationUrl);
+        }
+        return consultation.getParent();
+    }
+
+    String getSlugFromConsultationUrl(String url) {
+        if (!startsWith(url, "https://www.gov.scot/publications/")) {
+            return null;
+        }
+        url = StringUtils.stripEnd(url, "/");
+        String [] parts = url.split("/");
+        if (parts.length != 5) {
+            return null;
+        }
+
+        return parts[4];
+    }
+
     private void createOrUpdateConsultationFields(Node node, Metadata metadata) throws RepositoryException {
         if (!metadata.isConsultation()) {
             return;
@@ -222,7 +281,7 @@ public class PublicationNodeUpdater {
         hippoUtils.apply(it, Node::remove);
         for (ConsultationResponseMethod responseMethod : consultation.getAlternativeWaysToRespond()) {
             Node respondMethodNode = hippoUtils.createNode(node,"govscot:consultationResponseMethods",
-                    "govscot:ConsultationResponseType", "hippo:container", "hippostd:container", "hippostd:relaxed");
+                    "govscot:ConsultationResponseType", HIPPO_CONTAINER, HIPPOSTD_CONTAINER, "hippostd:relaxed");
             respondMethodNode.setProperty("govscot:type", responseMethod.getTitle());
             hippoUtils.ensureHtmlNode(respondMethodNode, "govscot:content", responseMethod.getText());
         }
@@ -239,7 +298,7 @@ public class PublicationNodeUpdater {
 
         // some nodes have a responsibleDirectorate of / ... treat these as empty
         Node respRole = publicationNode.getNode(RESPONSIBLE_ROLE);
-        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respRole.getProperty("hippo:docbase").getString())) {
+        if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respRole.getProperty(HIPPO_DOCBASE).getString())) {
             respRole.remove();
             return true;
         }
@@ -300,7 +359,7 @@ public class PublicationNodeUpdater {
         if (pubNode == null) {
             List<String> newPath = pathStrategy.path(metadata);
             Node pubFolder = hippoPaths.ensurePath(newPath);
-            pubFolder.setProperty("hippo:name", metadata.getTitle());
+            pubFolder.setProperty(HIPPO_NAME, metadata.getTitle());
             Node handle = nodeFactory.newHandle(metadata.getTitle(), pubFolder, "index");
             String type = metadata.isConsultation() ? "govscot:Consultation" : "govscot:Publication";
             pubNode = nodeFactory.newDocumentNode(
@@ -373,7 +432,7 @@ public class PublicationNodeUpdater {
         NodeIterator it = result.getNodes();
         while (it.hasNext()) {
             Node node = it.nextNode();
-            String state = node.getProperty("hippostd:state").getString();
+            String state = node.getProperty(HIPPOSTD_STATE).getString();
             byState.put(state, node);
         }
         return firstNonNull(
