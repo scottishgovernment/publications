@@ -2,7 +2,10 @@ package scot.gov.publications.metadata;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import java.time.LocalDateTime;
+
+import static org.junit.Assert.*;
+import static scot.gov.publications.metadata.PublicationTypeMapper.STATISTICS;
 
 public class MetadataTest {
 
@@ -26,4 +29,40 @@ public class MetadataTest {
         sut.setIsbn(" 9999-899990-  \t");
         assertEquals(sut.normalisedIsbn(), "9999899990");
     }
+
+    @Test
+    public void shouldEmbargoReturnsFalseIfDateInPast() {
+        Metadata sut = new Metadata();
+        sut.setPublicationDate(LocalDateTime.now().minusDays(1));
+        assertFalse(sut.shoudlEmbargo());
+    }
+
+    @Test
+    public void shouldEmbargoReturnsTrueIfSensetive() {
+        Metadata sut = new Metadata();
+        sut.setPublicationDate(LocalDateTime.now().plusDays(1));
+        sut.setSensitive(true);
+        sut.setPublicationType("type");
+        assertTrue(sut.shoudlEmbargo());
+    }
+
+    @Test
+    public void shouldEmbargoReturnsTrueIfEmbargoType() {
+        Metadata sut = new Metadata();
+        sut.setPublicationDate(LocalDateTime.now().plusDays(1));
+        sut.setSensitive(false);
+        sut.setPublicationType(STATISTICS);
+        assertTrue(sut.shoudlEmbargo());
+    }
+
+//    public boolean shoudlEmbargo() {
+//
+//        // we never need to embargo a publications whose publication date is in the past
+//        if (publicationDate.isBefore(LocalDateTime.now())) {
+//            return false;
+//        }
+//
+//        // if the sensitive flag is set or if this is an embargo type then we should embargo it.
+//        return isSensitive() || typeMapper.isEmbargoType(publicationType);
+//    }
 }
