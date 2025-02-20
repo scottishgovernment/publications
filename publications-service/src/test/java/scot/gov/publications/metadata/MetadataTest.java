@@ -55,14 +55,58 @@ public class MetadataTest {
         assertTrue(sut.shoudlEmbargo());
     }
 
-//    public boolean shoudlEmbargo() {
+    @Test
+    public void isConsultationRecognisesConsultation() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation-paper");
+        sut.consultation = new Consultation();
+        assertTrue(sut.isConsultation());
+    }
+
+    @Test
+    public void isConsultationFalseIfNoConsultation() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation-paper");
+        assertFalse(sut.isConsultation());
+    }
+
+    @Test
+    public void isConsultationFalseIfWrongTypeConsultation() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation-analysis");
+        sut.consultation = new Consultation();
+        assertFalse(sut.isConsultation());
+    }
+
+    @Test
+    public void isConsultationAnalysisRecognisesAnalysis() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation-analysis");
+        sut.consultation = new Consultation();
+        assertTrue(sut.isConsultationAnalysis());
+    }
+
+    @Test
+    public void isConsultationAnalysisFalseIfNoConsultation() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation-analysis");
+        assertFalse(sut.isConsultationAnalysis());
+    }
+
+    @Test
+    public void isConsultationAnalysisFalseIfWrongTypeConsultation() {
+        Metadata sut = new Metadata();
+        sut.setPublicationType("consultation");
+        sut.consultation = new Consultation();
+        assertFalse(sut.isConsultationAnalysis());
+    }
+
 //
-//        // we never need to embargo a publications whose publication date is in the past
-//        if (publicationDate.isBefore(LocalDateTime.now())) {
-//            return false;
-//        }
+//    public boolean isConsultation() {
+//        return "consultation-paper".equals(getPublicationType()) && getConsultation() != null;
+//    }
 //
-//        // if the sensitive flag is set or if this is an embargo type then we should embargo it.
-//        return isSensitive() || typeMapper.isEmbargoType(publicationType);
+//    public boolean isConsultationAnalysis() {
+//        return "consultation-analysis".equals(getPublicationType()) && getConsultation() != null;
 //    }
 }
