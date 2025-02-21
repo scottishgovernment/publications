@@ -130,6 +130,9 @@ public class PublicationNodeUpdater {
         } catch (RepositoryException e) {
             removePublicationFolderQuietly(publicationFolder);
             throw new ApsZipImporterException("Failed to create or update publication node", e);
+        } catch (ApsZipImporterException e) {
+            removePublicationFolderQuietly(publicationFolder);
+            throw e;
         }
     }
 
@@ -211,7 +214,6 @@ public class PublicationNodeUpdater {
             throws RepositoryException, ApsZipImporterException {
 
         if (!metadata.isConsultationAnalysis()) {
-            LOG.error("createOrUpdateConsultationAnalysisFields not an analysis");
             return;
         }
 
@@ -243,7 +245,7 @@ public class PublicationNodeUpdater {
             throw new ApsZipImporterException("invalid consultation URL");
         }
 
-        String xpath = String.format("//element(*, govscot:Publication)[hippostd:state = 'published'][govscot:slug = '%s']", slug);
+        String xpath = String.format("//element(*, govscot:Publication)[govscot:slug = '%s'][hippo:availability = 'live'][hippostd:state = 'published']", slug);
         Node consultation = hippoUtils.findOneXPath(session, xpath);
         if (consultation == null) {
             throw new ApsZipImporterException("Unable to find consultation " + consultationUrl);
