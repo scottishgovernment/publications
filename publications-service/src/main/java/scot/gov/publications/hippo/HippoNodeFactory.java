@@ -38,12 +38,35 @@ public class HippoNodeFactory {
             String type,
             ZonedDateTime publishDateTime,
             boolean embargo) throws RepositoryException {
+        return this.newDocumentNode(handle, slug, title, type, publishDateTime, embargo, true);
+    }
+
+    public Node newDocumentNodeWithoutSlug(
+            Node handle,
+            String slug,
+            String title,
+            String type,
+            ZonedDateTime publishDateTime,
+            boolean embargo) throws RepositoryException {
+        return this.newDocumentNode(handle, slug, title, type, publishDateTime, embargo, false);
+    }
+
+    public Node newDocumentNode(
+            Node handle,
+            String slug,
+            String title,
+            String type,
+            ZonedDateTime publishDateTime,
+            boolean embargo,
+            boolean includeSlug) throws RepositoryException {
 
         Node node = hippoUtils.createNode(handle, slug, type, DOCUMENT_MIXINS);
 
         // the folder has been created using the SlugAllocations strategy so we can use it name as the govscot:slug
         // property that is used to determine the url of this publication.
-        node.setProperty("govscot:slug", handle.getParent().getName());
+        if (includeSlug) {
+            node.setProperty("govscot:slug", handle.getParent().getName());
+        }
         node.setProperty(HIPPO_NAME, TitleSanitiser.sanitise(title));
         node.setProperty("hippotranslation:locale", "en");
         node.setProperty("hippotranslation:id", UUID.randomUUID().toString());
@@ -55,7 +78,6 @@ public class HippoNodeFactory {
         ensurePublicationStatus(node, publishDateTime, embargo);
         return node;
     }
-
     /**
      * Ensure that the publication status and wny required workflow job exists for this publication
      */

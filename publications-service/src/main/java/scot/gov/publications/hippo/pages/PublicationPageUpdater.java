@@ -122,7 +122,7 @@ public class PublicationPageUpdater {
             String slug = "respond";
             String title = "How to respond";
             Node pageHandle = nodeFactory.newHandle(title, pages, slug);
-            Node pageNode = nodeFactory.newDocumentNode(
+            Node pageNode = nodeFactory.newDocumentNodeWithoutSlug(
                     pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbargo);
             nodeFactory.addBasicFields(pageNode, title);
             pageNode.setProperty(GOVSCOT_TITLE, title);
@@ -157,10 +157,8 @@ public class PublicationPageUpdater {
         String title = TitleSanitiser.sanitise(htmlUtil.getTitle(mainTextDiv, index));
         String slug = Integer.toString(index);
         Node pageHandle = nodeFactory.newHandle(title, pagesNode, slug);
-        Node pageNode = nodeFactory.newDocumentNode(
+        Node pageNode = nodeFactory.newDocumentNodeWithoutSlug(
                 pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbaro);
-        // slugs are unused for pages
-        pageNode.getProperty("govscot:slug").remove();
         nodeFactory.addBasicFields(pageNode, title);
         pageNode.setProperty(GOVSCOT_TITLE, title);
         createPageContentAndLinkImages(mainTextDiv, pageNode, filenameToImageId);

@@ -108,15 +108,13 @@ public class DocumentUploader {
         String title = getTitle(manifestEntry, existingDocumentTitles);
         String slug = hippoPaths.slugify(title);
         Node handle = nodeFactory.newHandle(title, documentsFolder, slug);
-        Node documentInfoNode = nodeFactory.newDocumentNode(
+        Node documentInfoNode = nodeFactory.newDocumentNodeWithoutSlug(
                 handle,
                 slug,
                 title,
                 "govscot:DocumentInformation",
                 metadata.getPublicationDateWithTimezone(),
                 metadata.shoudlEmbargo());
-        // slugs are unused for document info pages
-        documentInfoNode.getProperty("govscot:slug").remove();
         documentInfoNode.setProperty(GOVSCOT_TITLE, title);
         documentInfoNode.setProperty("govscot:accessible", false);
         documentInfoNode.setProperty("govscot:highlighted", false);
