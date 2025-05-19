@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import static java.util.stream.Collectors.joining;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -67,16 +66,16 @@ public class MetadataParser {
         if (StringUtils.equals(metadata.getPublicationType(), "consultation-paper")) {
             // if the type is consultation paper, and the JSON contains a 'consultation' element then
             // assert that there has to be: openingDate, closingDate, responseUrl
-            assertRequiredConsultaitonFields(metadata, missingFields);
+            assertRequiredConsultationFields(metadata, missingFields);
         }
 
         if (!missingFields.isEmpty()) {
-            String missignFieldsString = missingFields.stream().collect(joining(", "));
+            String missignFieldsString = String.join(", ", missingFields);
             throw new MetadataParserException("Metadata missing required field(s): " + missignFieldsString);
         }
     }
 
-    void assertRequiredConsultaitonFields(Metadata metadata, List<String> missingFields) {
+    void assertRequiredConsultationFields(Metadata metadata, List<String> missingFields) {
         if (metadata.getConsultation() == null) {
             return;
         }
@@ -86,9 +85,6 @@ public class MetadataParser {
         }
         if (consultation.getClosingDate() == null) {
             missingFields.add("consultation.closingDate");
-        }
-        if (isBlank(consultation.getResponseUrl())) {
-            missingFields.add("consultation.reponseUrl");
         }
     }
 

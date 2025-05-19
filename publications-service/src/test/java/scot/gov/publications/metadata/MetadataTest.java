@@ -101,12 +101,4 @@ public class MetadataTest {
         assertFalse(sut.isConsultationAnalysis());
     }
 
-//
-//    public boolean isConsultation() {
-//        return "consultation-paper".equals(getPublicationType()) && getConsultation() != null;
-//    }
-//
-//    public boolean isConsultationAnalysis() {
-//        return "consultation-analysis".equals(getPublicationType()) && getConsultation() != null;
-//    }
 }

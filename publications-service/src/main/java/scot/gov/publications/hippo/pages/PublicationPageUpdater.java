@@ -7,10 +7,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.hippo.HippoNodeFactory;
-import scot.gov.publications.hippo.HippoPaths;
-import scot.gov.publications.hippo.HippoUtils;
-import scot.gov.publications.hippo.TitleSanitiser;
+import scot.gov.publications.hippo.*;
 import scot.gov.publications.hippo.rewriter.PublicationLinkRewriter;
 import scot.gov.publications.util.ZipEntryUtil;
 
@@ -19,6 +16,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -126,7 +124,8 @@ public class PublicationPageUpdater {
                     pageHandle, slug, title, "govscot:PublicationPage", publishDateTime, shouldEmbargo);
             nodeFactory.addBasicFields(pageNode, title);
             pageNode.setProperty(GOVSCOT_TITLE, title);
-            hippoUtils.ensureHtmlNode(pageNode, GOVSCOT_CONTENT, "");
+            String html = IOUtils.resourceToString("/consultationResponse.html", Charset.defaultCharset());
+            hippoUtils.ensureHtmlNode(pageNode, GOVSCOT_CONTENT, html);
         }
         return pageNodesByEntry;
     }
