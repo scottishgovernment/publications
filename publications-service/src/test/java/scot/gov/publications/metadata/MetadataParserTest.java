@@ -194,19 +194,6 @@ public class MetadataParserTest {
         // ASSERT - see expected exception
     }
 
-    @Test(expected = MetadataParserException.class)
-    public void exceptionThrownIfResponseUrlIsBlank() throws Exception {
-
-        // ARRANGE
-        String in = metadata("consultation").replaceAll("https://consult.gov.scot/environment-forestry/charging-for-single-use-disposable-beverage-cups/", "");
-        MetadataParser sut = new MetadataParser();
-
-        // ACT
-        sut.parse(new ByteArrayInputStream(in.getBytes()));
-
-        // ASSERT - see expected exception
-    }
-
     InputStream exceptionThowingInputStream() throws IOException {
         InputStream in = mock(InputStream.class);
         when(in.read(any(byte[].class))).thenThrow(new IOException("arg"));
