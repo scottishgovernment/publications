@@ -1,5 +1,6 @@
 #!/bin/sh
-JAVA=${JAVA_HOME:-/usr}/bin/java
+#JAVA=${JAVA_HOME:-/usr}/bin/java
+JAVA=/usr/lib/jvm/java-17-openjdk-arm64/bin/java
 . /etc/profile
 set -eu
 

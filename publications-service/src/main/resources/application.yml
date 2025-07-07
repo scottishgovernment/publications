@@ -9,6 +9,10 @@ datasource:
   url: jdbc:postgresql://localhost:5432/publications
   username: publications
   password: publications
+  databaseName: publications
+  serverName: publications
+  user: publications
+  URL: jdbc:postgresql://localhost:5432/publications
   maxPoolSize: 2
 
 s3:

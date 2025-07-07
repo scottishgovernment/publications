@@ -70,7 +70,7 @@ public class ApsZipImporterTest {
 
         // get a session with the test repository
         session = TestRepository.session();
-        sut.sessionFactory = () -> TestRepository.session();
+        sut.sessionFactory = TestRepository::session;
         sut.configuration = new PublicationsConfiguration();
         sut.configuration.getHippo().setUser("testuser");
 
