@@ -14,12 +14,13 @@
   <name>Publications Service</name>
 
   <properties>
-    <hippo.repository.version>15.7.1</hippo.repository.version>
-    <slf4j.version>2.0.6</slf4j.version>
-    <logback.version>1.4.12</logback.version>
-    <postgres.jdbc.version>42.5.5</postgres.jdbc.version>
+    <hippo.repository.version>16.4.1</hippo.repository.version>
+    <slf4j.version>2.0.17</slf4j.version>
+    <logback.version>1.5.18</logback.version>
+    <postgres.jdbc.version>42.7.6</postgres.jdbc.version>
     <undertow.version>2.3.17.Final</undertow.version>
     <jackson.version>2.13.1</jackson.version>
+<!--    <jackson.version>2.18.3</jackson.version> Test errors-->
     <aws.version>1.12.436</aws.version>
     <resteasy.version>6.2.3.Final</resteasy.version>
 
@@ -207,7 +208,7 @@
     <dependency>
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
-      <version>1.15.3</version>
+      <version>1.20.1</version>
     </dependency>
 
     <!-- Logging -->
@@ -301,7 +302,9 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
-      <version>2.16.3</version>
+<!--      This is as high in 2.21 as we can go without tests breaking-->
+      <version>2.21.1</version>
+<!--      <version>2.21.19-h5</version> brXM 16.4.0 version-->
       <scope>test</scope>
     </dependency>
 
@@ -310,6 +313,13 @@
       <artifactId>hst-addon-cnd</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <!-- Used by AWS SDK -->
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <version>2.3.1</version>
     </dependency>
 
   </dependencies>
@@ -323,26 +333,18 @@
         <version>${resteasy.version}</version>
         <type>pom</type>
         <scope>import</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.yaml</groupId>
-        <artifactId>snakeyaml</artifactId>
-        <version>2.0</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.resteasy</groupId>
-        <artifactId>resteasy-bom</artifactId>
-        <version>4.5.6.Final</version>
         <exclusions>
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-        <scope>import</scope>
-        <type>pom</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>2.0</version>
       </dependency>
 
       <dependency>
@@ -374,7 +376,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>1.5.10.RELEASE</version>
+        <version>3.5.0</version>
         <executions>
           <execution>
             <goals>
