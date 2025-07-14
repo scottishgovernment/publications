@@ -1,6 +1,5 @@
 package scot.gov.publications.repo;
 
-import net.bytebuddy.implementation.bind.ArgumentTypeResolver;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanHandler;
 import org.flywaydb.core.Flyway;
@@ -9,18 +8,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.ArgumentMatchers;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -311,7 +305,7 @@ public class PublicationRepositoryTest {
         publication.setTitle(prefix + "title");
         publication.setIsbn(prefix + "isbn");
         publication.setState(State.PENDING.name());
-        publication.setEmbargodate(Timestamp.from(Instant.now()));
+        publication.setEmbargodate(Timestamp.from(Instant.now(sut.clock)));
         publication.setStatedetails(prefix + "statedetails");
         publication.setChecksum(prefix + "checksum");
         return publication;
