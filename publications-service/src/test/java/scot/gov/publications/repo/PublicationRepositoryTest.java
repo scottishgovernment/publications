@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +31,7 @@ public class PublicationRepositoryTest {
         JdbcConnectionPool connectionPool = JdbcConnectionPool.create("jdbc:h2:mem:testing", "user", "password");
         Flyway.configure().dataSource(connectionPool).load().migrate();
         sut.queryRunner = new QueryRunner(connectionPool);
-        sut.clock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+        sut.clock = Clock.fixed(Instant.now().truncatedTo(ChronoUnit.MICROS), ZoneId.systemDefault());
     }
 
     @After
@@ -58,18 +59,6 @@ public class PublicationRepositoryTest {
         assertEquals(out.getCreateddate(), Timestamp.from(sut.clock.instant()));
         assertEquals(out.getLastmodifieddate(), Timestamp.from(sut.clock.instant()));
     }
-
-//    @Test(expected = PublicationRepositoryException.class)
-//    public void createExceptionWrappedAsExpected() throws Exception {
-//
-//        // ARRANGE
-//        sut.queryRunner = exceptionThrowingQueryRunner();
-//
-//        // ACT
-//        sut.create(examplePublication());
-//
-//        // ASSERT - see expected
-//    }
 
     @Test
     public void canUpdateAndFetchPublication() throws Exception {
