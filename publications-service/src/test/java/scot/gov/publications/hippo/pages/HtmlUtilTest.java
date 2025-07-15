@@ -20,7 +20,7 @@ public class HtmlUtilTest {
     HtmlUtil sut = new HtmlUtil();
 
     @Test
-    public void getTitleUsesIndexIfNoH2OrH3() throws Exception {
+    public void getTitleUsesIndexIfNoH2OrH3() {
         // ARRANGE
         Element div = mock(Element.class);
         Elements emptyElements = mock(Elements.class);
@@ -36,7 +36,7 @@ public class HtmlUtilTest {
     }
 
     @Test
-    public void getTitleUsesH2IfPresent() throws Exception {
+    public void getTitleUsesH2IfPresent() {
         // ARRANGE
         Element div = mock(Element.class);
         Elements elements = mock(Elements.class);
@@ -54,7 +54,7 @@ public class HtmlUtilTest {
     }
 
     @Test
-    public void getTitleUsesH3IfNoH2Present() throws Exception {
+    public void getTitleUsesH3IfNoH2Present() {
         // ARRANGE
         Element div = mock(Element.class);
         Elements emptyElements = mock(Elements.class);

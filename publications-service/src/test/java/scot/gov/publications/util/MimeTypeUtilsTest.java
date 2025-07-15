@@ -30,8 +30,7 @@ public class MimeTypeUtilsTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionForUnrecognisedExtensions() throws Exception {
-        InputStream in = MimeTypeUtilsTest.class.getResourceAsStream("/pdfwithwrongextention.pdf-wrong");
+    public void throwsExceptionForUnrecognisedExtensions() {
         assertEquals("application/pdf", MimeTypeUtils.detectContentType("pdfwithwrongextention.pdf-wrong"));
     }
 }

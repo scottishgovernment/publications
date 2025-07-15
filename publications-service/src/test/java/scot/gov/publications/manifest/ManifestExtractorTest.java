@@ -35,7 +35,7 @@ public class ManifestExtractorTest {
     @Test(expected = ApsZipImporterException.class)
     public void throwsExceptionForUnparseableManifest() throws Exception {
         ManifestExtractor sut = new ManifestExtractor();
-        sut.manifestParser = mock(ManifestParser.class);;
+        sut.manifestParser = mock(ManifestParser.class);
         when(sut.manifestParser.parse(any())).thenThrow(new ManifestParserException("arg"));
         sut.extract(ZipFixtures.exampleZip());
     }

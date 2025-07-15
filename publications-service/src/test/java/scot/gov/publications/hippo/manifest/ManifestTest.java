@@ -1,6 +1,5 @@
 package scot.gov.publications.hippo.manifest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import scot.gov.publications.hippo.ZipFixtures;
@@ -10,7 +9,6 @@ import scot.gov.publications.manifest.ManifestEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 

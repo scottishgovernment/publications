@@ -290,7 +290,7 @@ public class ApsZipImporterTest {
         Publication publication = new Publication();
 
         // ACT
-        String path = sut.importApsZip(zip1, publication);
+        sut.importApsZip(zip1, publication);
 
         // ASSERT -- exect an exception
     }
@@ -744,7 +744,6 @@ public class ApsZipImporterTest {
         ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath1);
 
         Path fixturePath2= ZipFixtures.copyFixture("policiesAddedCorrectly2");
-        //metadata.getPolicies().add("biodiversity");
         saveMetadata(metadata, fixturePath2);
         ZipFile zip2 = ZipFixtures.zipDirectory(fixturePath2);
 
@@ -759,7 +758,6 @@ public class ApsZipImporterTest {
         // ASSERT
         Node publicationFolder = session.getNode(path);
         assertIsRelatedTo(publicationFolder, "digital");
-        //assertIsRelatedTo(publicationFolder, "biodiversity");
     }
 
     void assertIsRelatedTo(Node publicationFolder, String policyName) throws RepositoryException {
@@ -782,7 +780,7 @@ public class ApsZipImporterTest {
         Publication publication = new Publication();
 
         // ACT
-        String path = sut.importApsZip(zip1, publication);
+        sut.importApsZip(zip1, publication);
 
         // ASSERT - expect exception
     }
@@ -825,7 +823,7 @@ public class ApsZipImporterTest {
         Publication publication = new Publication();
 
         // ACT
-        String path = sut.importApsZip(zip1, publication);
+        sut.importApsZip(zip1, publication);
 
         // ASSERT - expect exception
     }
@@ -844,7 +842,7 @@ public class ApsZipImporterTest {
         Publication publication = new Publication();
 
         // ACT
-        String path = sut.importApsZip(zip1, publication);
+        sut.importApsZip(zip1, publication);
 
         // ASSERT - expect exception
     }
@@ -863,7 +861,7 @@ public class ApsZipImporterTest {
         Publication publication = new Publication();
 
         // ACT
-        String path = sut.importApsZip(zip1, publication);
+        sut.importApsZip(zip1, publication);
 
         // ASSERT - expect exception
 
@@ -996,7 +994,7 @@ public class ApsZipImporterTest {
     /**
      * since gm is not installed on jenkins we want a fake implementation of ImageProcessing that always returns the same image.
      */
-    ImageProcessing fakeImageProcessing() throws Exception {
+    ImageProcessing fakeImageProcessing() {
 
         return new ImageProcessing() {
             public File extractPdfCoverImage(InputStream source) throws ImageProcessingException {

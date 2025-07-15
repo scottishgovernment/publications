@@ -1,6 +1,7 @@
 package scot.gov.publications.imageprocessing;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import scot.gov.publications.util.FileType;
@@ -25,32 +26,32 @@ public class ThumbnailsProviderTest {
         sut.thumbnails(docStream, mimeType);
     }
 
-// these tests fail due to graphiks magik and ExifProcessImpl tool not being installed on jenkins.
-//    @Test
-//    public void pdfGreenpath() throws Exception {
-//        ThumbnailsProvider sut = new ThumbnailsProvider();
-//        sut.imageProcessing = new GraphicsMagickImageProcessingImpl();
-//        InputStream docStream = ThumbnailsProviderTest.class.getResourceAsStream("/examplepdf.pdf");
-//        String mimeType = FileType.PDF.getMimeType();
-//        Map<Integer, File> thumbs = sut.thumbnails(docStream, mimeType);
-//        assertTrue(thumbs.containsKey(Integer.valueOf(330)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(214)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(165)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(107)));
-//    }
+    // these tests fail due to graphiks magik and ExifProcessImpl tool not being installed on jenkins.
+    @Ignore
+    @Test
+    public void pdfGreenpath() throws Exception {
+        ThumbnailsProvider sut = new ThumbnailsProvider(new GraphicsMagickImageProcessingImpl());
+        InputStream docStream = ThumbnailsProviderTest.class.getResourceAsStream("/examplepdf.pdf");
+        String mimeType = FileType.PDF.getMimeType();
+        Map<Integer, File> thumbs = sut.thumbnails(docStream, mimeType);
+        assertTrue(thumbs.containsKey(Integer.valueOf(330)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(214)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(165)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(107)));
+    }
 
-//    @Test
-//    public void jpgGreenpath() throws Exception {
-//        ThumbnailsProvider sut = new ThumbnailsProvider();
-//        sut.imageProcessing = new GraphicsMagickImageProcessingImpl();
-//        InputStream docStream = ThumbnailsProviderTest.class.getResourceAsStream("/examplejpg.jpg");
-//        String mimeType = FileType.JPG.getMimeType();
-//        Map<Integer, File> thumbs = sut.thumbnails(docStream, mimeType);
-//        assertTrue(thumbs.containsKey(Integer.valueOf(330)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(214)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(165)));
-//        assertTrue(thumbs.containsKey(Integer.valueOf(107)));
-//    }
+    @Ignore
+    @Test
+    public void jpgGreenpath() throws Exception {
+        ThumbnailsProvider sut = new ThumbnailsProvider(new GraphicsMagickImageProcessingImpl());
+        InputStream docStream = ThumbnailsProviderTest.class.getResourceAsStream("/examplejpg.jpg");
+        String mimeType = FileType.JPG.getMimeType();
+        Map<Integer, File> thumbs = sut.thumbnails(docStream, mimeType);
+        assertTrue(thumbs.containsKey(Integer.valueOf(330)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(214)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(165)));
+        assertTrue(thumbs.containsKey(Integer.valueOf(107)));
+    }
 
     @Test
     public void exelGreenpath() throws Exception {

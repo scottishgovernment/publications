@@ -198,8 +198,7 @@ public class HealthCheckResourceTest {
     }
 
     PublicationStorage healthlyPublicationStorage() {
-        PublicationStorage storage = mock(PublicationStorage.class);
-        return storage;
+        return mock(PublicationStorage.class);
     }
 
     PublicationStorage unhealthlyPublicationStorage() throws Exception {

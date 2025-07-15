@@ -1,23 +1,15 @@
 package scot.gov.publications.rest;
 
-import org.junit.Assert;
+import jakarta.ws.rs.WebApplicationException;
 import org.junit.Test;
-import org.mockito.Mockito;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
 import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
 
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.WebApplicationException;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyMap;
@@ -54,7 +46,7 @@ public class MaintenanceResourceTest {
         Collections.addAll(expected, "two", "three");
 
         // ACT
-        Set<String> actual = sut.getOrphans();
+        sut.getOrphans();
 
         // ASSERT -- see expected
     }
@@ -70,7 +62,7 @@ public class MaintenanceResourceTest {
         Collections.addAll(expected, "two", "three");
 
         // ACT
-        Set<String> actual = sut.getOrphans();
+        sut.getOrphans();
 
         // ASSERT -- see expected
     }
@@ -137,25 +129,5 @@ public class MaintenanceResourceTest {
         when(storage.listKeys()).thenThrow(new PublicationStorageException(new RuntimeException("")));
         return storage;
     }
-
-//
-//    @GET
-//    @Produces({ MediaType.APPLICATION_JSON })
-//    @Path("orphans")
-//    public Set<String> getOrphans() {
-//
-//        try {
-//            Set<String> inStorage = storage.listKeys();
-//            Set<String> inRepo = repository.allChecksums();
-//            inStorage.removeAll(inRepo);
-//            return inStorage;
-//        } catch (PublicationStorageException e) {
-//            LOG.error("Failed to get keys from storage");
-//            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
-//        } catch (PublicationRepositoryException e) {
-//            LOG.error("Failed to get keys from repository");
-//            throw new WebApplicationException(e, Response.status(500).entity("Server error").build());
-//        }
-//    }
 
 }

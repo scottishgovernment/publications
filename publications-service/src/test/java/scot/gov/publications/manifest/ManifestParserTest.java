@@ -121,7 +121,7 @@ public class ManifestParserTest {
         InputStream in = new ByteArrayInputStream(lines.stream().collect(Collectors.joining("\n\n")).getBytes());
 
         // ACT
-        Manifest actual = sut.parse(in);
+        sut.parse(in);
 
         //ASSERT -- see expected exception
     }

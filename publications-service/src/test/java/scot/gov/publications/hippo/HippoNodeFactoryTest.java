@@ -5,7 +5,6 @@ import scot.gov.publications.PublicationsConfiguration;
 
 import javax.jcr.*;
 
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;

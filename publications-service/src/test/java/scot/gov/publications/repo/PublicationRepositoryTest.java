@@ -70,24 +70,12 @@ public class PublicationRepositoryTest {
         in.setState("newstate");
         in.setChecksum("newchecksum");
         sut.update(in);
-        Publication out = sut.get(in.getId());
+        sut.get(in.getId());
 
         // ASSERT
-        assertEquals(in.getState(), "newstate");
-        assertEquals(in.getChecksum(), "newchecksum");
+        assertEquals("newstate", in.getState());
+        assertEquals("newchecksum", in.getChecksum());
     }
-//
-//    @Test(expected = PublicationRepositoryException.class)
-//    public void updateExceptionWrappedAsExpected() throws Exception {
-//
-//        // ARRANGE
-//        sut.queryRunner = exceptionThrowingQueryRunner();
-//
-//        // ACT
-//        sut.update(examplePublication());
-//
-//        // ASSERT - see expected
-//    }
 
     @Test
     public void getReturnsNullIfIdDoesNotExist() throws Exception {
