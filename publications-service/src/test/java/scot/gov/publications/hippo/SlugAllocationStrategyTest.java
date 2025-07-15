@@ -70,7 +70,7 @@ public class SlugAllocationStrategyTest {
         when(sut.hippoUtils.findFirst(any(), any(), any())).thenThrow(new RepositoryException());
 
         // ACT
-        String actual = sut.allocate("MY Publication title");
+        sut.allocate("MY Publication title");
 
         // ASSERT - expect exception
     }

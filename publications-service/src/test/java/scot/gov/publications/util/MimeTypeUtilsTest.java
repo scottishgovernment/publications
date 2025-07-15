@@ -2,8 +2,6 @@ package scot.gov.publications.util;
 
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +10,7 @@ import static org.junit.Assert.assertEquals;
 public class MimeTypeUtilsTest {
 
     @Test
-    public void canDetectByNameForCommonTypes() throws IOException {
+    public void canDetectByNameForCommonTypes() {
         Map<String, String> inputs = new HashMap<>();
         inputs.put("filename.pdf", "application/pdf");
         inputs.put("filename.PDF", "application/pdf");

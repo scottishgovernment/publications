@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.mock;
@@ -53,12 +52,13 @@ public class PublicationsResourceTest {
         // ARRANGE
         PublicationsResource sut = new PublicationsResource();
         sut.repository = mock(PublicationRepository.class);
-        ListResult result = new ListResult();
         when(sut.repository.list(1, 10, "queryString", "", ""))
                 .thenThrow(new PublicationRepositoryException("arg", new RuntimeException("arg")));
 
         // ACT
-        Response actual = sut.list(1, 10, "queryString", "", "");
+        try (Response actual = sut.list(1, 10, "queryString", "", "")) {
+            fail("Expected exception");
+        }
 
         // ASSERT - see exception
     }
@@ -83,7 +83,6 @@ public class PublicationsResourceTest {
     public void getReturns500ForException() throws Exception {
         // ARRANGE
         PublicationsResource sut = new PublicationsResource();
-        Publication publication = new Publication();
         sut.repository = mock(PublicationRepository.class);
         when(sut.repository.get("id")).thenThrow(new PublicationRepositoryException("arg", new RuntimeException("arg")));
 
@@ -91,14 +90,13 @@ public class PublicationsResourceTest {
         Response actual = sut.get("id");
 
         // ASSERT
-        assertEquals(actual.getStatus(), 500);
+        assertEquals(500, actual.getStatus());
     }
 
     @Test
     public void getReturns404IfPubNotFound() throws Exception {
         // ARRANGE
         PublicationsResource sut = new PublicationsResource();
-        Publication publication = new Publication();
         sut.repository = mock(PublicationRepository.class);
         when(sut.repository.get("id")).thenReturn(null);
 
@@ -106,7 +104,7 @@ public class PublicationsResourceTest {
         Response actual = sut.get("id");
 
         // ASSERT
-        assertEquals(actual.getStatus(), 404);
+        assertEquals(404, actual.getStatus());
     }
 
     @Test

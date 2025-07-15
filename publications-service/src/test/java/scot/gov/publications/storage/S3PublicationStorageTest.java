@@ -160,7 +160,6 @@ public class S3PublicationStorageTest {
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
         sut.s3 = mock(AmazonS3.class);
-        S3Object s3Obj = mock(S3Object.class);
         when(sut.s3.getObject(any())).thenThrow(new AmazonClientException(""));
         Publication publication = new Publication();
         publication.setChecksum("checksum");
