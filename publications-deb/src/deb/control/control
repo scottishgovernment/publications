@@ -5,4 +5,4 @@ Priority: optional
 Architecture: all
 Description: [[description]]
 Maintainer: martin.ellis@gov.scot
-Depends: java11-runtime-headless
+Depends: java17-runtime-headless
