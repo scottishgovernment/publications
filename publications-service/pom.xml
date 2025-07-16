@@ -15,14 +15,13 @@
 
   <properties>
     <hippo.repository.version>16.4.1</hippo.repository.version>
+    <jackson.version>2.19.1</jackson.version>
     <slf4j.version>2.0.17</slf4j.version>
     <logback.version>1.5.18</logback.version>
     <postgres.jdbc.version>42.7.7</postgres.jdbc.version>
-    <undertow.version>2.3.17.Final</undertow.version>
-    <jackson.version>2.13.1</jackson.version>
-<!--    <jackson.version>2.18.3</jackson.version> Test errors-->
-    <aws.version>1.12.436</aws.version>
-    <resteasy.version>6.2.3.Final</resteasy.version>
+    <undertow.version>2.3.18.Final</undertow.version>
+    <aws.version>1.12.788</aws.version>
+    <resteasy.version>6.2.12.Final</resteasy.version>
 
     <sonar.exclusions>
       src/main/java/scot/gov/publications/imageprocessing/GraphicsMagickImageProcessingImpl.java,
@@ -164,7 +163,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -245,7 +243,7 @@
     <dependency>
       <groupId>net.logstash.logback</groupId>
       <artifactId>logstash-logback-encoder</artifactId>
-      <version>7.3</version>
+      <version>8.1</version>
     </dependency>
 
     <!-- Dependency injection -->
@@ -351,6 +349,20 @@
         <groupId>jakarta.validation</groupId>
         <artifactId>jakarta.validation-api</artifactId>
         <version>3.0.2</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson</groupId>
+        <artifactId>jackson-bom</artifactId>
+        <version>${jackson.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging</artifactId>
+        <version>3.6.1.Final</version>
       </dependency>
 
     </dependencies>
