@@ -107,10 +107,12 @@ public class PublicationNodeUpdater {
             hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getDescription());
             topicMappings.ensureTopics(publicationNode, metadata);
             policiesUpdater.ensurePolicies(publicationNode, metadata);
+            maintainUpdateHistory(publicationNode, metadata);
             createDirectoratesIfAbsent(publicationNode, metadata);
             createRolesIfAbsent(publicationNode, metadata);
             createOrUpdateConsultationFields(publicationNode, metadata);
             createOrUpdateConsultationAnalysisFields(publicationNode, metadata);
+
 
             // update the tags - add any that are not already there.
             tagUpdater.updateTags(publicationNode, metadata.getTags());
@@ -147,6 +149,7 @@ public class PublicationNodeUpdater {
             LOG.error("Failed to remove publication folder after exception", e);
         }
     }
+
     /**
      * Update the publication node from the directorates in the metadata. If the node already contains information
      * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits
@@ -156,7 +159,7 @@ public class PublicationNodeUpdater {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
         if (shouldUpdateDirectorate(publicationNode, metadata)) {
-            createDirectorateLink(publicationNode, RESPONSIBLE_DIRECTORATE , metadata.getPrimaryResponsibleDirectorate());
+            createDirectorateLink(publicationNode, RESPONSIBLE_DIRECTORATE, metadata.getPrimaryResponsibleDirectorate());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleDirectorate")) {
@@ -171,12 +174,12 @@ public class PublicationNodeUpdater {
             return false;
         }
 
-        if (!publicationNode.hasNode(RESPONSIBLE_DIRECTORATE )) {
+        if (!publicationNode.hasNode(RESPONSIBLE_DIRECTORATE)) {
             return true;
         }
 
         // some nodes have a responsibleDirectorate of / ... treat these as empty
-        Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE );
+        Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE);
         if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respDirectorate.getProperty(HIPPO_DOCBASE).getString())) {
             respDirectorate.remove();
             return true;
@@ -208,6 +211,30 @@ public class PublicationNodeUpdater {
                 createRoleLink(publicationNode, "govscot:secondaryResponsibleRole", role);
             }
         }
+    }
+
+    private void maintainUpdateHistory(Node node, Metadata metadata) throws RepositoryException {
+
+        ///  if no update history then do nothing
+        if (metadata.getUpdate() == null) {
+            return;
+        }
+
+        // if update already exist do nothing
+        Node existingEntry = hippoUtils.find(node.getNodes("govscot:updateHistory"), update -> isExistingEntry(ensureMonthNode(, metadata)));
+        if (existingEntry != null) {
+            return;
+        }
+
+        // create the new update history entry
+        Node newUpdateEntry = hippoUtils.createNode(node, "govscot:updateHistory", "govscot:UpdateHistory");
+        newUpdateEntry.setProperty("govscot:lastUpdated", metadata.getUpdate().getLastUpdated());
+        newUpdateEntry.setProperty("govscot:updateText", metadata.getUpdate().getUpdateText());
+    }
+
+    boolean isExistingEntry(Node entry, Metadata metadata) {
+        Update update = metadata.getUpdate();
+        // TODO  match the date and text, same propes as when creating
     }
 
     private void createOrUpdateConsultationAnalysisFields(Node node, Metadata metadata)

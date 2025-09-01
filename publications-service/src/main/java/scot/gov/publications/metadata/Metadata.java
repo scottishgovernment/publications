@@ -68,6 +68,8 @@ public class Metadata {
 
     Consultation consultation;
 
+    Update update;
+
     public Consultation getConsultation() {
         return consultation;
     }
