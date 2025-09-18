@@ -78,6 +78,12 @@ public class Metadata {
         this.consultation = consultation;
     }
 
+    public Update getUpdate() { return update;}
+
+    public void setUpdate(Update update) {
+        this.update = update;
+    }
+
     boolean sensitive = false;
 
     public String getId() {
@@ -290,7 +296,7 @@ public class Metadata {
         return typeMapper.map(publicationType);
     }
 
-    public boolean shoudlEmbargo() {
+    public boolean shouldEmbargo() {
 
         // we never need to embargo a publications whose publication date is in the past
         if (publicationDate.isBefore(LocalDateTime.now())) {

@@ -96,7 +96,7 @@ public class ApsZipImporter {
                     imgMap,
                     docMap,
                     metadata.getPublicationDateWithTimezone(),
-                    metadata.shoudlEmbargo(),
+                    metadata.shouldEmbargo(),
                     metadata.isConsultation());
 
             publicationFolder = publicationNodeUpdater.ensureMonthNode(publicationFolder, metadata);

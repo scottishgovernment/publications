@@ -34,7 +34,7 @@ public class MetadataTest {
     public void shouldEmbargoReturnsFalseIfDateInPast() {
         Metadata sut = new Metadata();
         sut.setPublicationDate(LocalDateTime.now().minusDays(1));
-        assertFalse(sut.shoudlEmbargo());
+        assertFalse(sut.shouldEmbargo());
     }
 
     @Test
@@ -43,7 +43,7 @@ public class MetadataTest {
         sut.setPublicationDate(LocalDateTime.now().plusDays(1));
         sut.setSensitive(true);
         sut.setPublicationType("type");
-        assertTrue(sut.shoudlEmbargo());
+        assertTrue(sut.shouldEmbargo());
     }
 
     @Test
@@ -52,7 +52,7 @@ public class MetadataTest {
         sut.setPublicationDate(LocalDateTime.now().plusDays(1));
         sut.setSensitive(false);
         sut.setPublicationType(STATISTICS);
-        assertTrue(sut.shoudlEmbargo());
+        assertTrue(sut.shouldEmbargo());
     }
 
     @Test

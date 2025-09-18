@@ -8,6 +8,7 @@ import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.metadata.Consultation;
 import scot.gov.publications.metadata.ConsultationResponseMethod;
 import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.metadata.Update;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publishing.sluglookup.SlugLookups;
 
@@ -19,17 +20,13 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.*;
 import static scot.gov.publications.hippo.XpathQueryHelper.*;
 
@@ -215,27 +212,60 @@ public class PublicationNodeUpdater {
 
     private void maintainUpdateHistory(Node node, Metadata metadata) throws RepositoryException {
 
+        Update update = metadata.getUpdate();
+
         ///  if no update history then do nothing
-        if (metadata.getUpdate() == null) {
+        if (update == null) {
             return;
         }
 
-        // if update already exist do nothing
-        Node existingEntry = hippoUtils.find(node.getNodes("govscot:updateHistory"), update -> isExistingEntry(ensureMonthNode(, metadata)));
+        /// if update already exists, do nothing
+        Node existingEntry = hippoUtils.find(node.getNodes("govscot:updateHistory"),
+                entry -> isExistingEntry(ensureMonthNode(node, metadata), metadata));
         if (existingEntry != null) {
             return;
         }
 
-        // create the new update history entry
+        // Create the new update history entry
         Node newUpdateEntry = hippoUtils.createNode(node, "govscot:updateHistory", "govscot:UpdateHistory");
-        newUpdateEntry.setProperty("govscot:lastUpdated", metadata.getUpdate().getLastUpdated());
+        newUpdateEntry.setProperty("govscot:lastUpdated", GregorianCalendar.from(update.getLastUpdated().atZone(ZoneId.systemDefault())));
         newUpdateEntry.setProperty("govscot:updateText", metadata.getUpdate().getUpdateText());
+
+//        TODO: Sort update history by date, newest to oldest
     }
 
-    boolean isExistingEntry(Node entry, Metadata metadata) {
-        Update update = metadata.getUpdate();
-        // TODO  match the date and text, same propes as when creating
-    }
+    boolean isExistingEntry(Node entry, Metadata metadata) throws RepositoryException {
+        Update newUpdate = metadata.getUpdate();
+
+//        String newLastUpdated = newUpdate.getLastUpdated().atZone(ZoneId.systemDefault()).toString();
+        Instant newLastUpdated = GregorianCalendar.from(newUpdate.getLastUpdated().atZone(ZoneId.systemDefault())).toInstant();
+        Instant oldLastUpdated = entry.getNode("govscot:updateHistory").getProperty("govscot:lastUpdated").getDate().toInstant();
+
+        String newUpdateText = newUpdate.getUpdateText();
+        String oldUpdateText = entry.getNode("govscot:updateHistory").getProperty("govscot:updateText").getString();
+
+        /// If the newUpdate is identical to one already in the publication, do nothing
+        /// Date property looks like "2025-09-11T17:00:00.000+01:00"
+
+        ///  'entry' here is the publication type index
+
+        LOG.info("Entry update history path: {}", entry.getNode("govscot:updateHistory").getPath());
+        LOG.info("--");
+        LOG.info("New lastUpdated: {}", newLastUpdated);
+        LOG.info("Old lastUpdated: {}", oldLastUpdated);
+
+//        Update lastUpdated: 2025-09-17T09:00
+//        Entry lastUpdated: 2025-09-17T08:00:00Z
+//        Property: 2025-09-17T09:00:00.000+01:00
+
+        LOG.info("--");
+        LOG.info("Update updateText: {}", newUpdateText);
+        LOG.info("Entry updateText: {}", oldUpdateText);
+
+        /// If the update is identical to one already in the publication, do nothing
+        /// If both fields match, the update is identical and should be ignored
+        return newLastUpdated.equals(oldLastUpdated) && newUpdateText.equals(oldUpdateText);
+        }
 
     private void createOrUpdateConsultationAnalysisFields(Node node, Metadata metadata)
             throws RepositoryException, ApsZipImporterException {
@@ -301,6 +331,8 @@ public class PublicationNodeUpdater {
         Consultation consultation = metadata.getConsultation();
         LocalDateTime now = LocalDateTime.now();
         boolean open = now.isAfter(consultation.getOpeningDate()) && now.isBefore(consultation.getClosingDate());
+
+        // This is how a consultation LocalDateTime is directly used to set a property
         node.setProperty("govscot:openingDate", GregorianCalendar.from(consultation.getOpeningDate().atZone(ZoneId.systemDefault())));
         node.setProperty("govscot:closingDate", GregorianCalendar.from(consultation.getClosingDate().atZone(ZoneId.systemDefault())));
         node.setProperty("govscot:isOpen", open);
@@ -397,7 +429,7 @@ public class PublicationNodeUpdater {
                     metadata.getTitle(),
                     type,
                     metadata.getPublicationDateWithTimezone(),
-                    metadata.shoudlEmbargo());
+                    metadata.shouldEmbargo());
         } else {
             // remove any other nodes there are ...
             hippoUtils.removeSiblings(pubNode);
@@ -408,7 +440,7 @@ public class PublicationNodeUpdater {
             nodeFactory.ensurePublicationStatus(
                     pubNode,
                     metadata.getPublicationDateWithTimezone(),
-                    metadata.shoudlEmbargo());
+                    metadata.shouldEmbargo());
         }
 
         // create slug lookup for preview
@@ -428,7 +460,7 @@ public class PublicationNodeUpdater {
     }
 
     /**
-     * Ensure that this publications folder is in the right place.  The folder is based on its type and publicaiton
+     * Ensure that this publications folder is in the right place.  The folder is based on its type and publication
      * date and so if either changed since the last time the publication was uploaded then it might have to be moved.
      */
     public Node ensureMonthNode(Node publicationFolder, Metadata metadata) throws RepositoryException {
