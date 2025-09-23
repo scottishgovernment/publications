@@ -42,6 +42,10 @@ public class PublicationNodeUpdater {
 
     private static final String FEATURED_LINKS = "govscot:featuredLinks";
 
+    private static final String UPDATE_HISTORY = "govscot:updateHistory";
+
+    private static final String LAST_UPDATED = "govscot:lastUpdated";
+
     Session session;
 
     HippoPaths hippoPaths;
@@ -212,60 +216,52 @@ public class PublicationNodeUpdater {
     private void maintainUpdateHistory(Node node, Metadata metadata) throws RepositoryException {
 
         Update update = metadata.getUpdate();
+
         if (update == null) {
             return;
         }
 
-        /// if update already exists, do nothing
-        Node existingEntry = hippoUtils.find(node.getNodes("govscot:updateHistory"),
+        // If the update already exists, do nothing
+        Node existingEntry = hippoUtils.find(node.getNodes(UPDATE_HISTORY),
                 entry -> isExistingEntry(entry, update));
         if (existingEntry != null) {
             return;
         }
 
-        // find the position we want to insert it
-        Calendar newLastUpdated = GregorianCalendar.from((update.getLastUpdatedWithTimezone()));
-        String beforeNode = beforeNode(node, newLastUpdated);
-
         // Create the new update history entry
-        Node newUpdateEntry = hippoUtils.createNode(node, "govscot:updateHistory", "govscot:UpdateHistory");
-        newUpdateEntry.setProperty("govscot:lastUpdated", GregorianCalendar.from(update.getLastUpdatedWithTimezone()));
-        newUpdateEntry.setProperty("govscot:updateText", metadata.getUpdate().getUpdateText());
+        Node newUpdateEntry = hippoUtils.createNode(node, UPDATE_HISTORY, "govscot:UpdateHistory");
+        Calendar newLastUpdated = GregorianCalendar.from(update.getLastUpdatedWithTimezone());
 
-        // find the position to inset this node ...
+        newUpdateEntry.setProperty(LAST_UPDATED, newLastUpdated);
+        newUpdateEntry.setProperty("govscot:updateText", update.getUpdateText());
 
-        ///  this is throwing an exception ... not sutre why
-        if (beforeNode !=null) {
-            session.save();
-            LOG.info("sorting thing {}, {}", beforeNode, newUpdateEntry.getPath());
-            node.orderBefore(beforeNode, newUpdateEntry.getPath());
-        } else {
-            LOG.info("sorting thing nothing to do");
+        // Sort the new entry chronologically
+        // If there's an existing entry with a later date, insert the new update before
+        String existingLaterUpdate = existingLaterUpdate(node, newLastUpdated);
+        if (existingLaterUpdate != null) {
+            LOG.info("sorting {}  before {}", substringAfterLast(newUpdateEntry.getPath(), "/"), substringAfterLast(existingLaterUpdate, "/"));
+            node.orderBefore(substringAfterLast(newUpdateEntry.getPath(), "/"), substringAfterLast(existingLaterUpdate, "/"));
         }
     }
 
-    String beforeNode(Node node, Calendar newDate) throws RepositoryException {
-        NodeIterator it = node.getNodes("govscot:updateHistory");
+    String existingLaterUpdate(Node node, Calendar newDate) throws RepositoryException {
+        NodeIterator it = node.getNodes(UPDATE_HISTORY);
         while (it.hasNext()) {
-            Node update = it.nextNode();
-            Calendar oldLastUpdated = update.getProperty("govscot:lastUpdated").getDate();
-            if (oldLastUpdated.after(newDate)) {
-                return update.getPath();
+            Node existingUpdate = it.nextNode();
+            Calendar existingLastUpdated = existingUpdate.getProperty(LAST_UPDATED).getDate();
+            if (existingLastUpdated.after(newDate)) {
+                return existingUpdate.getPath();
             }
         }
         return null;
     }
 
     boolean isExistingEntry(Node entry, Update update) throws RepositoryException {
-        Calendar newLastUpdated = GregorianCalendar.from((update.getLastUpdatedWithTimezone()));
-        Calendar oldLastUpdated = entry.getProperty("govscot:lastUpdated").getDate();
+        Calendar newLastUpdated = GregorianCalendar.from(update.getLastUpdatedWithTimezone());
+        Calendar oldLastUpdated = entry.getProperty(LAST_UPDATED).getDate();
         String newUpdateText = update.getUpdateText();
         String oldUpdateText = entry.getProperty("govscot:updateText").getString();
-        return sameInstant(newLastUpdated, oldLastUpdated) && sameText(newUpdateText, oldUpdateText);
-    }
-
-    boolean sameText(String left, String right) {
-        return left.equals(right);
+        return sameInstant(newLastUpdated, oldLastUpdated) && newUpdateText.equals(oldUpdateText);
     }
 
     boolean sameInstant(Calendar left, Calendar right) {
