@@ -24,7 +24,7 @@ public class MetadataParser {
             Metadata metadata = doParse(in);
             assertRequiredFields(metadata);
             assertValidFields(metadata);
-            calculateZonedPublicationDatetime(metadata);
+            calculateZonedDateTimes(metadata);
             return metadata;
         } catch (IOException e) {
             throw new MetadataParserException("Failed to parse metadata", e);
@@ -95,12 +95,15 @@ public class MetadataParser {
         }
     }
 
-    private void calculateZonedPublicationDatetime(Metadata metadata) {
-        // the publication date contained in the metadata is specified without a timezone.
+    private void calculateZonedDateTimes(Metadata metadata) {
+        // the publication date and update date contained in the metadata is specified without a timezone.
         // To ensure it is published at the right time we convert this to the right timezone.
         TimeZone timezone = TimeZone.getTimeZone("Europe/London");
-        ZonedDateTime zonedDateTime = metadata.getPublicationDate().atZone(timezone.toZoneId());
-        metadata.setPublicationDateWithTimezone(zonedDateTime);
+        metadata.setPublicationDateWithTimezone(metadata.getPublicationDate().atZone(timezone.toZoneId()));
+
+        if (metadata.getUpdate() != null) {
+            metadata.getUpdate().setLastUpdatedWithTimezone(metadata.getUpdate().getLastUpdated().atZone(timezone.toZoneId()));
+        }
     }
 
     private boolean validISBN(String isbn) {
