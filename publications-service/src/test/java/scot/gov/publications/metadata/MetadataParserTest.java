@@ -7,13 +7,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -192,6 +188,28 @@ public class MetadataParserTest {
         sut.parse(new ByteArrayInputStream(in.getBytes()));
 
         // ASSERT - see expected exception
+    }
+
+    @Test(expected = MetadataParserException.class)
+    public void exceptionThrownIfEmptyUpdateText() throws Exception {
+
+        // ARRANGE
+        MetadataParser sut = new MetadataParser();
+        String input = metadata("updateWithEmptyUpdateText");
+
+        // ACT
+        sut.parse(new ByteArrayInputStream(input.getBytes()));
+    }
+
+    @Test(expected = MetadataParserException.class)
+    public void exceptionThrownIfMalformedLastUpdated() throws Exception {
+
+        // ARRANGE
+        MetadataParser sut = new MetadataParser();
+        String input = metadata("updateWithMalformedLastUpdated");
+
+        // ACT
+        sut.parse(new ByteArrayInputStream(input.getBytes()));
     }
 
     InputStream exceptionThowingInputStream() throws IOException {

@@ -5,10 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.metadata.Consultation;
-import scot.gov.publications.metadata.ConsultationResponseMethod;
-import scot.gov.publications.metadata.Metadata;
-import scot.gov.publications.metadata.Update;
+import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publishing.sluglookup.SlugLookups;
 
@@ -217,6 +214,7 @@ public class PublicationNodeUpdater {
 
         Update update = metadata.getUpdate();
 
+        // If update is absent, do nothing
         if (update == null) {
             return;
         }

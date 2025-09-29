@@ -92,6 +92,12 @@ public class MetadataParser {
         if (!validISBN(metadata.normalisedIsbn())) {
             throw new MetadataParserException("Invalid field: isbn = " + metadata.normalisedIsbn());
         }
+
+        if (metadata.getUpdate() != null) {
+            if (metadata.getUpdate().getUpdateText().isEmpty()) {
+                throw new MetadataParserException("Update text cannot be empty.");
+            }
+        }
     }
 
     private void calculateZonedDateTimes(Metadata metadata) {
