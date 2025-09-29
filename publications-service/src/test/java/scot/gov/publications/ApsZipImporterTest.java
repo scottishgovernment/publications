@@ -555,6 +555,58 @@ public class ApsZipImporterTest {
         assertEquals(1, documentsFolder.getNodes().getSize());
     }
 
+    @Test
+    public void canImportWithUpdate() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixture("canImportWithUpdate");
+        Metadata metadata = loadMetadata(fixturePath);
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node index = publicationFolder.getNode("index/index");
+
+        Node updateHistory = index.getNode("govscot:updateHistory");
+        String updateText = updateHistory.getProperty("govscot:updateText").getString();
+        assertEquals("Expected update text.", updateText);
+
+        Calendar lastUpdated = updateHistory.getProperty("govscot:lastUpdated").getDate();
+        Calendar expectedLastUpdated = GregorianCalendar.from(LocalDateTime.parse("2025-09-10T09:00:00").atZone(ZoneId.of("GMT+01:00")));
+        assertEquals("GMT+01:00", lastUpdated.getTimeZone().getID());
+        assertEquals(0, lastUpdated.compareTo(expectedLastUpdated));
+    }
+
+    @Test
+    public void rejectsIdenticalUpdateEntry() throws Exception {
+
+        // ARRANGE
+        Path fixturePath = ZipFixtures.copyFixture("rejectsIdenticalUpdateEntry");
+        Metadata metadata = loadMetadata(fixturePath);
+        saveMetadata(metadata, fixturePath);
+        ZipFile zip1 = ZipFixtures.zipDirectory(fixturePath);
+        Publication publication = new Publication();
+
+        // ACT
+        String path = sut.importApsZip(zip1, publication);
+
+        // Import the same zip again, with the same update
+        sut.importApsZip(zip1, publication);
+
+        // ASSERT
+        Node publicationFolder = session.getNode(path);
+        Node index = publicationFolder.getNode("index/index");
+
+        // Check that there's only one govscot:updateHistory node
+        assertEquals(1, index.getNodes("govscot:updateHistory").getSize());
+    }
+
     /**
      * Create a publication with a time in the past with a GMT timezone and ensure that the publication date has the
      * right timezone

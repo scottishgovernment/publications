@@ -5,9 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.ApsZipImporterException;
 import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.metadata.Consultation;
-import scot.gov.publications.metadata.ConsultationResponseMethod;
-import scot.gov.publications.metadata.Metadata;
+import scot.gov.publications.metadata.*;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publishing.sluglookup.SlugLookups;
 
@@ -21,15 +19,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.commons.lang3.ObjectUtils.firstNonNull;
 import static org.apache.commons.lang3.StringUtils.*;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static scot.gov.publications.hippo.Constants.*;
 import static scot.gov.publications.hippo.XpathQueryHelper.*;
 
@@ -45,6 +38,10 @@ public class PublicationNodeUpdater {
     private static final String RESPONSIBLE_ROLE = "govscot:responsibleRole";
 
     private static final String FEATURED_LINKS = "govscot:featuredLinks";
+
+    private static final String UPDATE_HISTORY = "govscot:updateHistory";
+
+    private static final String LAST_UPDATED = "govscot:lastUpdated";
 
     Session session;
 
@@ -107,10 +104,12 @@ public class PublicationNodeUpdater {
             hippoUtils.addHtmlNodeIfAbsent(publicationNode, "govscot:content", metadata.getDescription());
             topicMappings.ensureTopics(publicationNode, metadata);
             policiesUpdater.ensurePolicies(publicationNode, metadata);
+            maintainUpdateHistory(publicationNode, metadata);
             createDirectoratesIfAbsent(publicationNode, metadata);
             createRolesIfAbsent(publicationNode, metadata);
             createOrUpdateConsultationFields(publicationNode, metadata);
             createOrUpdateConsultationAnalysisFields(publicationNode, metadata);
+
 
             // update the tags - add any that are not already there.
             tagUpdater.updateTags(publicationNode, metadata.getTags());
@@ -147,6 +146,7 @@ public class PublicationNodeUpdater {
             LOG.error("Failed to remove publication folder after exception", e);
         }
     }
+
     /**
      * Update the publication node from the directorates in the metadata. If the node already contains information
      * it will not be overwritten with this data.  We may want to revise this later as we do not want manual edits
@@ -156,7 +156,7 @@ public class PublicationNodeUpdater {
 
         // if there is a primary responsible directorate specified and none existing on the node then create it
         if (shouldUpdateDirectorate(publicationNode, metadata)) {
-            createDirectorateLink(publicationNode, RESPONSIBLE_DIRECTORATE , metadata.getPrimaryResponsibleDirectorate());
+            createDirectorateLink(publicationNode, RESPONSIBLE_DIRECTORATE, metadata.getPrimaryResponsibleDirectorate());
         }
 
         if (!publicationNode.hasNode("govscot:secondaryResponsibleDirectorate")) {
@@ -171,12 +171,12 @@ public class PublicationNodeUpdater {
             return false;
         }
 
-        if (!publicationNode.hasNode(RESPONSIBLE_DIRECTORATE )) {
+        if (!publicationNode.hasNode(RESPONSIBLE_DIRECTORATE)) {
             return true;
         }
 
         // some nodes have a responsibleDirectorate of / ... treat these as empty
-        Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE );
+        Node respDirectorate = publicationNode.getNode(RESPONSIBLE_DIRECTORATE);
         if ("cafebabe-cafe-babe-cafe-babecafebabe".equals(respDirectorate.getProperty(HIPPO_DOCBASE).getString())) {
             respDirectorate.remove();
             return true;
@@ -208,6 +208,61 @@ public class PublicationNodeUpdater {
                 createRoleLink(publicationNode, "govscot:secondaryResponsibleRole", role);
             }
         }
+    }
+
+    private void maintainUpdateHistory(Node node, Metadata metadata) throws RepositoryException {
+
+        Update update = metadata.getUpdate();
+
+        // If update is absent, do nothing
+        if (update == null) {
+            return;
+        }
+
+        // If the update already exists, do nothing
+        Node existingEntry = hippoUtils.find(node.getNodes(UPDATE_HISTORY),
+                entry -> isExistingEntry(entry, update));
+        if (existingEntry != null) {
+            return;
+        }
+
+        // Create the new update history entry
+        Node newUpdateEntry = hippoUtils.createNode(node, UPDATE_HISTORY, "govscot:UpdateHistory");
+        Calendar newLastUpdated = GregorianCalendar.from(update.getLastUpdatedWithTimezone());
+
+        newUpdateEntry.setProperty(LAST_UPDATED, newLastUpdated);
+        newUpdateEntry.setProperty("govscot:updateText", update.getUpdateText());
+
+        // Sort the new entry chronologically
+        // If there's an existing entry with a later date, insert the new update before
+        String existingLaterUpdate = existingLaterUpdate(node, newLastUpdated);
+        if (existingLaterUpdate != null) {
+            node.orderBefore(substringAfterLast(newUpdateEntry.getPath(), "/"), substringAfterLast(existingLaterUpdate, "/"));
+        }
+    }
+
+    String existingLaterUpdate(Node node, Calendar newDate) throws RepositoryException {
+        NodeIterator it = node.getNodes(UPDATE_HISTORY);
+        while (it.hasNext()) {
+            Node existingUpdate = it.nextNode();
+            Calendar existingLastUpdated = existingUpdate.getProperty(LAST_UPDATED).getDate();
+            if (existingLastUpdated.after(newDate)) {
+                return existingUpdate.getPath();
+            }
+        }
+        return null;
+    }
+
+    boolean isExistingEntry(Node entry, Update update) throws RepositoryException {
+        Calendar newLastUpdated = GregorianCalendar.from(update.getLastUpdatedWithTimezone());
+        Calendar oldLastUpdated = entry.getProperty(LAST_UPDATED).getDate();
+        String newUpdateText = update.getUpdateText();
+        String oldUpdateText = entry.getProperty("govscot:updateText").getString();
+        return sameInstant(newLastUpdated, oldLastUpdated) && newUpdateText.equals(oldUpdateText);
+    }
+
+    boolean sameInstant(Calendar left, Calendar right) {
+        return left.getTimeInMillis() == right.getTimeInMillis();
     }
 
     private void createOrUpdateConsultationAnalysisFields(Node node, Metadata metadata)
@@ -274,6 +329,7 @@ public class PublicationNodeUpdater {
         Consultation consultation = metadata.getConsultation();
         LocalDateTime now = LocalDateTime.now();
         boolean open = now.isAfter(consultation.getOpeningDate()) && now.isBefore(consultation.getClosingDate());
+        
         node.setProperty("govscot:openingDate", GregorianCalendar.from(consultation.getOpeningDate().atZone(ZoneId.systemDefault())));
         node.setProperty("govscot:closingDate", GregorianCalendar.from(consultation.getClosingDate().atZone(ZoneId.systemDefault())));
         node.setProperty("govscot:isOpen", open);
@@ -401,7 +457,7 @@ public class PublicationNodeUpdater {
     }
 
     /**
-     * Ensure that this publications folder is in the right place.  The folder is based on its type and publicaiton
+     * Ensure that this publications folder is in the right place.  The folder is based on its type and publication
      * date and so if either changed since the last time the publication was uploaded then it might have to be moved.
      */
     public Node ensureMonthNode(Node publicationFolder, Metadata metadata) throws RepositoryException {

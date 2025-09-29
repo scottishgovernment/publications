@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
@@ -24,7 +23,7 @@ public class MetadataParser {
             Metadata metadata = doParse(in);
             assertRequiredFields(metadata);
             assertValidFields(metadata);
-            calculateZonedPublicationDatetime(metadata);
+            calculateZonedDateTimes(metadata);
             return metadata;
         } catch (IOException e) {
             throw new MetadataParserException("Failed to parse metadata", e);
@@ -93,14 +92,21 @@ public class MetadataParser {
         if (!validISBN(metadata.normalisedIsbn())) {
             throw new MetadataParserException("Invalid field: isbn = " + metadata.normalisedIsbn());
         }
+
+        if (metadata.getUpdate() != null && metadata.getUpdate().getUpdateText().isEmpty()) {
+                throw new MetadataParserException("Update text cannot be empty.");
+        }
     }
 
-    private void calculateZonedPublicationDatetime(Metadata metadata) {
-        // the publication date contained in the metadata is specified without a timezone.
+    private void calculateZonedDateTimes(Metadata metadata) {
+        // the publication date and update date contained in the metadata is specified without a timezone.
         // To ensure it is published at the right time we convert this to the right timezone.
         TimeZone timezone = TimeZone.getTimeZone("Europe/London");
-        ZonedDateTime zonedDateTime = metadata.getPublicationDate().atZone(timezone.toZoneId());
-        metadata.setPublicationDateWithTimezone(zonedDateTime);
+        metadata.setPublicationDateWithTimezone(metadata.getPublicationDate().atZone(timezone.toZoneId()));
+
+        if (metadata.getUpdate() != null) {
+            metadata.getUpdate().setLastUpdatedWithTimezone(metadata.getUpdate().getLastUpdated().atZone(timezone.toZoneId()));
+        }
     }
 
     private boolean validISBN(String isbn) {

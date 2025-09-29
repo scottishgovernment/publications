@@ -22,6 +22,10 @@
       "ethnicity": false,
       "orientation": false
     },
-    "links": []
+    "links": [],
+    "update": {
+      "lastUpdated": "2025-09-10T09:00:00",
+      "updateText": "Expected update text."
+    }
   }
 }

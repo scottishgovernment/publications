@@ -68,12 +68,20 @@ public class Metadata {
 
     Consultation consultation;
 
+    Update update;
+
     public Consultation getConsultation() {
         return consultation;
     }
 
     public void setConsultation(Consultation consultation) {
         this.consultation = consultation;
+    }
+
+    public Update getUpdate() { return update;}
+
+    public void setUpdate(Update update) {
+        this.update = update;
     }
 
     boolean sensitive = false;
