@@ -120,7 +120,7 @@ public class HippoNodeFactory {
         if (embargo) {
             node.addMixin(EMBARGO_DOCUMENT);
             handle.addMixin(EMBARGO_HANDLE);
-            handle.setProperty(EMBARGO_GROUPS, new String[]{"General Embargo"});
+            handle.setProperty(EMBARGO_GROUPS, new String[]{"general-embargo"});
             createRemoveEmbargoJob(node, publishDateTime);
         } else {
             hippoUtils.ensureMixinRemoved(node, EMBARGO_DOCUMENT);
