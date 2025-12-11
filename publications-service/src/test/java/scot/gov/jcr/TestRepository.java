@@ -11,9 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Creates an embedded JCR repository for testing.
@@ -45,8 +43,10 @@ public class TestRepository {
     }
 
     private static void setUpRepo() throws RepositoryException, IOException {
-        String repoUrl = repoDirectory().toURI().toURL().toString();
-        repository = JcrUtils.getRepository(repoUrl);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("org.apache.jackrabbit.repository.home", repoDirectory().getPath());
+        parameters.put("org.apache.jackrabbit.repository.conf", configFile().getPath());
+        repository = JcrUtils.getRepository(parameters);
         Session session = repository.login(admin);
         Workspace workspace = session.getWorkspace();
         JackrabbitNodeTypeManager manager = (JackrabbitNodeTypeManager) workspace.getNodeTypeManager();
@@ -67,14 +67,22 @@ public class TestRepository {
     }
 
     private static File repoDirectory() {
+            return new File(targetDirectory(), "repo");
+    }
+
+    private static File configFile() {
+        return new File(targetDirectory(), "test-classes/repository.xml");
+    }
+
+    private static File targetDirectory() {
         try {
-            File target = new File(TestRepository.class
+            return new File(TestRepository.class
                     .getProtectionDomain()
                     .getCodeSource()
                     .getLocation()
                     .toURI())
-                    .getParentFile();
-            return new File(target, "repo");
+                    .getParentFile()
+                    .getAbsoluteFile();
         } catch (URISyntaxException ex) {
             throw new RuntimeException(ex);
         }

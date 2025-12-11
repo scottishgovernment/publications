@@ -312,13 +312,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.14.2.0</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
       <artifactId>hst-addon-cnd</artifactId>
       <version>${hippo.repository.version}</version>
