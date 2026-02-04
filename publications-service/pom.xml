@@ -19,7 +19,7 @@
     <slf4j.version>2.0.17</slf4j.version>
     <logback.version>1.5.18</logback.version>
     <postgres.jdbc.version>42.7.7</postgres.jdbc.version>
-    <undertow.version>2.3.20.Final</undertow.version>
+    <undertow.version>2.3.21.Final</undertow.version>
     <aws.version>1.12.788</aws.version>
     <resteasy.version>6.2.12.Final</resteasy.version>
 
