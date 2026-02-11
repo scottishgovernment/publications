@@ -2,6 +2,7 @@ package scot.gov.publications;
 
 import dagger.ObjectGraph;
 import io.undertow.Undertow;
+import io.undertow.UndertowOptions;
 import org.flywaydb.core.Flyway;
 import org.jboss.resteasy.plugins.server.undertow.UndertowJaxrsServer;
 import org.slf4j.Logger;
@@ -52,7 +53,9 @@ public class Publications {
     private void startServer() {
         Server server = new Server();
         server.deploy(application);
-        server.start(Undertow.builder().addHttpListener(config.getPort(), "::"));
+        server.start(Undertow.builder()
+                .setServerOption(UndertowOptions.MAX_ENTITY_SIZE, 50 * 1024 * 1024L)
+                .addHttpListener(config.getPort(), "::"));
         LOG.info("Listening on port {}", server.port());
     }
 
