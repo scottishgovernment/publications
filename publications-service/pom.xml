@@ -67,7 +67,13 @@
 
     <dependency>
       <groupId>scot.gov.publishing.hippo</groupId>
-      <artifactId>hippo-govscot-funnelback-cms</artifactId>
+      <artifactId>hippo-govscot-jcrutil</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
+    <dependency>
+      <groupId>scot.gov.publishing.hippo</groupId>
+      <artifactId>hippo-govscot-search-cms</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
 
