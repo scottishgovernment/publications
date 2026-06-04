@@ -1,23 +1,27 @@
 package scot.gov.publications.storage;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.DeleteObjectsResult;
-import com.amazonaws.services.s3.model.GetObjectRequest;
-import com.amazonaws.services.s3.model.MultiObjectDeleteException;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.PublicationsConfiguration;
 import scot.gov.publications.repo.Publication;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.Delete;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -28,9 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Store and fetch zip files in s3.
@@ -45,7 +47,7 @@ public class S3PublicationStorage implements PublicationStorage {
     PublicationsConfiguration.S3 configuration;
 
     @Inject
-    AmazonS3 s3;
+    S3Client s3;
 
     /**
      * Determine if the storage service is healthly by trying to ensure that the readme file exists.
@@ -54,78 +56,83 @@ public class S3PublicationStorage implements PublicationStorage {
      * @throws PublicationStorageException If we fail to talk to s3.
      */
     public boolean ok() throws PublicationStorageException {
-
         try {
-            // test if we can determine the existence of the readme file
             String path = path(README);
-            if (s3.doesObjectExist(configuration.getBucket(), path)) {
+            String bucketName = configuration.getBucket();
+            if (doesObjectExist(bucketName, path)) {
                 return true;
             }
-
-            // the file does not exist, try to write it
-            ObjectMetadata objectMetadata = new ObjectMetadata();
-            String bucketName = configuration.getBucket();
-            InputStream in = S3PublicationStorage.class.getResourceAsStream("/StorageReadme.txt");
-            PutObjectRequest put = new PutObjectRequest(bucketName, path, in, objectMetadata);
-
-            s3.putObject(put);
+            byte[] content = S3PublicationStorage.class.getResourceAsStream("/StorageReadme.txt").readAllBytes();
+            s3.putObject(
+                PutObjectRequest.builder().bucket(bucketName).key(path).build(),
+                RequestBody.fromBytes(content)
+            );
             return true;
-        } catch (AmazonClientException e) {
+        } catch (SdkException | IOException e) {
             throw new PublicationStorageException(e);
+        }
+    }
+
+    private boolean doesObjectExist(String bucket, String key) {
+        try {
+            s3.headObject(HeadObjectRequest.builder().bucket(bucket).key(key).build());
+            return true;
+        } catch (NoSuchKeyException e) {
+            LOG.warn("no such key", e);
+            return false;
         }
     }
 
     public void save(Publication publication, File file) throws PublicationStorageException {
         String path = getPath(publication);
-        PutObjectRequest put = new PutObjectRequest(configuration.getBucket(), path, file);
         try {
-            s3.putObject(put);
-        } catch (AmazonClientException e) {
+            s3.putObject(
+                PutObjectRequest.builder().bucket(configuration.getBucket()).key(path).build(),
+                RequestBody.fromFile(file)
+            );
+        } catch (SdkException e) {
             throw new PublicationStorageException(e);
         }
     }
 
     public InputStream get(Publication publication) throws PublicationStorageException {
         String path = getPath(publication);
-        GetObjectRequest get = new GetObjectRequest(configuration.getBucket(), path);
         try {
-            S3Object s3Object = s3.getObject(get);
-            return s3Object.getObjectContent();
-        } catch (AmazonClientException e) {
+            return s3.getObject(GetObjectRequest.builder().bucket(configuration.getBucket()).key(path).build());
+        } catch (SdkException e) {
             throw new PublicationStorageException(e);
         }
     }
 
-    public Set<String> listKeys() throws PublicationStorageException{
+    public Set<String> listKeys() throws PublicationStorageException {
         Set<String> keys = new HashSet<>();
         try {
-            ObjectListing objects = s3.listObjects(configuration.getBucket(), configuration.getPath());
-            while (!objects.getObjectSummaries().isEmpty()) {
-                keys.addAll(objects.getObjectSummaries()
-                        .stream()
-                        .map(S3ObjectSummary::getKey)
+            ListObjectsV2Request request = ListObjectsV2Request.builder()
+                    .bucket(configuration.getBucket())
+                    .prefix(configuration.getPath())
+                    .build();
+            ListObjectsV2Response response;
+            do {
+                response = s3.listObjectsV2(request);
+                response.contents().stream()
+                        .map(S3Object::key)
                         .map(key -> key.substring(configuration.getPath().length() + 1))
-                        .collect(toList()));
-                // don't need to check the next listing if this one is not truncated
-                if (!objects.isTruncated()) {
-                    break;
+                        .forEach(keys::add);
+                if (response.isTruncated()) {
+                    request = request.toBuilder()
+                            .continuationToken(response.nextContinuationToken())
+                            .build();
                 }
-                objects = s3.listNextBatchOfObjects(objects);
-            }
-
-            // we do not want to remove the readme file used by the ok method
+            } while (response.isTruncated());
             keys.remove(README);
             return keys;
-        } catch (AmazonClientException e) {
+        } catch (SdkException e) {
             throw new PublicationStorageException(e);
         }
     }
 
     public Map<String, String> deleteKeys(Collection<String> keys) throws PublicationStorageException {
-        // split into arrays no larger than 1000
         List<List<String>> chunks = partition(keys, 1000);
-
-        // delete each chunk and record the results
         Map<String, String> results = new HashMap<>();
         for (List<String> chunk : chunks) {
             results.putAll(deleteChunk(chunk));
@@ -143,31 +150,23 @@ public class S3PublicationStorage implements PublicationStorage {
     }
 
     private Map<String, String> deleteChunk(List<String> chunk) {
-        String[] s3KeysArray = chunk.toArray(new String[chunk.size()]);
-        DeleteObjectsRequest deleteRequest =
-                new DeleteObjectsRequest(configuration.getBucket()).withKeys(s3KeysArray);
+        List<ObjectIdentifier> identifiers = chunk.stream()
+                .map(key -> ObjectIdentifier.builder().key(key).build())
+                .collect(toList());
+        DeleteObjectsRequest deleteRequest = DeleteObjectsRequest.builder()
+                .bucket(configuration.getBucket())
+                .delete(Delete.builder().objects(identifiers).build())
+                .build();
 
-        try {
-            DeleteObjectsResult result = s3.deleteObjects(deleteRequest);
+        DeleteObjectsResponse response = s3.deleteObjects(deleteRequest);
 
-            List<DeleteObjectsResult.DeletedObject> deletedObjects = result.getDeletedObjects();
-            return deletedObjects.stream().map(DeleteObjectsResult.DeletedObject::getKey).collect(toMap(identity(), key -> "deleted"));
-
-        } catch (MultiObjectDeleteException e) {
-            LOG.warn("Multiple delete threw exception.", e);
-            // some items could not be deleted, collect the successful and error responses into the result map.
-            Map<String, String> ok = e.getDeletedObjects()
-                    .stream()
-                    .map(DeleteObjectsResult.DeletedObject::getKey)
-                    .collect(toMap(identity(), key -> "deleted"));
-            Map<String, String> errors = e.getErrors()
-                    .stream()
-                    .collect(toMap(MultiObjectDeleteException.DeleteError::getKey, MultiObjectDeleteException.DeleteError::getMessage));
-            Map<String, String> results = new HashMap<>();
-            results.putAll(ok);
-            results.putAll(errors);
-            return results;
-        }
+        Map<String, String> results = new HashMap<>();
+        response.deleted().forEach(d -> results.put(d.key(), "deleted"));
+        response.errors().forEach(e -> {
+            LOG.warn("Failed to delete {}: {}", e.key(), e.message());
+            results.put(e.key(), e.message());
+        });
+        return results;
     }
 
     private String getPath(Publication publication) {

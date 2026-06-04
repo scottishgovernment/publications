@@ -21,7 +21,7 @@
     <logback.version>1.5.18</logback.version>
     <postgres.jdbc.version>42.7.7</postgres.jdbc.version>
     <undertow.version>2.3.21.Final</undertow.version>
-    <aws.version>1.12.788</aws.version>
+    <aws.version>2.28.11</aws.version>
     <resteasy.version>6.2.12.Final</resteasy.version>
 
     <sonar.exclusions>
@@ -99,27 +99,9 @@
 
     <!-- amazon -->
     <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-s3</artifactId>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>s3</artifactId>
       <version>${aws.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-core</artifactId>
-      <version>${aws.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Servlet container -->
@@ -323,13 +305,6 @@
       <artifactId>hst-addon-cnd</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <!-- Used by AWS SDK -->
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>2.3.1</version>
     </dependency>
 
   </dependencies>

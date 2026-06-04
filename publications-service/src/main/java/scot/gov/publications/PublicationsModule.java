@@ -1,17 +1,5 @@
 package scot.gov.publications;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSCredentialsProviderChain;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
-import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
-import com.amazonaws.regions.AwsRegionProvider;
-import com.amazonaws.regions.AwsRegionProviderChain;
-import com.amazonaws.regions.DefaultAwsRegionProviderChain;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.zaxxer.hikari.HikariDataSource;
 import dagger.Module;
 import dagger.Provides;
 import org.apache.commons.dbutils.QueryRunner;
@@ -27,10 +15,22 @@ import scot.gov.publications.storage.S3PublicationStorage;
 import scot.gov.publications.util.Exif;
 import scot.gov.publications.util.ExifProcessImpl;
 import scot.mygov.config.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.regions.providers.AwsRegionProvider;
+import software.amazon.awssdk.regions.providers.AwsRegionProviderChain;
+import software.amazon.awssdk.regions.providers.DefaultAwsRegionProviderChain;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import javax.inject.Singleton;
 import javax.sql.DataSource;
 import java.time.Clock;
+
+import com.zaxxer.hikari.HikariDataSource;
 
 @Module(injects = Publications.class)
 class PublicationsModule {
@@ -106,23 +106,22 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    AmazonS3 s3Client(AWSCredentialsProvider credentialsProvider, AwsRegionProvider regionProvider) {
+    S3Client s3Client(AwsCredentialsProvider credentialsProvider, AwsRegionProvider regionProvider) {
         LOG.info("Creating Amazon S3 client");
         StopWatch watch = StopWatch.createStarted();
 
-        AWSCredentialsProvider credentialsProviderChain= new AWSCredentialsProviderChain(
-                credentialsProvider,
-                DefaultAWSCredentialsProviderChain.getInstance()
-        );
+        AwsCredentialsProvider credentialsChain = AwsCredentialsProviderChain.builder()
+                .credentialsProviders(credentialsProvider, DefaultCredentialsProvider.create())
+                .build();
 
-        AwsRegionProvider regionProviderChain = new AwsRegionProviderChain(
+        AwsRegionProvider regionChain = new AwsRegionProviderChain(
                 regionProvider,
                 new DefaultAwsRegionProviderChain()
         );
 
-        AmazonS3 client = AmazonS3ClientBuilder.standard()
-                .withCredentials(credentialsProviderChain)
-                .withRegion(regionProviderChain.getRegion())
+        S3Client client = S3Client.builder()
+                .credentialsProvider(credentialsChain)
+                .region(regionChain.getRegion())
                 .build();
         LOG.info("Created Amazon S3 client in {}ms", watch.getTime());
         return client;
@@ -130,27 +129,24 @@ class PublicationsModule {
 
     @Provides
     @Singleton
-    AWSCredentialsProvider configurationAWSCrendentials(PublicationsConfiguration.S3 configuration) {
-        return new EnvironmentVariableCredentialsProvider() {
-            @Override
-            public AWSCredentials getCredentials() {
-                if (configuration.getKey() == null || configuration.getSecret() == null) {
-                    return null;
-                }
-                LOG.info("Using AWS credentials from configuration");
-                return new BasicAWSCredentials(configuration.getKey(), configuration.getSecret());
+    AwsCredentialsProvider configurationAWSCrendentials(PublicationsConfiguration.S3 configuration) {
+        return () -> {
+            if (configuration.getKey() == null || configuration.getSecret() == null) {
+                throw SdkClientException.create("No AWS credentials in configuration");
             }
+            LOG.info("Using AWS credentials from configuration");
+            return AwsBasicCredentials.create(configuration.getKey(), configuration.getSecret());
         };
     }
 
     @Provides
     @Singleton
     AwsRegionProvider configurationAWSRegion(PublicationsConfiguration.S3 configuration) {
-        return new AwsRegionProvider() {
-            @Override
-            public String getRegion() {
-                return configuration.getRegion();
+        return () -> {
+            if (configuration.getRegion() == null) {
+                throw SdkClientException.create("No AWS region in configuration");
             }
+            return Region.of(configuration.getRegion());
         };
     }
 }

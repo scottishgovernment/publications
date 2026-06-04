@@ -1,11 +1,13 @@
 package scot.gov.publications;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import org.junit.Test;
 import scot.gov.publications.PublicationsConfiguration.S3;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkClientException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class PublicationsModuleTest {
 
@@ -16,19 +18,19 @@ public class PublicationsModuleTest {
         S3 s3 = new S3();
         s3.setKey(key);
         s3.setSecret(secret);
-        AWSCredentialsProvider provider = new PublicationsModule().configurationAWSCrendentials(s3);
-        AWSCredentials credentials = provider.getCredentials();
+        AwsCredentialsProvider provider = new PublicationsModule().configurationAWSCrendentials(s3);
+        AwsCredentials credentials = provider.resolveCredentials();
         assertThat(credentials).isNotNull();
-        assertThat(credentials.getAWSAccessKeyId()).isEqualTo(key);
-        assertThat(credentials.getAWSSecretKey()).isEqualTo(secret);
+        assertThat(credentials.accessKeyId()).isEqualTo(key);
+        assertThat(credentials.secretAccessKey()).isEqualTo(secret);
     }
 
     @Test
     public void usesIAMRoleIfNoAWSCredentialsConfigured() {
         S3 s3 = new S3();
-        AWSCredentialsProvider provider = new PublicationsModule().configurationAWSCrendentials(s3);
-        AWSCredentials credentials = provider.getCredentials();
-        assertThat(credentials).isNull();
+        AwsCredentialsProvider provider = new PublicationsModule().configurationAWSCrendentials(s3);
+        assertThatThrownBy(provider::resolveCredentials)
+                .isInstanceOf(SdkClientException.class);
     }
 
 }

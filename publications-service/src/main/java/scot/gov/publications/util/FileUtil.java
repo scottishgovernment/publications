@@ -1,7 +1,5 @@
 package scot.gov.publications.util;
 
-import com.amazonaws.util.BinaryUtils;
-import com.amazonaws.util.Md5Utils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -9,6 +7,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 
 public class FileUtil {
 
@@ -38,12 +40,17 @@ public class FileUtil {
     }
 
     public String hash(File zip) throws IOException {
-        InputStream in = null;
         try {
-            in = new FileInputStream(zip);
-            return BinaryUtils.toHex(Md5Utils.computeMD5Hash(in));
-        } finally {
-            IOUtils.closeQuietly(in);
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            try (InputStream in = new DigestInputStream(new FileInputStream(zip), digest)) {
+                byte[] buffer = new byte[8192];
+                while (in.read(buffer) != -1) {
+                    // digest updated by DigestInputStream
+                }
+            }
+            return HexFormat.of().formatHex(digest.digest());
+        } catch (NoSuchAlgorithmException e) {
+            throw new IOException(e);
         }
     }
 }

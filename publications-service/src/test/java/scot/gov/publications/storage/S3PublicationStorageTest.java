@@ -1,14 +1,23 @@
 package scot.gov.publications.storage;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.DeleteObjectsResult;
-import com.amazonaws.services.s3.model.ObjectListing;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
 import org.junit.Test;
 import scot.gov.publications.PublicationsConfiguration.S3;
 import scot.gov.publications.repo.Publication;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -37,10 +46,10 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3 = mock(AmazonS3.class);
+        sut.s3 = mock(S3Client.class);
         sut.configuration = new S3();
         sut.configuration.setPath("path");
-        when(sut.s3.doesObjectExist(any(), any())).thenReturn(true);
+        when(sut.s3.headObject(any(HeadObjectRequest.class))).thenReturn(HeadObjectResponse.builder().build());
 
         // ACT
         boolean actual = sut.ok();
@@ -54,10 +63,10 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3 = mock(AmazonS3.class);
-        when(sut.s3.doesObjectExist(any(), any())).thenReturn(false);
+        sut.s3 = mock(S3Client.class);
         sut.configuration = new S3();
         sut.configuration.setPath("path");
+        when(sut.s3.headObject(any(HeadObjectRequest.class))).thenThrow(NoSuchKeyException.builder().build());
 
         // ACT
         boolean actual = sut.ok();
@@ -71,15 +80,15 @@ public class S3PublicationStorageTest {
 
         // ARRANGE
         S3PublicationStorage sut = new S3PublicationStorage();
-        sut.s3 = mock(AmazonS3.class);
-        when(sut.s3.doesObjectExist(any(), any())).thenThrow(new AmazonClientException(""));
+        sut.s3 = mock(S3Client.class);
         sut.configuration = new S3();
         sut.configuration.setPath("path");
+        when(sut.s3.headObject(any(HeadObjectRequest.class))).thenThrow(SdkException.create("error", null));
 
         // ACT
         boolean actual = sut.ok();
 
-        // ASSERT - see excpetion
+        // ASSERT - see exception
         assertFalse(actual);
     }
 
@@ -90,10 +99,11 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
+        sut.s3 = mock(S3Client.class);
         Publication publication = new Publication();
         publication.setChecksum("checksum");
-        File file = mock(File.class);
+        File file = File.createTempFile("test", ".zip");
+        file.deleteOnExit();
 
         String expectedBucketName = "bucket";
         String expectedPath = "path/checksum";
@@ -103,7 +113,8 @@ public class S3PublicationStorageTest {
 
         // ASSERT
         verify(sut.s3).putObject(
-                argThat(put -> put.getBucketName().equals(expectedBucketName) && put.getKey().equals(expectedPath)));
+                argThat((PutObjectRequest put) -> put.bucket().equals(expectedBucketName) && put.key().equals(expectedPath)),
+                any(RequestBody.class));
     }
 
 
@@ -114,11 +125,12 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
-        when(sut.s3.putObject(any())).thenThrow(new AmazonClientException(""));
+        sut.s3 = mock(S3Client.class);
+        when(sut.s3.putObject(any(PutObjectRequest.class), any(RequestBody.class))).thenThrow(SdkException.create("error", null));
         Publication publication = new Publication();
         publication.setChecksum("checksum");
-        File file = mock(File.class);
+        File file = File.createTempFile("test", ".zip");
+        file.deleteOnExit();
 
         // ACT
         sut.save(publication, file);
@@ -134,9 +146,9 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
-        S3Object s3Obj = mock(S3Object.class);
-        when(sut.s3.getObject(any())).thenReturn(s3Obj);
+        sut.s3 = mock(S3Client.class);
+        ResponseInputStream<GetObjectResponse> mockResponse = mock(ResponseInputStream.class);
+        when(sut.s3.getObject(any(GetObjectRequest.class))).thenReturn(mockResponse);
         Publication publication = new Publication();
         publication.setChecksum("checksum");
 
@@ -148,7 +160,7 @@ public class S3PublicationStorageTest {
 
         // ASSERT
         verify(sut.s3).getObject(
-                argThat(get -> get.getBucketName().equals(expectedBucketName) && get.getKey().equals(expectedPath)));
+                argThat((GetObjectRequest get) -> get.bucket().equals(expectedBucketName) && get.key().equals(expectedPath)));
     }
 
     @Test(expected = PublicationStorageException.class)
@@ -159,20 +171,15 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
-        when(sut.s3.getObject(any())).thenThrow(new AmazonClientException(""));
+        sut.s3 = mock(S3Client.class);
+        when(sut.s3.getObject(any(GetObjectRequest.class))).thenThrow(SdkException.create("error", null));
         Publication publication = new Publication();
         publication.setChecksum("checksum");
-
-        String expectedBucketName = "bucket";
-        String expectedPath = "path/checksum";
 
         // ACT
         sut.get(publication);
 
-        // ASSERT
-        verify(sut.s3).getObject(
-                argThat(get -> get.getBucketName().equals(expectedBucketName) && get.getKey().equals(expectedPath)));
+        // ASSERT -- see exception
     }
 
     @Test
@@ -183,13 +190,20 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
+        sut.s3 = mock(S3Client.class);
 
-        ObjectListing objectListing1 = listing(true, summary("summary1"), summary("summary2"));
-        when(sut.s3.listObjects(any(), any())).thenReturn(objectListing1);
-
-        ObjectListing objectListing2 = listing(false, summary("summary3"));
-        when(sut.s3.listNextBatchOfObjects(any(ObjectListing.class))).thenReturn(objectListing2);
+        ListObjectsV2Response response1 = ListObjectsV2Response.builder()
+                .isTruncated(true)
+                .nextContinuationToken("token")
+                .contents(s3object("path/summary1"), s3object("path/summary2"))
+                .build();
+        ListObjectsV2Response response2 = ListObjectsV2Response.builder()
+                .isTruncated(false)
+                .contents(s3object("path/summary3"))
+                .build();
+        when(sut.s3.listObjectsV2(any(ListObjectsV2Request.class)))
+                .thenReturn(response1)
+                .thenReturn(response2);
 
         Set<String> expected = new HashSet<>();
         Collections.addAll(expected, "summary1", "summary2", "summary3");
@@ -208,9 +222,8 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
-
-        when(sut.s3.listObjects(any(), any())).thenThrow(new AmazonClientException("arg"));
+        sut.s3 = mock(S3Client.class);
+        when(sut.s3.listObjectsV2(any(ListObjectsV2Request.class))).thenThrow(SdkException.create("arg", null));
 
         // ACT
         sut.listKeys();
@@ -226,11 +239,14 @@ public class S3PublicationStorageTest {
         sut.configuration = new S3();
         sut.configuration.setPath("path");
         sut.configuration.setBucket("bucket");
-        sut.s3 = mock(AmazonS3.class);
-        DeleteObjectsResult res = mock(DeleteObjectsResult.class);
-        when(sut.s3.deleteObjects(any())).thenReturn(res);
+        sut.s3 = mock(S3Client.class);
+        DeleteObjectsResponse res = DeleteObjectsResponse.builder()
+                .deleted(emptyList())
+                .errors(emptyList())
+                .build();
+        when(sut.s3.deleteObjects(any(DeleteObjectsRequest.class))).thenReturn(res);
         List<String> keys = new ArrayList<>();
-        for (int i = 0; i< 2500; i++) {
+        for (int i = 0; i < 2500; i++) {
             keys.add(Integer.toString(i));
         }
 
@@ -238,7 +254,7 @@ public class S3PublicationStorageTest {
         sut.deleteKeys(keys);
 
         // ASSERT - objects are deleted in three chunks
-        verify(sut.s3, times(3)).deleteObjects(any());
+        verify(sut.s3, times(3)).deleteObjects(any(DeleteObjectsRequest.class));
     }
 
     @Test
@@ -253,17 +269,8 @@ public class S3PublicationStorageTest {
         assertThat(storage.partition(emptyList(), 5)).isEmpty();
     }
 
-    ObjectListing listing(boolean truncted, S3ObjectSummary...summaries) {
-        ObjectListing listing = mock(ObjectListing.class);
-        when(listing.isTruncated()).thenReturn(truncted);
-        when(listing.getObjectSummaries()).thenReturn(asList(summaries));
-        return listing;
-    }
-
-    S3ObjectSummary summary(String key) {
-        S3ObjectSummary summary = mock(S3ObjectSummary.class);
-        when(summary.getKey()).thenReturn("path/" + key);
-        return summary;
+    S3Object s3object(String key) {
+        return S3Object.builder().key(key).build();
     }
 
 }
