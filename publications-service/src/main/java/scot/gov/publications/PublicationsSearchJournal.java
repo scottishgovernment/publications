@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scot.gov.publications.hippo.HippoUtils;
 import scot.gov.publishing.jcr.FeatureFlag;
+import scot.gov.publishing.searchjournal.FunnelbackCollection;
 import scot.gov.publishing.searchjournal.SearchJournal;
 import scot.gov.publishing.searchjournal.SearchJournalEntry;
-import scot.gov.publishing.searchjournal.funnelback.FunnelbackCollection;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
