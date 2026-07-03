@@ -36,6 +36,7 @@
 
 [hippostd:folder] > hippo:document orderable
 - hippostd:foldertype (string) multiple copy
+- hippostd:hasfolders (boolean)
 + * = hippostd:folder multiple
 
 [hippostd:space] > hippostd:folder
