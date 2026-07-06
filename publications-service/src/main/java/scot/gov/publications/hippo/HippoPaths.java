@@ -1,7 +1,5 @@
 package scot.gov.publications.hippo;
 
-import com.github.slugify.Slugify;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -9,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.github.slugify.Slugify;
 
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -115,7 +115,6 @@ public class HippoPaths {
         node.addMixin("mix:simpleVersionable");
         node.addMixin("mix:lockable");
         node.setProperty("hippo:name", name);
-        parent.setProperty("hippostd:hasfolders", true);
         return node;
     }
 
@@ -146,7 +145,6 @@ public class HippoPaths {
         node.setProperty("hippo:name", name);
         node.setProperty("hippostd:foldertype", new String [] { "new-image-folder"});
         node.setProperty("hippostd:gallerytype", new String [] {"hippogallery:imageset"});
-        parent.setProperty("hippostd:hasfolders", true);
         return node;
     }
 
