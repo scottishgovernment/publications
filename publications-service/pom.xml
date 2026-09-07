@@ -15,7 +15,7 @@
 
   <properties>
     <hippo.repository.version>16.5.2</hippo.repository.version>
-    <jackson.version>2.19.4</jackson.version>
+    <jackson.version>2.19.2</jackson.version>
     <slf4j.version>2.0.17</slf4j.version>
     <jsoup.version>1.23.1</jsoup.version>
     <logback.version>1.5.18</logback.version>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.20.0</version>
+      <version>3.18.0</version>
     </dependency>
 
     <!-- markdown processor -->
