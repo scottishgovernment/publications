@@ -1,6 +1,8 @@
 package scot.gov.publications.hippo;
 
 import com.github.slugify.Slugify;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -158,6 +160,10 @@ public class HippoPaths {
     }
 
     private Node applyDisplayName(Node folder, String displayName) throws RepositoryException {
+
+        if (!folder.isNodeType("hippo:named")) {
+            folder.addMixin("hippo:named");
+        }
         if (!folder.hasProperty(HIPPO_NAME) || !displayName.equals(folder.getProperty(HIPPO_NAME).getString())) {
             folder.setProperty(HIPPO_NAME, displayName);
         }
