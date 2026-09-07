@@ -1,8 +1,6 @@
 package scot.gov.publications.hippo;
 
 import com.github.slugify.Slugify;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -15,6 +13,7 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static scot.gov.publications.hippo.Constants.HIPPO_NAME;
+import static scot.gov.publications.hippo.Constants.HIPPO_NAMED;
 
 /**
  * Creates nodes in the repository for given hippoPaths.
@@ -112,7 +111,7 @@ public class HippoPaths {
     public Node folderNode(Node parent, String name) throws RepositoryException {
         String slug = slugify(name);
         Node node = parent.addNode(slug, "hippostd:folder");
-        node.addMixin("hippo:named");
+        node.addMixin(HIPPO_NAMED);
         node.addMixin("mix:referenceable");
         node.addMixin("mix:versionable");
         node.addMixin("mix:simpleVersionable");
@@ -161,8 +160,8 @@ public class HippoPaths {
 
     private Node applyDisplayName(Node folder, String displayName) throws RepositoryException {
 
-        if (!folder.isNodeType("hippo:named")) {
-            folder.addMixin("hippo:named");
+        if (!folder.isNodeType(HIPPO_NAMED)) {
+            folder.addMixin(HIPPO_NAMED);
         }
         if (!folder.hasProperty(HIPPO_NAME) || !displayName.equals(folder.getProperty(HIPPO_NAME).getString())) {
             folder.setProperty(HIPPO_NAME, displayName);
@@ -172,7 +171,7 @@ public class HippoPaths {
 
     private Node imageFolderNode(Node parent, String slug, String displayName) throws RepositoryException {
         Node node = parent.addNode(slug, "hippogallery:stdImageGallery");
-        node.addMixin("hippo:named");
+        node.addMixin(HIPPO_NAMED);
         node.addMixin("mix:referenceable");
         node.setProperty(HIPPO_NAME, displayName);
         node.setProperty("hippostd:foldertype", new String [] { "new-image-folder"});
