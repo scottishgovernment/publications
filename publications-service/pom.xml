@@ -14,8 +14,8 @@
   <name>Publications Service</name>
 
   <properties>
-    <hippo.repository.version>16.5.2</hippo.repository.version>
-    <jackson.version>2.19.2</jackson.version>
+    <hippo.repository.version>16.9.4</hippo.repository.version>
+    <jackson.version>2.21.5</jackson.version>
     <slf4j.version>2.0.17</slf4j.version>
     <jsoup.version>1.23.1</jsoup.version>
     <logback.version>1.5.18</logback.version>
@@ -87,7 +87,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.18.0</version>
+      <version>3.20.0</version>
     </dependency>
 
     <!-- markdown processor -->
@@ -375,7 +375,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.5.13</version>
         <executions>
           <execution>
             <goals>
