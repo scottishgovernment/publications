@@ -152,11 +152,19 @@ public class HippoNodeFactory {
     }
 
     /**
-     * If this publication node has a workflow job attached to its handle then remove it
+     * If this publication node has a workflow job or embargo removal job attached to its handle then remove them.
+     * Both must be cleared together, otherwise a stale embargo:request job left over from a previous import can
+     * fire its removeEmbargo action while a later scheduled publish job is versioning the same handle, causing a
+     * JCR NoSuchItemStateException on embargo:groups.
      */
     public void ensureWorkflowJobsDeleted(Node node) throws RepositoryException {
         Node handle = node.getParent();
-        NodeIterator it = handle.getNodes(HIPPO_REQUEST);
+        removeChildNodes(handle, HIPPO_REQUEST);
+        removeChildNodes(handle, EMBARGO_REQUEST);
+    }
+
+    private void removeChildNodes(Node handle, String name) throws RepositoryException {
+        NodeIterator it = handle.getNodes(name);
         while (it.hasNext()) {
             Node request = (Node) it.nextNode();
             request.remove();

@@ -13,6 +13,7 @@ import static java.util.Collections.emptyList;
 import static org.mockito.Mockito.*;
 import static scot.gov.publications.hippo.Constants.DOCUMENT_MIXINS;
 import static scot.gov.publications.hippo.Constants.HIPPO_REQUEST;
+import static scot.gov.publications.hippo.Constants.EMBARGO_REQUEST;
 import static scot.gov.publications.hippo.Constants.JCR_MIMETYPE;
 import static scot.gov.publications.hippo.HippoUtilsTest.iterator;
 
@@ -31,6 +32,7 @@ public class HippoNodeFactoryTest {
         when(handle.getParent()).thenReturn(folder);
         when(sut.hippoUtils.createNode(handle, "slug", "type", DOCUMENT_MIXINS)).thenReturn(node);
         when(handle.getNodes(HIPPO_REQUEST)).thenReturn(iterator(emptyList()));
+        when(handle.getNodes(EMBARGO_REQUEST)).thenReturn(iterator(emptyList()));
 
         // ACT
         sut.newDocumentNode(handle, "slug", "title", "type", ZonedDateTime.now().minusDays(1), false);
@@ -58,6 +60,7 @@ public class HippoNodeFactoryTest {
         when(job.addNode("hipposched:triggers", "hipposched:triggers")).thenReturn(triggers);
         when(triggers.addNode("default", "hipposched:simpletrigger")).thenReturn(defaultNode);
         when(handle.getNodes(HIPPO_REQUEST)).thenReturn(iterator(emptyList()));
+        when(handle.getNodes(EMBARGO_REQUEST)).thenReturn(iterator(emptyList()));
 
         // ACT
         sut.newDocumentNode(handle, "slug", "title", "type", ZonedDateTime.now().plusDays(1), false);
