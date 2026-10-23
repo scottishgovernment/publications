@@ -14,9 +14,9 @@
   <name>Publications Service</name>
 
   <properties>
-    <hippo.repository.version>16.9.4</hippo.repository.version>
-    <jackson.version>2.21.5</jackson.version>
-    <slf4j.version>2.0.17</slf4j.version>
+    <hippo.repository.version>16.9.5</hippo.repository.version>
+    <jackson.version>2.21.6</jackson.version>
+    <slf4j.version>2.0.20</slf4j.version>
     <jsoup.version>1.23.2</jsoup.version>
     <logback.version>1.5.18</logback.version>
     <postgres.jdbc.version>42.7.13</postgres.jdbc.version>
@@ -375,7 +375,7 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <version>3.5.13</version>
+        <version>3.5.16</version>
         <executions>
           <execution>
             <goals>
