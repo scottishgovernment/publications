@@ -6,14 +6,8 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scot.gov.publications.hippo.HippoSessionFactory;
-import scot.gov.publications.hippo.SessionFactory;
-import scot.gov.publications.imageprocessing.GraphicsMagickImageProcessingImpl;
-import scot.gov.publications.imageprocessing.ImageProcessing;
 import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.S3PublicationStorage;
-import scot.gov.publications.util.Exif;
-import scot.gov.publications.util.ExifProcessImpl;
 import scot.mygov.config.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
@@ -60,24 +54,6 @@ class PublicationsModule {
         dataSource.setPassword(configuration.getDatasource().getPassword());
         dataSource.setMaximumPoolSize(configuration.getDatasource().getMaxPoolSize());
         return dataSource;
-    }
-
-    @Provides
-    @Singleton
-    SessionFactory sessionFactory(HippoSessionFactory sessionFactory) {
-        return sessionFactory;
-    }
-
-    @Provides
-    @Singleton
-    ImageProcessing imageProcessing() {
-        return new GraphicsMagickImageProcessingImpl();
-    }
-
-    @Provides
-    @Singleton
-    Exif exif() {
-        return new ExifProcessImpl();
     }
 
     @Provides

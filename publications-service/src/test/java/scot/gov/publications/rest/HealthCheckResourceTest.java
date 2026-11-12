@@ -1,11 +1,8 @@
 package scot.gov.publications.rest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.junit.Test;
 import org.mockito.Mockito;
-import scot.gov.publications.hippo.HippoPaths;
-import scot.gov.publications.hippo.HippoSessionFactory;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
 import scot.gov.publications.repo.PublicationRepositoryException;
@@ -13,8 +10,6 @@ import scot.gov.publications.repo.State;
 import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import jakarta.ws.rs.core.Response;
 
 import java.sql.Timestamp;
@@ -37,7 +32,6 @@ public class HealthCheckResourceTest {
         HealthCheckResource sut = new HealthCheckResource();
         sut.publicationRepository = healthyPublicationRepository();
         sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = healthySessionFactory();
 
         // ACT
         Response actual = sut.health();
@@ -54,7 +48,6 @@ public class HealthCheckResourceTest {
         HealthCheckResource sut = new HealthCheckResource();
         sut.publicationRepository = publicationRepositoryWithItems(Collections.singleton(pendingALongTimePublication()));
         sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = healthySessionFactory();
 
         // ACT
         Response actual = sut.health();
@@ -73,7 +66,6 @@ public class HealthCheckResourceTest {
         Collections.addAll(publications, anyPublication(), anyPublication(), anyPublication(), anyPublication(), anyPublication(), anyPublication());
         sut.publicationRepository = publicationRepositoryWithItems(publications);
         sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = healthySessionFactory();
 
         // ACT
         Response actual = sut.health();
@@ -91,43 +83,6 @@ public class HealthCheckResourceTest {
         HealthCheckResource sut = new HealthCheckResource();
         sut.publicationRepository = exceptionThrowingPublicationRepository();
         sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = healthySessionFactory();
-
-        // ACT
-        Response actual = sut.health();
-        ObjectNode actualEntity = (ObjectNode) actual.getEntity();
-
-        // ASSERT
-        assertEquals(actual.getStatus(), 503);
-        assertFalse(actualEntity.get("ok").asBoolean());
-    }
-
-    @Test
-    public void errorAddedIfJCRRepositorythrowsRepositoryException() throws Exception {
-
-        // ARRANGE
-        HealthCheckResource sut = new HealthCheckResource();
-        sut.publicationRepository = healthyPublicationRepository();
-        sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = unhealthSessionFactory(RepositoryException.class);
-
-        // ACT
-        Response actual = sut.health();
-        ObjectNode actualEntity = (ObjectNode) actual.getEntity();
-
-        // ASSERT
-        assertEquals(actual.getStatus(), 503);
-        assertFalse(actualEntity.get("ok").asBoolean());
-    }
-
-    @Test
-    public void errorAddedIfJCRRepositorythrowsRemoteRuntimeException() throws Exception {
-
-        // ARRANGE
-        HealthCheckResource sut = new HealthCheckResource();
-        sut.publicationRepository = healthyPublicationRepository();
-        sut.publicationStorage = healthlyPublicationStorage();
-        sut.sessionFactory = unhealthSessionFactory(RemoteRuntimeException.class);
 
         // ACT
         Response actual = sut.health();
@@ -145,7 +100,6 @@ public class HealthCheckResourceTest {
         HealthCheckResource sut = new HealthCheckResource();
         sut.publicationRepository = healthyPublicationRepository();
         sut.publicationStorage = unhealthlyPublicationStorage();
-        sut.sessionFactory = healthySessionFactory();
 
         // ACT
         Response actual = sut.health();
@@ -205,22 +159,6 @@ public class HealthCheckResourceTest {
         PublicationStorage storage = mock(PublicationStorage.class);
         Mockito.when(storage.ok()).thenThrow(new PublicationStorageException(new RuntimeException("arg")));
         return storage;
-    }
-
-    HippoSessionFactory healthySessionFactory() throws Exception {
-        HippoSessionFactory sessionFactory = mock(HippoSessionFactory.class);
-        Session session = mock(Session.class);
-        Mockito.when(session.nodeExists(HippoPaths.ROOT)).thenReturn(true);
-        Mockito.when(sessionFactory.newSession()).thenReturn(session);
-        return sessionFactory;
-    }
-
-    HippoSessionFactory unhealthSessionFactory(Class throwableclass) throws Exception {
-        HippoSessionFactory sessionFactory = mock(HippoSessionFactory.class);
-        Session session = mock(Session.class);
-        Mockito.when(session.itemExists(HippoPaths.ROOT)).thenThrow(throwableclass);
-        Mockito.when(sessionFactory.newSession()).thenReturn(session);
-        return sessionFactory;
     }
 
 }

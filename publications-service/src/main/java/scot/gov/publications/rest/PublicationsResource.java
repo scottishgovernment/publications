@@ -1,15 +1,8 @@
 package scot.gov.publications.rest;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scot.gov.publications.ApsZipImporterException;
-import scot.gov.publications.PublicationsConfiguration;
-import scot.gov.publications.metadata.Metadata;
-import scot.gov.publications.metadata.MetadataExtractor;
 import scot.gov.publications.repo.ListResult;
 import scot.gov.publications.repo.Publication;
 import scot.gov.publications.repo.PublicationRepository;
@@ -17,8 +10,6 @@ import scot.gov.publications.repo.PublicationRepositoryException;
 import scot.gov.publications.repo.State;
 import scot.gov.publications.storage.PublicationStorage;
 import scot.gov.publications.storage.PublicationStorageException;
-import scot.gov.publications.util.FileUtil;
-import scot.gov.publications.util.ZipUtil;
 
 import javax.inject.Inject;
 import jakarta.ws.rs.*;
@@ -27,15 +18,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.StreamingOutput;
 import jakarta.ws.rs.Path;
 
-import java.io.*;
-import java.sql.Timestamp;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.InputStream;
 
 /**
- * REST service that allow uploading APS zip files to be imported into Hippo.  It also allows tracking of
- * publications imports.
+ * REST service that allows tracking of publications imports and downloading of previously uploaded zip files.
  **/
 @Path("publications")
 public class PublicationsResource {
@@ -43,24 +29,10 @@ public class PublicationsResource {
     private static final Logger LOG = LoggerFactory.getLogger(PublicationsResource.class);
 
     @Inject
-    PublicationsConfiguration configuration;
-
-    @Inject
     PublicationStorage storage;
 
     @Inject
     PublicationRepository repository;
-
-    @Inject
-    PublicationUploader publicationUploader;
-
-    FileUtil fileUtil = new FileUtil();
-
-    ZipUtil zipUtil = new ZipUtil();
-
-    MetadataExtractor metadataExtractor = new MetadataExtractor();
-
-    ExecutorService executor = Executors.newSingleThreadExecutor();
 
     /**
      * Get a paged list of publications with an optional queryString that can be used to perform a partial and case insensitive
@@ -153,120 +125,5 @@ public class PublicationsResource {
             LOG.error(msg, e);
             return Response.status(500).entity("Failed to cancel publication").build();
         }
-    }
-
-    /**
-     * Upload a new zip file to be processed.
-     *
-     * @param fileUpload A multipart file upload containing a zip in the expected format.
-     * @param username the user posting this content *(set by proxette)
-     * @return Response indicating if the zip has been accepted.
-     */
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces({ MediaType.APPLICATION_JSON })
-    public Response postFormData(@MultipartForm UploadRequest fileUpload, @HeaderParam("X-User") String username) {
-
-        // extract the zip file from the uploaded file
-        File zipFile = null;
-        File extractedZipFile = null;
-        try {
-            // assert that the upload contains data and a filename
-            assertRequiredFields(fileUpload);
-
-            // save the zip file to disk
-            zipFile = fileUtil.createTempFile("zipUpload", "zip", new ByteArrayInputStream(fileUpload.getFileData()));
-
-            // the up-loaded zip file contains a zip - extract it
-            extractedZipFile = zipUtil.getZipToProcess(zipFile);
-
-        } catch (IllegalArgumentException | IOException e) {
-            // return a client error since we were not able to extract the zip file.  ensure that any temp files are deleted.
-            LOG.error("Failed to extract zip", e);
-            FileUtils.deleteQuietly(zipFile);
-            FileUtils.deleteQuietly(extractedZipFile);
-            return Response.status(400).entity(UploadResponse.error("Failed to extract zip file")).build();
-        }
-
-        Publication publication = null;
-        try {
-            // get the publication details from the zip
-            publication = newPublication(zipFile, extractedZipFile, username, fileUpload.getFilename());
-
-            // upload the file to s3
-            storage.save(publication, zipFile);
-
-            // save the details in the repository
-            repository.create(publication);
-
-            // submit the publication to the processing queue and return accepted status code
-            importPublication(publication);
-            return Response.accepted(UploadResponse.accepted(publication)).build();
-        } catch (ApsZipImporterException e) {
-            LOG.error("Failed to extract metadata from zip",  e);
-            return Response.status(400).entity(UploadResponse.error(e.getMessage())).build();
-        } catch (PublicationStorageException e) {
-            String msg = "Failed to upload zip file to s3";
-            LOG.error(msg,  e);
-            return Response.status(500).entity(UploadResponse.error(msg)).build();
-        } catch (PublicationRepositoryException e) {
-            String msg = "Failed to save publication to the repository";
-            LOG.error(msg, e);
-            return Response.status(500).entity(UploadResponse.error("Failed to save publication to the repository")).build();
-        } finally {
-            // ensure that temp files are deleted
-            FileUtils.deleteQuietly(zipFile);
-            FileUtils.deleteQuietly(extractedZipFile);
-        }
-    }
-
-    private void assertRequiredFields(UploadRequest request) {
-        if (request.getFileData() == null) {
-            throw new IllegalArgumentException("Upload contains no file");
-        }
-
-        if (StringUtils.isBlank(request.getFilename())) {
-            throw new IllegalArgumentException("Upload contains no filename");
-        }
-    }
-
-    private void importPublication(Publication publication) {
-        executor.submit(() -> publicationUploader.importPublication(publication));
-    }
-
-    private Publication newPublication(
-            File zip,
-            File extractedZip,
-            String username,
-            String filename)
-                throws ApsZipImporterException {
-
-        Metadata metadata = metadataExtractor.extract(extractedZip);
-        Publication publication = new Publication();
-        publication.setId(UUID.randomUUID().toString());
-        publication.setUsername(username);
-        publication.setIsbn(metadata.normalisedIsbn());
-        publication.setFilename(filename);
-        publication.setTitle(metadata.getTitle());
-        publication.setState(State.PENDING.name());
-        publication.setEmbargodate(Timestamp.from(metadata.getPublicationDateWithTimezone().toInstant()));
-        publication.setContact(contactEmail(metadata));
-
-        try {
-            publication.setChecksum(fileUtil.hash(zip));
-        } catch (IOException e) {
-            throw new ApsZipImporterException("Unable to calculate checksum", e);
-        }
-        return publication;
-    }
-
-    /**
-     * The contact email has not always been present in the JSON and so we guard against it being null.
-     */
-    private String contactEmail(Metadata metadata) {
-        if (metadata.getContact() != null) {
-            return metadata.getContact().getEmail().trim();
-        }
-        return "";
     }
 }

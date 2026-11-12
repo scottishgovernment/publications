@@ -3,12 +3,8 @@ package scot.gov.publications;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 
 public class PublicationsConfiguration {
-
-    @Valid
-    Hippo hippo = new Hippo();
 
     @Valid
     Datasource datasource = new Datasource();
@@ -17,14 +13,6 @@ public class PublicationsConfiguration {
     S3 s3 = new S3();
 
     int port;
-
-    public Hippo getHippo() {
-        return hippo;
-    }
-
-    public void setHippo(Hippo hippo) {
-        this.hippo = hippo;
-    }
 
     public Datasource getDatasource() {
         return datasource;
@@ -48,42 +36,6 @@ public class PublicationsConfiguration {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public static class Hippo {
-
-        @Pattern(regexp = "rmi://.*")
-        private String url = "rmi://localhost:1099/hipporepository";
-
-        @NotNull
-        private String user;
-
-        @NotNull
-        private String password;
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(String url) {
-            this.url = url;
-        }
-
-        public String getUser() {
-            return user;
-        }
-
-        public void setUser(String user) {
-            this.user = user;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
     }
 
     public static class Datasource {

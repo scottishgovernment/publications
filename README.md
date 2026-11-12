@@ -1,59 +1,21 @@
 # Publications
 
-This project provides a REST service which supports uploading ZIP files 
-from APS to Hippo. 
+This project provides a REST service which tracks publications previously 
+uploaded as ZIP files from APS and allows the uploaded ZIP files to be 
+downloaded.
+
+Uploading of ZIP files and importing them into Hippo is no longer handled 
+by this service.
 
 It collaborates with:
 * proxette: used to ensure that only users with admin access can access this api
-* publishing-site: uses this api to provide the publications upload functionality
-* jcr / hippo: used to insert publications on www.gov.scot
+* publishing-site: uses this api to provide the publications functionality
 * postgres: has a simple posgres database used to store processing information
-* s3: publications are uploaded to s3
- 
-When a ZIP file is uploaded a job is added to a queue and an entry 
-returned to allow clients to track the status of the publication.
+* s3: uploaded publications are stored in s3
  
 ## Configuration
 
 ## Endpoints
-
-`POST /publications/`
-
-Create a new publications uby uploding a zip file.
-
-This endpoint will either return an error if the file is not a valid zip 
-file containing metadata and a manifest or the details of a job that can 
-be polled to determine if the publication was imported successfully.
-
-TThe file should be specified as a the form field 'file'. 
- 
-If the zip is accepted then the output will look like:
- 
-201
-{
-    "accepted": true,
-    "message": "accepted",
-    "publication": {
-        "id": "11f8ec4d-ecc9-4e95-ac7a-62a97754b4e5",
-        "title": "Support for Nursing and Midwifery Students in Scotland 2018-19",
-        "isbn": "9781788517348",
-        "embargodate": 1544003700000,
-        "state": "PENDING",
-        "statedetails": null,
-        "checksum": "8b754477ce0f2756a83a7007627692d8",
-        "createddate": null,
-        "lastmodifieddate": null
-    }
-}
-
-If it is rejected the response will look like: 
-
-400
-{
-    "accepted": false,
-    "message": "Failed to extract metadata from zip",
-    "publication": null
-}
 
 `GET /publications?page=<page>&size=<size>&q=<searchterm>`
 
