@@ -14,13 +14,12 @@
   <name>Publications Service</name>
 
   <properties>
-    <jackson.version>2.21.6</jackson.version>
+    <jackson.version>2.22.1</jackson.version>
     <slf4j.version>2.0.20</slf4j.version>
-    <logback.version>1.5.18</logback.version>
+    <logback.version>1.5.37</logback.version>
     <postgres.jdbc.version>42.7.13</postgres.jdbc.version>
-    <undertow.version>2.3.21.Final</undertow.version>
-    <aws.version>2.28.11</aws.version>
-    <resteasy.version>6.2.12.Final</resteasy.version>
+    <aws.version>2.47.1</aws.version>
+    <resteasy.version>7.0.2.Final</resteasy.version>
 
     <sonar.coverage.exclusions>
       src/main/java/scot/gov/publications/rest/RequestLogger.java
@@ -84,13 +83,13 @@
     <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-core</artifactId>
-      <version>2.4.1.Final</version>
+      <version>2.4.2.Final</version>
     </dependency>
 
     <dependency>
       <groupId>io.undertow</groupId>
       <artifactId>undertow-servlet</artifactId>
-      <version>2.3.24.Final</version>
+      <version>2.3.25.Final</version>
     </dependency>
 
     <!-- JAX-RS -->
@@ -188,7 +187,7 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
-      <version>5.3.1</version>
+      <version>5.23.0</version>
       <scope>test</scope>
     </dependency>
 
@@ -245,12 +244,6 @@
         <scope>import</scope>
       </dependency>
 
-      <dependency>
-        <groupId>org.jboss.logging</groupId>
-        <artifactId>jboss-logging</artifactId>
-        <version>3.6.1.Final</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -269,6 +262,26 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>properties</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>@{argLine} -javaagent:${org.mockito:mockito-core:jar}</argLine>
+        </configuration>
       </plugin>
 
       <plugin>
